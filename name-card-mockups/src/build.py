@@ -1,14 +1,15 @@
-"""Build the name-card mockup pages.
+"""Build the name-card mockups as one HTML file with a tab per page.
 
     python3 name-card-mockups/src/build.py
 
-Writes self-contained HTML files to name-card-mockups/.
+Writes name-card-mockups/minmed-name-cards.html.
 """
 
+import re
 from pathlib import Path
 
 from parts import (
-    E, P, addr, apphead, badge, chathead, diff_table, email_phone, legend, mark, ncard, not_found,
+    RECORD, E, P, addr, apphead, badge, chathead, diff_table, email_phone, legend, mark, ncard, not_found,
     page, ph, phi, phone, public_page, section, st_active, st_error, st_unavail, staff_status,
     staff_view, step, wa_bubble,
 )
@@ -120,7 +121,7 @@ def index_page():
 {legend()}
 <div class="callout"><h3>Rule used in every phone</h3><p>Text inside a phone is either wording quoted from the spec or a dashed placeholder. Explanations sit outside the phone, with the spec section they come from.</p><p>Icons, colours and layout are illustrative. The spec fixes the wording and behaviour, not the visual design.</p></div>
 
-<h2 style="margin-top:28px">Pages</h2>
+<h2 style="margin-top:28px">What each tab shows</h2>
 <div class="hub">{hub}</div>
 
 {section("reference", "Baseline", "Reference: a normal, active card",
@@ -440,7 +441,7 @@ def pending_page():
 <h1>When changed details are pending</h1>
 <p class="lede">An officer with an approved card changes their designation, then corrects the change while it's still under review. Sample: "{E(P['desig'])}" to "Senior Sales Manager", corrected to "{E(P['desig_new'])}" {badge('sample')}.</p>
 {legend()}
-{section("flow", "Flow", "From edit to live", "<p>The approved card stays live the whole time. Recipients never see unapproved details.</p>", f'<div class="steps">{steps}</div>')}
+{section("pending-flow", "Flow", "From edit to live", "<p>The approved card stays live the whole time. Recipients never see unapproved details.</p>", f'<div class="steps">{steps}</div>')}
 """
     return page("2-pending-change.html", "Pending Change Flow",
                 "What staff and recipients see while a name card change is pending, from spec draft 0.2.", body)
@@ -537,25 +538,93 @@ def left_page():
 <h1>When the person is no longer with Minmed</h1>
 <p class="lede">The officer's card is deactivated. The link and QR keep working, but now they show that the card is unavailable.</p>
 {legend()}
-{section("flow", "Flow", "From deactivation to what recipients see", "", f'<div class="steps">{steps}</div>')}
+{section("left-flow", "Flow", "From deactivation to what recipients see", "", f'<div class="steps">{steps}</div>')}
 <div class="callout warn"><h3>Still to decide {badge("pending")}</h3><p>Who triggers offboarding, and how quickly a departure takes effect.</p></div>
 """
     return page("3-left-minmed.html", "Left Minmed Flow",
                 "What happens to a Minmed name card when the person leaves, from spec draft 0.2.", body)
 
 
+TABS = [
+    ("index.html", "overview", "Overview", index_page),
+    ("1-not-verified.html", "not-verified", "1 · Not verified", not_verified_page),
+    ("2-pending-change.html", "pending-change", "2 · Pending change", pending_page),
+    ("3-left-minmed.html", "left-minmed", "3 · Left Minmed", left_page),
+    ("4-security.html", "security", "4 · Security", security_page),
+    ("5-recommended.html", "recommended", "5 · Recommended", recommended_page),
+]
+
+TAB_JS = """
+(function () {
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
+  var links = document.querySelectorAll(".nav a");
+  function show(hash) {
+    var id = (hash || "").replace(/^#/, "");
+    var el = id ? document.getElementById(id) : null;
+    var tab = el ? (el.classList.contains("tab") ? el : el.closest(".tab")) : null;
+    if (!tab) tab = tabs[0];
+    tabs.forEach(function (t) { t.hidden = t !== tab; });
+    links.forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + tab.id); });
+    if (el && el !== tab) el.scrollIntoView(); else window.scrollTo(0, 0);
+  }
+  window.addEventListener("hashchange", function () { show(location.hash); });
+  show(location.hash);
+})();
+"""
+
+
+def combine():
+    """Put every page in one file, one tab per page."""
+    panels, scripts = [], []
+    for fname, tab_id, _, build in TABS:
+        build()
+        _, body, js = RECORD[fname]
+        for other, other_id, _, _ in TABS:
+            body = body.replace(f'href="{other}"', f'href="#{other_id}"')
+        body = re.sub(r"\b([Pp])age(s?) (\d)", lambda m: ("T" if m.group(1) == "P" else "t") + "ab" + m.group(2) + " " + m.group(3), body)
+        panels.append(f'<section class="tab" id="{tab_id}">{body}</section>')
+        if js:
+            scripts.append(js)
+    ids = re.findall(r'\bid="([^"]+)"', "".join(panels))
+    dupes = sorted({i for i in ids if ids.count(i) > 1})
+    if dupes:
+        raise SystemExit(f"duplicate ids across tabs: {dupes}")
+    nav = "".join(f'<a href="#{tab_id}">{label}</a>' for _, tab_id, label, _ in TABS)
+    css = (Path(__file__).resolve().parent / "styles.css").read_text()
+    return f"""<!doctype html>
+<html lang="en-SG">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Phone mockups, security explanations and recommended answers for Minmed Digital Name Cards, from spec draft 0.2.">
+<title>Minmed Name Card Mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+{css}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-inner"><a class="brandline" href="#overview">{mark()}<span>Name Cards · mockups</span></a><nav class="nav" aria-label="Tabs">{nav}</nav></div></header>
+<main>
+{"".join(panels)}
+<div class="footer">Mockup based on Minmed Digital Name Cards Technical Specification draft 0.2 (15/10/2026). Not a final design: the spec fixes wording and behaviour, not visuals. Brand colours and fonts come from the minmed repo; the "mm" mark is the stand-in mark used in that repo, not a confirmed official logo. QR codes are illustrative and not scannable. Alex Tan and every other person shown are fictional.</div>
+</main>
+<script>
+{TAB_JS}
+{"".join(scripts)}
+</script>
+</body>
+</html>
+"""
+
+
 def main():
-    pages = {
-        "index.html": index_page(),
-        "1-not-verified.html": not_verified_page(),
-        "2-pending-change.html": pending_page(),
-        "3-left-minmed.html": left_page(),
-        "4-security.html": security_page(),
-        "5-recommended.html": recommended_page(),
-    }
-    for name, text in pages.items():
-        (OUT / name).write_text(text)
-        print(f"wrote {name} ({len(text) // 1024} KB)")
+    text = combine()
+    (OUT / "minmed-name-cards.html").write_text(text)
+    print(f"wrote minmed-name-cards.html ({len(text) // 1024} KB)")
 
 
 if __name__ == "__main__":

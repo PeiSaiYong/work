@@ -319,7 +319,11 @@ def legend():
     return '<div class="legend">' + "".join(f"<div>{b}<br>{t}</div>" for b, t in items) + "</div>"
 
 
+RECORD = {}
+
+
 def page(fname, title, desc, body, js=""):
+    RECORD[fname] = (title, body, js)
     css = (SRC / "styles.css").read_text()
     on = ' class="on"'
     nav = "".join(f'<a href="{href}"{on if href == fname else ""}>{label}</a>' for href, label in NAV)
