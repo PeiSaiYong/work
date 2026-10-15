@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en-SG">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Phone mockups and security explanations for Minmed Digital Name Cards, from spec draft 0.2.">
+<title>Name Card Mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Minmed brand colours taken from the minmed repo (frontend/src/index.css):
+   plum #AD5E99, navy #192637, blush #EFDFEB, green #419F84, blue #6493EC.
+   Text and buttons use the darker shades from that file so they meet WCAG AA. */
+:root {
+  --bg: #f7f5f7;
+  --surface: #ffffff;
+  --surface-2: #f8f0f6;
+  --text: #2b2f36;
+  --muted: #5f6673;
+  --border: #e6e2e6;
+  --plum: #96487f;
+  --brand: #ad5e99;
+  --blush: #efdfeb;
+  --navy: #192637;
+  --on-plum: #ffffff;
+  --green: #2e7d66;
+  --green-soft: #e3f3ee;
+  --amber: #9a5b00;
+  --amber-soft: #fff2dc;
+  --red: #c0352b;
+  --red-soft: #fdecea;
+  --blue: #2f5fbf;
+  --blue-soft: #e8effc;
+  --grey-soft: #eef0f3;
+  --chrome: #eceef1;
+  --frame: #1d232c;
+  --shadow: 0 10px 30px rgba(25, 38, 55, 0.12);
+  --radius: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1520;
+    --surface: #151f2c;
+    --surface-2: #221a26;
+    --text: #e6e9ef;
+    --muted: #a3adbb;
+    --border: #263244;
+    --plum: #d38bc2;
+    --brand: #d38bc2;
+    --blush: #3a2436;
+    --navy: #e6e9ef;
+    --on-plum: #1a0f17;
+    --green: #6fd3b3;
+    --green-soft: #133329;
+    --amber: #f5c26b;
+    --amber-soft: #3a2a0f;
+    --red: #ff8a80;
+    --red-soft: #3a1714;
+    --blue: #8fb1f5;
+    --blue-soft: #16243d;
+    --grey-soft: #1d2836;
+    --chrome: #1d2836;
+    --frame: #05080d;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1520;
+  --surface: #151f2c;
+  --surface-2: #221a26;
+  --text: #e6e9ef;
+  --muted: #a3adbb;
+  --border: #263244;
+  --plum: #d38bc2;
+  --brand: #d38bc2;
+  --blush: #3a2436;
+  --navy: #e6e9ef;
+  --on-plum: #1a0f17;
+  --green: #6fd3b3;
+  --green-soft: #133329;
+  --amber: #f5c26b;
+  --amber-soft: #3a2a0f;
+  --red: #ff8a80;
+  --red-soft: #3a1714;
+  --blue: #8fb1f5;
+  --blue-soft: #16243d;
+  --grey-soft: #1d2836;
+  --chrome: #1d2836;
+  --frame: #05080d;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Open Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+h1, h2, h3, h4 { font-family: "Lato", "Open Sans", system-ui, sans-serif; color: var(--navy); line-height: 1.25; }
+h1 { font-size: 1.9rem; font-weight: 900; margin: 0 0 0.4rem; }
+h2 { font-size: 1.45rem; font-weight: 900; margin: 0 0 0.5rem; }
+h3 { font-size: 1.05rem; font-weight: 700; margin: 0 0 0.4rem; }
+a { color: var(--plum); }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.88em; background: var(--grey-soft); padding: 1px 5px; border-radius: 5px; }
+
+/* ---------- page chrome ---------- */
+.top {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 20;
+}
+.top-inner { max-width: 1240px; margin: 0 auto; padding: 10px 16px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.brandline { display: flex; align-items: center; gap: 10px; font-family: "Lato", sans-serif; font-weight: 900; color: var(--navy); text-decoration: none; }
+.mark { width: 30px; height: 30px; flex: none; }
+.nav { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
+.nav a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: 0.86rem; padding: 6px 10px; border-radius: 8px; }
+.nav a:hover { background: var(--surface-2); color: var(--plum); }
+.nav a.on { background: var(--blush); color: var(--plum); }
+main { max-width: 1240px; margin: 0 auto; padding: 28px 16px 80px; }
+.lede { color: var(--muted); max-width: 820px; margin: 0 0 1rem; }
+.meta { font-size: 0.82rem; color: var(--muted); }
+.section { margin-top: 56px; scroll-margin-top: 80px; }
+.section > .intro { max-width: 860px; color: var(--text); }
+.jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
+.jump a { display: inline-block; text-decoration: none; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; font-weight: 600; font-size: 0.86rem; color: var(--navy); }
+.jump a:hover { border-color: var(--brand); color: var(--plum); }
+.eyebrow { font-family: "Lato", sans-serif; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.74rem; color: var(--plum); margin-bottom: 4px; }
+
+/* ---------- legend + badges ---------- */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: "Lato", sans-serif; font-weight: 900; font-size: 0.68rem;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 999px; border: 1px solid transparent;
+  vertical-align: middle; white-space: nowrap; line-height: 1.5;
+}
+.b-proposed { background: var(--amber-soft); color: var(--amber); border-color: color-mix(in srgb, var(--amber) 35%, transparent); }
+.b-pending { background: var(--blue-soft); color: var(--blue); border-color: color-mix(in srgb, var(--blue) 35%, transparent); }
+.b-candidate { background: transparent; color: var(--blue); border-color: var(--blue); }
+.b-example { background: transparent; color: var(--plum); border-color: var(--plum); }
+.b-sample { background: var(--grey-soft); color: var(--muted); border-color: var(--border); }
+.b-notspec { background: transparent; color: var(--red); border-color: var(--red); border-style: dashed; }
+.b-spec { background: var(--green-soft); color: var(--green); border-color: color-mix(in srgb, var(--green) 35%, transparent); }
+.legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin: 14px 0 0; }
+.legend > div { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; font-size: 0.88rem; }
+.legend .badge, .legend .ph-inline { margin-bottom: 4px; }
+
+/* placeholder for wording the spec has not defined */
+.ph {
+  border: 1.5px dashed var(--muted); border-radius: 8px; padding: 8px 10px;
+  color: var(--muted); font-size: 0.8rem; line-height: 1.4;
+  background: repeating-linear-gradient(-45deg, transparent 0 8px, color-mix(in srgb, var(--muted) 7%, transparent) 8px 16px);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.ph-inline {
+  display: inline-block; border: 1.5px dashed var(--muted); border-radius: 6px; padding: 0 6px;
+  color: var(--muted); font-size: 0.78rem; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* ---------- step grid ---------- */
+.steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 34px 26px; margin-top: 24px; }
+.step { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.step-head { display: flex; gap: 10px; align-items: flex-start; }
+.num { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--plum); color: var(--on-plum); display: grid; place-items: center; font-family: "Lato", sans-serif; font-weight: 900; font-size: 0.85rem; }
+.step-head h3 { margin: 3px 0 0; }
+.who { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+.notes { margin: 0; padding: 0 0 0 18px; font-size: 0.87rem; }
+.notes li { margin: 0 0 5px; }
+.ref { font-size: 0.76rem; color: var(--muted); }
+.ref b { color: var(--plum); }
+
+/* ---------- phone frame ---------- */
+.phone {
+  width: 100%; max-width: 300px; margin: 0 auto;
+  border: 9px solid var(--frame); border-radius: 34px; overflow: hidden;
+  background: var(--surface); box-shadow: var(--shadow); position: relative;
+  font-size: 13.5px; line-height: 1.45;
+}
+.phone .sbar { height: 18px; background: var(--frame); position: relative; }
+.phone .sbar::after { content: ""; position: absolute; left: 50%; top: 3px; width: 70px; height: 11px; transform: translateX(-50%); background: #000; border-radius: 0 0 10px 10px; }
+.addr { display: flex; align-items: center; gap: 6px; background: var(--chrome); padding: 7px 10px; font-size: 12px; color: var(--text); border-bottom: 1px solid var(--border); }
+.addr .url { background: var(--surface); border-radius: 999px; padding: 4px 10px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.addr .url b { font-weight: 700; }
+.addr .url .path { color: var(--muted); }
+.addr.fake .url { outline: 2px solid var(--red); }
+.screen { padding: 14px; min-height: 470px; display: flex; flex-direction: column; gap: 10px; }
+.screen.short { min-height: 0; }
+.apphead { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-bottom: 1px solid var(--border); font-family: "Lato", sans-serif; font-weight: 900; color: var(--navy); font-size: 13px; }
+.apphead .mark { width: 22px; height: 22px; }
+.apphead .sub { margin-left: auto; font-family: "Open Sans", sans-serif; font-weight: 600; color: var(--muted); font-size: 11px; }
+.mini { font-size: 0.58rem; padding: 1px 5px; }
+.phone-cap { text-align: center; font-size: 0.78rem; color: var(--muted); margin-top: -4px; }
+
+/* ---------- public card page ---------- */
+.avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--grey-soft); border: 1.5px dashed var(--muted); display: grid; place-items: center; color: var(--muted); font-size: 10px; text-align: center; line-height: 1.1; margin: 4px auto 0; }
+.pname { text-align: center; font-family: "Lato", sans-serif; font-weight: 900; font-size: 19px; color: var(--navy); margin: 2px 0 0; }
+.pdesig { text-align: center; color: var(--text); margin: 0; }
+.pco { text-align: center; color: var(--plum); font-weight: 700; margin: 0; font-size: 12.5px; }
+.status { display: flex; gap: 8px; align-items: center; border-radius: 10px; padding: 8px 10px; font-size: 12.5px; }
+.status .ic { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 13px; }
+.status .t { font-weight: 700; }
+.status .s { font-size: 11px; color: var(--muted); display: block; font-weight: 400; }
+.st-active { background: var(--green-soft); color: var(--green); }
+.st-active .ic { background: var(--green); color: var(--surface); }
+.st-unavail { background: var(--grey-soft); color: var(--text); }
+.st-unavail .ic { background: var(--muted); color: var(--surface); }
+.st-error { background: var(--amber-soft); color: var(--amber); }
+.st-error .ic { background: transparent; color: var(--amber); border: 2px solid var(--amber); font-size: 12px; }
+.st-pending { background: var(--blue-soft); color: var(--blue); }
+.st-pending .ic { background: var(--blue); color: var(--surface); }
+.st-rejected { background: var(--red-soft); color: var(--red); }
+.st-rejected .ic { background: var(--red); color: var(--surface); }
+.howto { font-size: 12px; color: var(--plum); font-weight: 700; text-decoration: underline; display: inline-flex; gap: 6px; align-items: center; }
+.btn { display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 10px; padding: 9px 10px; font-weight: 700; font-size: 12.5px; border: 1.5px solid var(--plum); color: var(--plum); background: var(--surface); text-align: center; }
+.btn.primary { background: var(--plum); color: var(--on-plum); }
+.btn.off { opacity: 0.4; border-style: dashed; text-decoration: line-through; }
+.btn.ghost { border-color: var(--border); color: var(--text); }
+.btnrow { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.btngrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.kv { font-size: 12px; border-top: 1px solid var(--border); padding-top: 8px; }
+.kv div { display: flex; gap: 8px; padding: 2px 0; }
+.kv dt, .kv .k { color: var(--muted); width: 84px; flex: none; }
+.foot-link { font-size: 12px; color: var(--plum); text-align: center; margin-top: auto; }
+.blank { flex: 1; }
+.big-msg { text-align: center; padding: 20px 6px 6px; }
+.big-msg .ic { width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 10px; display: grid; place-items: center; font-size: 24px; font-weight: 900; }
+
+/* ---------- staff card visual ---------- */
+.ncard { border-radius: 12px; border: 1px solid var(--border); overflow: hidden; background: var(--surface); box-shadow: 0 2px 8px rgba(25, 38, 55, 0.08); }
+.ncard .band { height: 8px; background: linear-gradient(90deg, var(--plum), var(--brand)); }
+.ncard .body { display: flex; gap: 10px; padding: 10px 12px; align-items: center; }
+.ncard .info { flex: 1; min-width: 0; font-size: 11.5px; }
+.ncard .nm { font-family: "Lato", sans-serif; font-weight: 900; font-size: 14px; color: var(--navy); }
+.ncard .co { color: var(--plum); font-weight: 700; font-size: 11px; }
+.ncard .line { color: var(--text); overflow-wrap: anywhere; }
+.ncard .lk { color: var(--muted); font-size: 10.5px; }
+.ncard svg.qr { width: 62px; height: 62px; flex: none; }
+.ncard.dim { opacity: 0.45; filter: grayscale(0.6); }
+.hl { background: color-mix(in srgb, var(--amber) 22%, transparent); border-radius: 3px; padding: 0 2px; outline: 1.5px solid var(--amber); }
+.hl-red { background: color-mix(in srgb, var(--red) 18%, transparent); border-radius: 3px; padding: 0 2px; outline: 1.5px solid var(--red); }
+
+/* ---------- forms ---------- */
+.field { font-size: 11.5px; }
+.field label { display: block; color: var(--muted); margin-bottom: 2px; font-weight: 600; }
+.field .in { border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; background: var(--surface); color: var(--text); }
+.field .in.changed { border-color: var(--amber); background: var(--amber-soft); }
+.field .in.locked { background: var(--grey-soft); color: var(--muted); }
+
+/* diff table inside staff view */
+.diff { font-size: 11px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.diff .row { display: grid; grid-template-columns: 1fr 1fr; }
+.diff .row > div { padding: 5px 7px; border-top: 1px solid var(--border); }
+.diff .hd { background: var(--grey-soft); font-weight: 700; color: var(--muted); }
+.diff .hd > div { border-top: 0; }
+.diff .fld { grid-column: 1 / -1; font-weight: 700; color: var(--navy); background: var(--surface-2); }
+.diff .old { color: var(--muted); }
+.diff .new { color: var(--amber); font-weight: 700; }
+
+/* ---------- chat + email mock ---------- */
+.chat { background: color-mix(in srgb, var(--green) 7%, var(--surface)); }
+.chathead { display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: var(--surface); border-bottom: 1px solid var(--border); font-weight: 700; font-size: 13px; }
+.chathead .dot { width: 26px; height: 26px; border-radius: 50%; background: var(--grey-soft); border: 1px solid var(--border); }
+.bubble { align-self: flex-start; max-width: 92%; background: var(--surface); border-radius: 4px 12px 12px 12px; padding: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.12); font-size: 12.5px; }
+.bubble.me { align-self: flex-end; border-radius: 12px 4px 12px 12px; background: color-mix(in srgb, var(--green) 16%, var(--surface)); }
+.bubble .time { font-size: 10px; color: var(--muted); text-align: right; }
+.preview { border-radius: 8px; overflow: hidden; background: var(--grey-soft); margin-bottom: 4px; }
+.preview .img { height: 84px; display: grid; place-items: center; color: var(--muted); font-size: 10.5px; border-bottom: 1px solid var(--border); background: repeating-linear-gradient(45deg, transparent 0 6px, color-mix(in srgb, var(--muted) 8%, transparent) 6px 12px); }
+.preview .txt { padding: 6px 8px; font-size: 11.5px; }
+.preview .ttl { font-weight: 700; color: var(--text); }
+.preview .dom { color: var(--muted); font-size: 10.5px; }
+.linktext { color: var(--blue); text-decoration: underline; word-break: break-all; }
+.mailhead { font-size: 11.5px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.mailhead div { padding: 1px 0; }
+.mailhead .k { color: var(--muted); display: inline-block; width: 52px; }
+
+/* ---------- generic boxes ---------- */
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+.panel + .panel { margin-top: 14px; }
+.callout { border-left: 4px solid var(--plum); background: var(--surface-2); border-radius: 0 var(--radius) var(--radius) 0; padding: 12px 16px; margin: 16px 0; max-width: 900px; }
+.callout.warn { border-left-color: var(--amber); background: var(--amber-soft); }
+.callout.info { border-left-color: var(--blue); background: var(--blue-soft); }
+.callout h3 { margin-bottom: 4px; }
+.callout p { margin: 0.3rem 0; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.cols3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.tag-ok { color: var(--green); font-weight: 700; }
+.tag-no { color: var(--red); font-weight: 700; }
+.tag-warn { color: var(--amber); font-weight: 700; }
+.small { font-size: 0.84rem; }
+.muted { color: var(--muted); }
+table.t { width: 100%; border-collapse: collapse; font-size: 0.87rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+table.t th, table.t td { text-align: left; padding: 8px 10px; border-top: 1px solid var(--border); vertical-align: top; }
+table.t th { background: var(--grey-soft); font-family: "Lato", sans-serif; color: var(--navy); border-top: 0; }
+.tablewrap { overflow-x: auto; }
+
+/* ---------- flow diagram (HTML boxes) ---------- */
+.flowdia { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+.node { background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px; padding: 9px 11px; font-size: 0.84rem; flex: 1 1 150px; min-width: 140px; }
+.node b { display: block; font-family: "Lato", sans-serif; color: var(--navy); }
+.node.ok { border-color: var(--green); }
+.node.no { border-color: var(--red); }
+.node.tbd { border-style: dashed; border-color: var(--blue); }
+.node.warn { border-color: var(--amber); }
+.arrow { align-self: center; color: var(--muted); font-weight: 900; flex: none; }
+.vlist { display: flex; flex-direction: column; gap: 8px; }
+
+/* ---------- security page interactive ---------- */
+.sim { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 720px) { .sim { grid-template-columns: 1fr; } }
+.ctrls { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+button.act { font: inherit; font-weight: 700; font-size: 0.85rem; padding: 8px 12px; border-radius: 9px; border: 1.5px solid var(--plum); background: var(--surface); color: var(--plum); cursor: pointer; }
+button.act.primary { background: var(--plum); color: var(--on-plum); }
+button.act:disabled { opacity: 0.4; cursor: not-allowed; }
+button.act:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.log { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.78rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px; max-height: 260px; overflow: auto; }
+.log div { padding: 2px 0; border-bottom: 1px dashed var(--border); }
+.log .ok { color: var(--green); }
+.log .no { color: var(--red); }
+.log .warn { color: var(--amber); }
+.meter { height: 10px; border-radius: 999px; background: var(--grey-soft); overflow: hidden; border: 1px solid var(--border); }
+.meter > i { display: block; height: 100%; width: 0; background: var(--green); transition: width 0.25s; }
+.captcha { border: 1px solid var(--border); border-radius: 8px; padding: 10px; display: flex; gap: 10px; align-items: center; background: var(--surface); }
+.captcha .box { width: 24px; height: 24px; border: 2px solid var(--muted); border-radius: 4px; background: var(--surface); cursor: pointer; flex: none; }
+.captcha .box.done { background: var(--green); border-color: var(--green); }
+.hidden { display: none !important; }
+
+.ipbox { border: 1.5px solid var(--border); border-radius: 12px; padding: 10px; background: var(--surface); }
+.people { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+.person { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--blush); color: var(--plum); font-weight: 900; font-size: 0.75rem; font-family: "Lato", sans-serif; }
+
+.addr-test { display: flex; flex-direction: column; gap: 8px; }
+.addr-test .row { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; font-size: 0.85rem; flex-wrap: wrap; }
+.addr-test .u { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; flex: 1; min-width: 200px; word-break: break-all; }
+
+.fields { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; }
+@media (max-width: 720px) { .fields { grid-template-columns: 1fr; } .fields .arrow { transform: rotate(90deg); justify-self: center; } }
+.chip { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 0.8rem; margin: 3px 3px 0 0; border: 1px solid var(--border); background: var(--surface); }
+.chip.pub { border-color: var(--green); color: var(--green); }
+.chip.priv { border-color: var(--red); color: var(--red); text-decoration: line-through; }
+
+.timeline { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 2px solid var(--border); }
+.timeline li { position: relative; padding: 0 0 14px 8px; font-size: 0.88rem; }
+.timeline li::before { content: ""; position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--plum); border: 2px solid var(--bg); }
+.timeline li.red::before { background: var(--red); }
+.timeline li.amber::before { background: var(--amber); }
+.timeline li.green::before { background: var(--green); }
+
+.sec { border-top: 1px solid var(--border); padding-top: 28px; }
+.sec .what { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 12px 0 18px; }
+.sec .what > div { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; font-size: 0.88rem; }
+.sec .what h4 { margin: 0 0 6px; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.sec .what .h-ok { color: var(--green); }
+.sec .what .h-no { color: var(--red); }
+.sec .what .h-n { color: var(--plum); }
+.sec .what ul { margin: 0; padding-left: 18px; }
+
+.toc { columns: 2 260px; font-size: 0.9rem; padding-left: 18px; }
+.toc li { margin-bottom: 4px; break-inside: avoid; }
+
+.hub { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; margin-top: 18px; }
+.hub a { display: block; text-decoration: none; color: inherit; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: border-color 0.15s, transform 0.15s; }
+.hub a:hover { border-color: var(--brand); transform: translateY(-2px); }
+.hub h3 { color: var(--plum); }
+.hub p { margin: 0; font-size: 0.88rem; color: var(--muted); }
+
+svg.diagram { width: 100%; height: auto; display: block; }
+svg.diagram text { font-family: "Open Sans", system-ui, sans-serif; fill: var(--text); }
+svg.diagram .lbl { font-family: "Lato", sans-serif; font-weight: 900; fill: var(--navy); }
+svg.diagram .sm { font-size: 11px; fill: var(--muted); }
+svg.diagram .box { fill: var(--surface); stroke: var(--border); stroke-width: 1.5; }
+svg.diagram .box-ok { fill: var(--surface); stroke: var(--green); stroke-width: 1.8; }
+svg.diagram .box-tbd { fill: var(--blue-soft); stroke: var(--blue); stroke-width: 1.8; stroke-dasharray: 6 4; }
+svg.diagram .box-no { fill: var(--red-soft); stroke: var(--red); stroke-width: 1.8; }
+svg.diagram .box-plum { fill: var(--surface-2); stroke: var(--plum); stroke-width: 1.8; }
+svg.diagram .ln { stroke: var(--muted); stroke-width: 1.6; fill: none; }
+svg.diagram .ln-no { stroke: var(--red); stroke-width: 1.6; fill: none; stroke-dasharray: 5 4; }
+svg.diagram .ln-ok { stroke: var(--green); stroke-width: 1.8; fill: none; }
+svg.diagram .ah { fill: var(--muted); }
+svg.diagram .ah-no { fill: var(--red); }
+svg.diagram .ah-ok { fill: var(--green); }
+svg.diagram .t-no { fill: var(--red); font-weight: 700; }
+svg.diagram .t-ok { fill: var(--green); font-weight: 700; }
+svg.diagram .t-tbd { fill: var(--blue); font-weight: 700; }
+
+.footer { margin-top: 64px; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 14px; }
+
+@media (max-width: 520px) {
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+  .nav { margin-left: 0; }
+}
+@media print {
+  .top { position: static; }
+  .step, .panel, .sec { break-inside: avoid; }
+}
+
+/* bottom sheet for the How to verify panel */
+.sheet-wrap { position: relative; flex: 1; display: flex; flex-direction: column; }
+.sheet-wrap .under { opacity: 0.25; pointer-events: none; display: flex; flex-direction: column; gap: 10px; }
+.sheet { position: absolute; left: -14px; right: -14px; bottom: -14px; background: var(--surface); border-top: 1px solid var(--border); border-radius: 18px 18px 0 0; box-shadow: 0 -8px 24px rgba(25, 38, 55, 0.18); padding: 12px 14px 14px; font-size: 12px; }
+.sheet .grab { width: 40px; height: 4px; border-radius: 4px; background: var(--border); margin: 0 auto 8px; }
+.sheet ol, .sheet ul { margin: 6px 0; padding-left: 18px; }
+.sheet li { margin-bottom: 3px; }
+.sheet .src { font-size: 10px; color: var(--muted); margin-top: 6px; }
+
+/* request path diagram (HTML, wraps on phones) */
+.pathdia { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.1fr) auto minmax(0, 1.5fr) auto minmax(0, 1fr); gap: 8px; align-items: stretch; }
+.pathdia .arrow { align-self: center; }
+@media (max-width: 900px) {
+  .pathdia { grid-template-columns: 1fr; }
+  .pathdia .arrow { transform: rotate(90deg); justify-self: center; }
+}
+.pathdia .node ul { margin: 6px 0 0; padding-left: 16px; font-size: 0.8rem; }
+.bypass { margin-top: 10px; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 3fr); gap: 8px; align-items: center; }
+@media (max-width: 900px) { .bypass { grid-template-columns: 1fr; } .bypass .arrow { transform: rotate(90deg); justify-self: center; } }
+.arrow.red { color: var(--red); }
+.cmp { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.verdict { font-family: "Lato", sans-serif; font-weight: 900; font-size: 0.8rem; padding: 2px 8px; border-radius: 6px; }
+.verdict.ok { background: var(--green-soft); color: var(--green); }
+.verdict.no { background: var(--red-soft); color: var(--red); }
+pre.req { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.8rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px; overflow-x: auto; white-space: pre; margin: 0; }
+pre.req .ok { color: var(--green); font-weight: 700; }
+pre.req .no { color: var(--red); font-weight: 700; }
+pre.req .c { color: var(--muted); }
+.scenario-pick { display: flex; flex-wrap: wrap; gap: 6px; }
+.vlist > .node, .vlist > .flowdia { flex: none; }
+.btn.primary .ph-inline { color: var(--on-plum); border-color: var(--on-plum); }
+.cmp { align-items: start; }
+
+</style>
+</head>
+<body>
+<header class="top"><div class="top-inner"><a class="brandline" href="index.html"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" fill="#96487F"/><text x="16" y="21" text-anchor="middle" font-family="Lato, Arial, sans-serif" font-size="14" font-weight="900" fill="#fff">mm</text></svg><span>Name Cards · mockups</span></a><nav class="nav" aria-label="Pages"><a href="index.html" class="on">Overview</a><a href="1-not-verified.html">Not verified</a><a href="2-pending-change.html">Pending change</a><a href="3-left-minmed.html">Left Minmed</a><a href="4-security.html">Security</a></nav></div></header>
+<main>
+
+<div class="eyebrow">Mockups · Spec draft 0.2</div>
+<h1>Minmed Digital Name Cards: flows and security</h1>
+<p class="lede">Phone mockups of what staff and recipients see in each flow, and visual explanations of each security measure. Everything comes from Technical Specification draft 0.2 (15/10/2026). Where the spec doesn't define something, the mockup says so instead of guessing.</p>
+
+<h2 style="margin-top:28px">How to read these mockups</h2>
+<div class="legend"><div><span class="badge b-proposed" title="In the spec for review, not yet approved">Proposed</span><br>In the spec for review, not yet approved.</div><div><span class="badge b-pending" title="Decision still needed">Pending</span><br>A decision is still needed.</div><div><span class="badge b-candidate" title="Named in the spec as an option, not chosen">Candidate</span><br>Named in the spec as an option, not chosen (for example Cloudflare Turnstile).</div><div><span class="badge b-example" title="Number given as an example, not a setting">Example only</span><br>A number the spec gives as an example, not a setting.</div><div><span class="ph-inline">[…]</span><br>Placeholder. The spec has not defined this wording or layout, so nothing was invented.</div><div><span class="badge b-notspec" title="The spec does not describe this">Not in spec</span><br>Something you might expect that the spec does not describe.</div><div><span class="badge b-sample" title="Fictional person and values">Sample data</span><br>Alex Tan is fictional. Names, titles, numbers and times are made up.</div></div>
+<div class="callout"><h3>Rule used in every phone</h3><p>Text inside a phone is either wording quoted from the spec or a dashed placeholder. Explanations sit outside the phone, with the spec section they come from.</p><p>Icons, colours and layout are illustrative. The spec fixes the wording and behaviour, not the visual design.</p></div>
+
+<h2 style="margin-top:28px">Pages</h2>
+<div class="hub"><a href="1-not-verified.html"><h3>1 · Card not verified</h3><p>Four separate cases: sign-in or directory failure, new card waiting for approval, change not approved, live check failed. Plus how the three recipient results differ.</p></a><a href="2-pending-change.html"><h3>2 · Changed details pending</h3><p>From Edit my details to approval: what staff see, what recipients keep seeing, editing again during review, and the exact-version rule.</p></a><a href="3-left-minmed.html"><h3>3 · No longer with Minmed</h3><p>Deactivation: what changes at once, what the recipient sees, and what can't be erased (old WhatsApp messages, saved contacts, images).</p></a><a href="4-security.html"><h3>4 · Security measures</h3><p>Every scenario in §7, with a request-path diagram, a CAPTCHA simulator, a token checker, look-alike addresses and the public-field filter.</p></a></div>
+
+<section class="section" id="reference"><div class="eyebrow">Baseline</div><h2>Reference: a normal, active card</h2><div class="intro"><p>The starting point every other flow is compared with.</p></div><div class="steps"><div class="step"><div class="step-head"><span class="num">1</span><div><h3>Staff view: Approved and Active</h3><div class="who">Signed-in officer</div></div></div><div class="phone "><div class="sbar"></div><div class="apphead"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" fill="#96487F"/><text x="16" y="21" text-anchor="middle" font-family="Lato, Arial, sans-serif" font-size="14" font-weight="900" fill="#fff">mm</text></svg><span>Minmed</span></div><div class="screen"><div class="status st-active"><span class="ic" aria-hidden="true">●</span><span class="t">Approved and Active</span></div><div class="ncard"><div class="band"></div><div class="body"><div class="info"><div class="nm">Alex Tan</div><div class="line">Corporate Sales Manager</div><div class="co">Minmed</div><div class="line">alex.tan@minmed.sg</div><div class="line">+65 8000 1234</div><div class="lk">me.minmed.sg/alex-tan</div></div><svg class="qr" viewBox="-1 -1 23 23" role="img" aria-label="Illustrative QR code (not scannable)"><rect x="-1" y="-1" width="23" height="23" fill="#fff"/><path d="M8 0h1v1h-1zM9 0h1v1h-1zM11 0h1v1h-1zM8 1h1v1h-1zM9 1h1v1h-1zM11 1h1v1h-1zM12 1h1v1h-1zM8 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1zM12 2h1v1h-1zM8 3h1v1h-1zM12 3h1v1h-1zM9 4h1v1h-1zM11 4h1v1h-1zM12 4h1v1h-1zM8 5h1v1h-1zM9 5h1v1h-1zM11 5h1v1h-1zM9 6h1v1h-1zM11 6h1v1h-1zM12 6h1v1h-1zM8 7h1v1h-1zM10 7h1v1h-1zM11 7h1v1h-1zM0 8h1v1h-1zM1 8h1v1h-1zM4 8h1v1h-1zM9 8h1v1h-1zM11 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM0 9h1v1h-1zM4 9h1v1h-1zM7 9h1v1h-1zM9 9h1v1h-1zM14 9h1v1h-1zM15 9h1v1h-1zM17 9h1v1h-1zM18 9h1v1h-1zM19 9h1v1h-1zM20 9h1v1h-1zM0 10h1v1h-1zM2 10h1v1h-1zM3 10h1v1h-1zM4 10h1v1h-1zM6 10h1v1h-1zM7 10h1v1h-1zM12 10h1v1h-1zM13 10h1v1h-1zM14 10h1v1h-1zM17 10h1v1h-1zM18 10h1v1h-1zM19 10h1v1h-1zM20 10h1v1h-1zM2 11h1v1h-1zM3 11h1v1h-1zM4 11h1v1h-1zM5 11h1v1h-1zM12 11h1v1h-1zM17 11h1v1h-1zM18 11h1v1h-1zM19 11h1v1h-1zM0 12h1v1h-1zM1 12h1v1h-1zM2 12h1v1h-1zM3 12h1v1h-1zM4 12h1v1h-1zM5 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM8 12h1v1h-1zM9 12h1v1h-1zM10 12h1v1h-1zM13 12h1v1h-1zM14 12h1v1h-1zM15 12h1v1h-1zM16 12h1v1h-1zM17 12h1v1h-1zM20 12h1v1h-1zM9 13h1v1h-1zM10 13h1v1h-1zM11 13h1v1h-1zM12 13h1v1h-1zM14 13h1v1h-1zM15 13h1v1h-1zM18 13h1v1h-1zM20 13h1v1h-1zM12 14h1v1h-1zM13 14h1v1h-1zM14 14h1v1h-1zM18 14h1v1h-1zM19 14h1v1h-1zM13 15h1v1h-1zM15 15h1v1h-1zM16 15h1v1h-1zM17 15h1v1h-1zM18 15h1v1h-1zM19 15h1v1h-1zM9 16h1v1h-1zM13 16h1v1h-1zM14 16h1v1h-1zM15 16h1v1h-1zM16 16h1v1h-1zM17 16h1v1h-1zM8 17h1v1h-1zM11 17h1v1h-1zM16 17h1v1h-1zM17 17h1v1h-1zM19 17h1v1h-1zM9 18h1v1h-1zM10 18h1v1h-1zM13 18h1v1h-1zM14 18h1v1h-1zM15 18h1v1h-1zM18 18h1v1h-1zM9 19h1v1h-1zM11 19h1v1h-1zM12 19h1v1h-1zM17 19h1v1h-1zM20 19h1v1h-1zM8 20h1v1h-1zM9 20h1v1h-1zM10 20h1v1h-1zM12 20h1v1h-1zM13 20h1v1h-1zM14 20h1v1h-1zM16 20h1v1h-1zM17 20h1v1h-1zM20 20h1v1h-1z" fill="#192637"/><rect x="0" y="0" width="7" height="7" fill="#192637"/><rect x="1" y="1" width="5" height="5" fill="#fff"/><rect x="2" y="2" width="3" height="3" fill="#192637"/><rect x="14" y="0" width="7" height="7" fill="#192637"/><rect x="15" y="1" width="5" height="5" fill="#fff"/><rect x="16" y="2" width="3" height="3" fill="#192637"/><rect x="0" y="14" width="7" height="7" fill="#192637"/><rect x="1" y="15" width="5" height="5" fill="#fff"/><rect x="2" y="16" width="3" height="3" fill="#192637"/></svg></div></div><div class="btngrid"><div class="btn">Share link</div><div class="btn">Show QR</div><div class="btn">Download QR</div><div class="btn">Download image <span class="badge b-pending mini" title="Decision still needed">Pending</span></div><div class="btn">Edit my details</div><div class="btn">View public profile</div></div></div></div><div class="phone-cap">Staff view (only the signed-in officer)</div><ul class="notes"><li>Only the signed-in officer sees this view.</li><li>The card shows name, designation, work email, published mobile and QR.</li><li>The link (me.minmed.sg/first-last) and the QR never change, even when details change.</li><li>Who may use <b>Download image</b> is <span class="badge b-pending" title="Decision still needed">Pending</span>.</li></ul><div class="ref">Spec: <b>§2</b></div></div><div class="step"><div class="step-head"><span class="num">2</span><div><h3>Shared on WhatsApp</h3><div class="who">The chat the officer sends</div></div></div><div class="phone chat"><div class="sbar"></div><div class="chathead"><span class="dot"></span><span><span class="ph-inline">[recipient]</span></span></div><div class="screen"><div class="bubble me"><div class="preview"><div class="img">Photo (optional)</div><div class="txt"><div class="ttl">Alex Tan</div><div>Corporate Sales Manager · Minmed</div><div>alex.tan@minmed.sg</div><div>+65 8000 1234</div><div style="margin-top:3px">Open link for current details. <span class="badge b-proposed mini" title="In the spec for review, not yet approved">Proposed</span></div><div class="dom">me.minmed.sg</div></div></div><div class="linktext">https://me.minmed.sg/alex-tan</div><div class="time">9:14 am</div></div></div></div><div class="phone-cap">WhatsApp link preview</div><ul class="notes"><li>The preview is a snapshot from when the link was sent. It never updates.</li><li>It never carries a tick and doesn't show whether the card is still valid.</li><li>"Open link for current details." <span class="badge b-proposed" title="In the spec for review, not yet approved">Proposed</span></li><li>Some people turn off link previews, so not everyone sees it.</li></ul><div class="ref">Spec: <b>§3, §6</b></div></div><div class="step"><div class="step-head"><span class="num">3</span><div><h3>Recipient opens the link</h3><div class="who">Anyone with the link</div></div></div><div class="phone "><div class="sbar"></div><div class="addr"><svg width="11" height="12" viewBox="0 0 11 12" aria-hidden="true"><rect x="1" y="5" width="9" height="7" rx="1.5" fill="currentColor"/><path d="M3 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="currentColor" stroke-width="1.4" fill="none"/></svg><span class="url"><b>me.minmed.sg</b><span class="path">/alex-tan</span></span></div><div class="screen"><div class="avatar">Photo<br>(optional)</div><p class="pname">Alex Tan</p><p class="pdesig">Corporate Sales Manager</p><p class="pco">Minmed</p><div class="status st-active"><span class="ic" aria-hidden="true">✓</span><span class="t">Active staff profile<span class="s">Checked 10:42 am, 15 Oct 2026</span></span></div><span class="howto">How to verify <span class="badge b-proposed mini" title="In the spec for review, not yet approved">Proposed</span></span><div class="btn primary">Save contact</div><div class="btnrow"><div class="btn">Email</div><div class="btn">Call</div><div class="btn">WhatsApp</div></div><dl class="kv"><div><dt>Languages</dt><dd style="margin:0">English, Mandarin</dd></div><div><dt>LinkedIn</dt><dd style="margin:0" class="linktext">linkedin.com/in/…</dd></div></dl><div class="foot-link">About Minmed</div></div></div><div class="phone-cap">Recipient view (public page, no sign-in)</div><ul class="notes"><li>The address bar should read exactly <b>me.minmed.sg</b>. This is the main sign the page is genuine.</li><li>✓ <b>Active staff profile</b> appears only after a successful live check, always with the check time.</li><li>The check time is when this page was opened, not when the link was sent.</li><li>Call and WhatsApp appear only if a personal mobile is published.</li><li>Recipients see no sharing tools, downloads, editing or approval status.</li><li>Whether recipients can download the card image is <span class="badge b-pending" title="Decision still needed">Pending</span>.</li></ul><div class="ref">Spec: <b>§4, §6</b></div></div><div class="step"><div class="step-head"><span class="num">4</span><div><h3>How to verify panel</h3><div class="who">Recipient taps How to verify</div></div></div><div class="phone "><div class="sbar"></div><div class="addr"><svg width="11" height="12" viewBox="0 0 11 12" aria-hidden="true"><rect x="1" y="5" width="9" height="7" rx="1.5" fill="currentColor"/><path d="M3 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="currentColor" stroke-width="1.4" fill="none"/></svg><span class="url"><b>me.minmed.sg</b><span class="path">/alex-tan</span></span></div><div class="screen"><div class="sheet-wrap"><div class="under"><div class="avatar">Photo<br>(optional)</div><p class="pname">Alex Tan</p><p class="pdesig">Corporate Sales Manager</p><p class="pco">Minmed</p><div class="status st-active"><span class="ic" aria-hidden="true">✓</span><span class="t">Active staff profile<span class="s">Checked 10:42 am, 15 Oct 2026</span></span></div><span class="howto">How to verify <span class="badge b-proposed mini" title="In the spec for review, not yet approved">Proposed</span></span><div class="btn primary">Save contact</div><div class="btnrow"><div class="btn">Email</div><div class="btn">Call</div><div class="btn">WhatsApp</div></div><div class="foot-link">About Minmed</div></div><div class="sheet"><div class="grab"></div><div class="ph">[Panel title and final wording not defined. Lines below are the checks in spec §5.3 and meanings in §5.2.]</div><ol><li>The address bar reads exactly <b>me.minmed.sg</b>.</li><li>The status shows ✓ Active staff profile with a check time from when you opened the page.</li><li>The details match what you were given. If they differ, trust the live page.</li><li>Open the link or scan the QR yourself rather than trusting an image of the card.</li><li>For payments or personal data, confirm through a Minmed contact you already know. Active confirms the card, not the person who sent it.</li></ol><ul><li><b>Card unavailable</b>: the card has been deactivated.</li><li><b>Temporary verification error</b>: the card couldn't be checked right now. It does not mean the person has left.</li></ul></div></div></div></div><div class="phone-cap">Recipient view (public page, no sign-in)</div><ul class="notes"><li>The whole panel is <span class="badge b-proposed" title="In the spec for review, not yet approved">Proposed</span>. It opens on the same page.</li><li>Its wording isn't defined yet, so the lines shown are the checks listed in the spec.</li></ul><div class="ref">Spec: <b>§4, §5.3</b></div></div></div></section>
+
+<section class="section" id="questions"><div class="eyebrow">For you to decide</div><h2>Open questions found while building these</h2><div class="intro"><p>The mockups show each of these as a placeholder or a note. Answering them would let the placeholders be filled in.</p></div><ol class="small" style="max-width:900px"><li>Wording listed in §8 as still to decide: sign-in failure, held application, CAPTCHA and blocked messages.</li><li>Wording that isn't defined but isn't listed in §8 either: the departure notice under Card unavailable, the text under Temporary verification error, the retry or status-unavailable message, the warning when editing during review, the approval and rejection emails, the download-failure message, the deactivation email to manage@minmed.sg.</li><li>Button labels the spec doesn't name: the sign-in button, the submit button on the change form, and any Try again button.</li><li>Card unavailable page: is the person's name, photo or designation still shown? Is a check time shown?</li><li>Temporary verification error page: §7.12 says no protected response is released, so these mockups show no details. Please confirm.</li><li>New card waiting for approval: what does the staff card preview show before first approval?</li><li>Where the staff view lives (which address) isn't specified.</li><li>Can someone whose card is deactivated still sign in and see Card deactivated?</li><li>The reviewer's and administrator's screens aren't described anywhere.</li><li>Format of the Checked time (these mockups use "10:42 am, 15 Oct 2026" as sample data).</li></ol></section>
+
+<div class="footer">Mockup based on Minmed Digital Name Cards Technical Specification draft 0.2 (15/10/2026). Not a final design: the spec fixes wording and behaviour, not visuals. Brand colours and fonts come from the minmed repo; the "mm" mark is the stand-in mark used in that repo, not a confirmed official logo. QR codes are illustrative and not scannable. Alex Tan and every other person shown are fictional.</div>
+</main>
+
+</body>
+</html>
