@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="light">
 <meta name="description" content="Phone mockups and security explanations for Minmed Digital Name Cards, from spec draft 0.2.">
 <title>Name Card Mockups</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +12,8 @@
 <style>
 /* Minmed brand colours taken from the minmed repo (frontend/src/index.css):
    plum #AD5E99, navy #192637, blush #EFDFEB, green #419F84, blue #6493EC.
-   Text and buttons use the darker shades from that file so they meet WCAG AA. */
+   Text and buttons use the darker shades from that file so they meet WCAG AA.
+   Light mode only. */
 :root {
   --bg: #f7f5f7;
   --surface: #ffffff;
@@ -38,58 +39,6 @@
   --frame: #1d232c;
   --shadow: 0 10px 30px rgba(25, 38, 55, 0.12);
   --radius: 12px;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0e1520;
-    --surface: #151f2c;
-    --surface-2: #221a26;
-    --text: #e6e9ef;
-    --muted: #a3adbb;
-    --border: #263244;
-    --plum: #d38bc2;
-    --brand: #d38bc2;
-    --blush: #3a2436;
-    --navy: #e6e9ef;
-    --on-plum: #1a0f17;
-    --green: #6fd3b3;
-    --green-soft: #133329;
-    --amber: #f5c26b;
-    --amber-soft: #3a2a0f;
-    --red: #ff8a80;
-    --red-soft: #3a1714;
-    --blue: #8fb1f5;
-    --blue-soft: #16243d;
-    --grey-soft: #1d2836;
-    --chrome: #1d2836;
-    --frame: #05080d;
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0e1520;
-  --surface: #151f2c;
-  --surface-2: #221a26;
-  --text: #e6e9ef;
-  --muted: #a3adbb;
-  --border: #263244;
-  --plum: #d38bc2;
-  --brand: #d38bc2;
-  --blush: #3a2436;
-  --navy: #e6e9ef;
-  --on-plum: #1a0f17;
-  --green: #6fd3b3;
-  --green-soft: #133329;
-  --amber: #f5c26b;
-  --amber-soft: #3a2a0f;
-  --red: #ff8a80;
-  --red-soft: #3a1714;
-  --blue: #8fb1f5;
-  --blue-soft: #16243d;
-  --grey-soft: #1d2836;
-  --chrome: #1d2836;
-  --frame: #05080d;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
 }
 
 * { box-sizing: border-box; }
