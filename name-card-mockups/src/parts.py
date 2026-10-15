@@ -30,6 +30,7 @@ BADGES = {
     "example": ("b-example", "Example only", "Number given as an example, not a setting"),
     "sample": ("b-sample", "Sample data", "Fictional person and values"),
     "notspec": ("b-notspec", "Not in spec", "The spec does not describe this"),
+    "rec": ("b-rec", "Recommended", "A recommendation for the spec, not yet in it"),
     "spec": ("b-spec", "In spec", "Described in the spec"),
 }
 
@@ -207,12 +208,12 @@ def not_found():
 
 # ---------------------------------------------------------------- staff view
 
-def staff_buttons(share_on=True, edit_on=True):
+def staff_buttons(share_on=True, edit_on=True, note=True):
     def b(label, on=True, extra=""):
         cls = "btn" if on else "btn off"
         return f'<div class="{cls}">{label}{extra}</div>'
 
-    off_note = "" if share_on else f'<div class="small muted" style="font-size:11px">Sharing, QR and downloads off until approval {badge("proposed", mini=True)}</div>'
+    off_note = "" if share_on or not note else f'<div class="small muted" style="font-size:11px">Sharing, QR and downloads off until approval {badge("proposed", mini=True)}</div>'
     return (
         off_note
         + '<div class="btngrid">'
@@ -233,9 +234,9 @@ def staff_view(state, card=None, between="", share_on=True, edit_on=True, button
     )
 
 
-def diff_table(rows, date="15 Oct 2026"):
+def diff_table(rows, date="15 Oct 2026", labels=("Current public value", "You submitted")):
     """rows: list of (field, current public value, submitted value)."""
-    out = ['<div class="diff"><div class="row hd"><div>Current public value</div><div>You submitted</div></div>']
+    out = [f'<div class="diff"><div class="row hd"><div>{labels[0]}</div><div>{labels[1]}</div></div>']
     for field, old, new in rows:
         out.append(
             f'<div class="row"><div class="fld">{E(field)}</div></div>'
@@ -301,6 +302,7 @@ NAV = [
     ("2-pending-change.html", "Pending change"),
     ("3-left-minmed.html", "Left Minmed"),
     ("4-security.html", "Security"),
+    ("5-recommended.html", "Recommended"),
 ]
 
 

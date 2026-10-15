@@ -12,6 +12,7 @@ from parts import (
     page, ph, phi, phone, public_page, section, st_active, st_error, st_unavail, staff_status,
     staff_view, step, wa_bubble,
 )
+from recommended import recommended_page
 from security import security_page
 
 OUT = Path(__file__).resolve().parent.parent
@@ -92,6 +93,8 @@ def index_page():
              "Deactivation: what changes at once, what the recipient sees, and what can't be erased (old WhatsApp messages, saved contacts, images)."),
             ("4-security.html", "4 · Security measures",
              "Every scenario in §7, with a request-path diagram, a CAPTCHA simulator, a token checker, look-alike addresses and the public-field filter."),
+            ("5-recommended.html", "5 · Recommended answers",
+             "A recommendation for each open question below, shown in mockups: page contents, reviewer and admin screens, the staff address and draft wording."),
         ]
     )
 
@@ -124,7 +127,7 @@ def index_page():
          "<p>The starting point every other flow is compared with.</p>", f'<div class="steps">{ref_steps}</div>')}
 
 {section("questions", "For you to decide", "Open questions found while building these",
-         "<p>The mockups show each of these as a placeholder or a note. Answering them would let the placeholders be filled in.</p>",
+         '<p>The mockups show each of these as a placeholder or a note. Answering them would let the placeholders be filled in. <a href="5-recommended.html">See the recommended answers →</a></p>',
          '<ol class="small" style="max-width:900px">' + "".join(f"<li>{q}</li>" for q in questions) + "</ol>")}
 """
     return page("index.html", "Name Card Mockups",
@@ -548,6 +551,7 @@ def main():
         "2-pending-change.html": pending_page(),
         "3-left-minmed.html": left_page(),
         "4-security.html": security_page(),
+        "5-recommended.html": recommended_page(),
     }
     for name, text in pages.items():
         (OUT / name).write_text(text)

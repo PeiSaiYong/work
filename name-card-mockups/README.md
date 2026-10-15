@@ -11,6 +11,7 @@ Open `index.html` in a browser. Each page works on its own (CSS and JS are inlin
 | `2-pending-change.html` | A change from Edit my details to approval, including the exact-version rule |
 | `3-left-minmed.html` | Deactivation when someone leaves Minmed |
 | `4-security.html` | Every scenario in spec §7, with a CAPTCHA simulator and a token checker |
+| `5-recommended.html` | A recommended answer to each open question, shown in mockups. Highlighted text is recommended wording, not spec |
 
 ## Conventions
 
