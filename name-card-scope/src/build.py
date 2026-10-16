@@ -5,6 +5,9 @@ Run: python3 build.py
 
 from pathlib import Path
 
+import html
+import re
+
 import mocks as M
 from mocks import E, LINK, chip, mark, thumb
 
@@ -148,6 +151,7 @@ def s_confirmed():
         grp("The card"),
         row("Fields: name, designation, Minmed, work email, optional mobile and photo, optional biography, languages and LinkedIn. Company information is a link to minmed.sg; no social links.", "Spec 0.2 §3.1; you, 16/10"),
         row("Actions: Save contact and Email, plus Call and WhatsApp when a mobile is published. No visitor app.", "Spec 0.2 §1.1; you, 16/10"),
+        row("Every card shows the Minmed logo. A Super admin sets it once in Settings; it's the same on every card and can't be changed for a single card.", you),
         row("On a computer, the card also shows a QR code to move it to a phone.", you),
         row("No “Active staff profile ✓ Checked” line and no How to verify panel.", you),
         row("Sharing the link on WhatsApp shows a preview of the card.", "Spec 0.2 §4.4",
@@ -176,7 +180,7 @@ def s_confirmed():
 <div class="eyebrow">2</div>
 <h2>What's confirmed</h2>
 <p>On 16/10/2026 you approved the proposals in this document. Open items are in section 13.</p>
-<div class="tablewrap"><table>
+<div class="tablewrap"><table class="decisions">
 <thead><tr><th>Decision</th><th>Source</th></tr></thead>
 <tbody>
 {"".join(rows)}
@@ -213,7 +217,7 @@ def s_features():
     <li>Card details: link, QR code, card image, views, history</li>
     <li>Deactivate; Super admin also reactivates, re-codes and deletes</li>
     <li>Activity log</li>
-    <li>Admins and Settings (Super admin)</li>
+    <li>Admins and Settings, including the company logo (Super admin)</li>
     <li>Email to manage@minmed.sg on every change</li>
   </ul></div>
 </div>
@@ -481,7 +485,7 @@ def s_pages():
               "<code>/admin/admins</code>. Admins are added by company email.",
               alt="Admins page listing four admins with role selectors and Remove links, plus a row to add an admin by email and role.", wide=True)
         + fig("pg-settings", admin_shot("/admin/settings", M.ad_settings()), "Settings (Super admin only).",
-              "<code>/admin/settings</code>. Card design, company details, notifications and Google Wallet.",
+              "<code>/admin/settings</code>. Card design (the company logo on every card), company details, notifications and Google Wallet.",
               alt="Settings page with sections for card design (logo and brand colours with a card preview), company details, notifications to manage@minmed.sg and Google Wallet status.", wide=True)
     )
     last_pair = (
@@ -754,6 +758,26 @@ def foot():
 </main>
 <script>
 document.documentElement.classList.add("js");
+function fitShots() {
+  document.querySelectorAll(".shot").forEach(function (s) {
+    var c = s.firstElementChild;
+    if (!c) return;
+    c.style.zoom = "";
+    if (s.classList.contains("zoomed")) { s.classList.remove("fit"); return; }
+    var need = c.scrollWidth, have = s.clientWidth - 4;
+    if (need > have + 1) { c.style.zoom = (have / need).toFixed(4); s.classList.add("fit"); }
+    else { s.classList.remove("fit"); }
+  });
+}
+document.addEventListener("click", function (e) {
+  var s = e.target.closest && e.target.closest(".shot");
+  if (!s || !(s.classList.contains("fit") || s.classList.contains("zoomed"))) return;
+  s.classList.toggle("zoomed");
+  fitShots();
+});
+window.addEventListener("resize", fitShots);
+window.addEventListener("load", fitShots);
+fitShots();
 document.addEventListener("click", function (e) {
   var a = e.target.closest && e.target.closest('a[href^="#"]');
   if (!a) return;
@@ -772,12 +796,47 @@ document.addEventListener("click", function (e) {
 """
 
 
+TABLE_RE = re.compile(r'(<div class="tablewrap"><table[^>]*>)(.*?)(</table></div>)', re.S)
+
+
+def label_cells(doc):
+    """Adds data-label (the column heading) to each data cell, so tables can stack on phones."""
+    def table(m):
+        start, inner, end = m.groups()
+        head = re.search(r"<thead>(.*?)</thead>", inner, re.S)
+        if not head:
+            return m.group(0)
+        labels = [re.sub(r"<[^>]+>", "", h).strip() for h in re.findall(r"<th[^>]*>(.*?)</th>", head.group(1), re.S)]
+
+        def row(rm):
+            col = 0
+
+            def cell(cm):
+                nonlocal col
+                tag, attrs = cm.groups()
+                span = re.search(r'colspan="(\d+)"', attrs)
+                width = int(span.group(1)) if span else 1
+                label = labels[col] if col < len(labels) and width == 1 else ""
+                col += width
+                if tag == "td" and label:
+                    return f'<td{attrs} data-label="{html.escape(label)}">'
+                return cm.group(0)
+
+            return re.sub(r"<(td|th)(\b[^>]*)>", cell, rm.group(0))
+
+        body = inner[head.end():]
+        body = re.sub(r"<tr[^>]*>.*?</tr>", row, body, flags=re.S)
+        return start + inner[:head.end()] + body + end
+
+    return TABLE_RE.sub(table, doc)
+
+
 def build():
     parts = [
         head(), intro(), s_how(), s_confirmed(), s_features(), s_users(), s_matrix(), s_map(), s_pages(),
         s_bots(), s_links(), s_failures(), s_feasibility(), s_spec(), s_pending(), foot(),
     ]
-    doc = "".join(parts)
+    doc = label_cells("".join(parts))
     assert USED == FIG_ORDER, f"figure order mismatch:\n{USED}\n{FIG_ORDER}"
     assert "zapkad" not in doc.lower(), "Zapkad must not appear in the scope"
     OUT.write_text(doc)
