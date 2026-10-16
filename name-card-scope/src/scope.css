@@ -173,6 +173,8 @@ a.smn:hover, a.smn:focus-visible { background: var(--surface-2); border-color: v
 .phone .island { position: absolute; top: 10px; left: 50%; width: 84px; height: 24px; margin-left: -42px; background: #101216; border-radius: 14px; z-index: 3; }
 .phone .sb { height: 44px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 5px 24px 0 32px; font: 700 13px/1 "Open Sans", sans-serif; color: #111; background: #fff; }
 .phone .pbody { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.phone.cut .scr { height: 580px; }
+.phone.cut .pbody { overflow: hidden; }
 .phone .urlbar { flex: none; padding: 8px 14px 16px; background: #f5f5f7; border-top: 1px solid #e4e4e8; display: flex; justify-content: center; }
 .phone .urlbar span { display: inline-flex; align-items: center; gap: 5px; background: #e6e6ea; border-radius: 12px; padding: 7px 16px; font: 600 12px/1 "Open Sans", sans-serif; color: #2b2f36; max-width: 100%; overflow: hidden; white-space: nowrap; }
 
