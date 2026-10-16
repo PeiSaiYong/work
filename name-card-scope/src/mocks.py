@@ -264,7 +264,7 @@ def wa_chat(kind="card"):
         '<div class="wa-msgs"><div class="wa-b">'
         f'<div class="wa-card">{img}<div class="wa-tx"><div class="wa-t">{title}</div><div class="wa-d">{desc}</div>'
         '<div class="wa-dom">me.minmed.sg</div></div></div>'
-        f'<div class="wa-link">https://{E(LINK)}</div><div class="wa-time">10:42 ✓✓</div></div></div></div>'
+        f'<div class="wa-link">https://{E(LINK_ALIAS)}</div><div class="wa-time">10:42 ✓✓</div></div></div></div>'
     )
 
 
@@ -319,7 +319,15 @@ def email_card():
     )
 
 
-def email_admin():
+def email_admin(kind="edit"):
+    if kind == "alias":
+        body = (
+            '<table class="ml-tab"><tr><th>Card</th><td>Alex Tan</td></tr>'
+            f'<tr><th>Change</th><td>Link: <s>{E(LINK)}</s> → {E(LINK_ALIAS)}</td></tr>'
+            '<tr><th>By</th><td>Alex Tan (staff)</td></tr><tr><th>When</th><td>16 Oct 2026, 11:05 am</td></tr></table>'
+            '<div class="ml-cta left"><span class="ad-btn">Open in admin console</span></div>'
+        )
+        return mail("Alias changed: Alex Tan", "Minmed Name Cards", "manage@minmed.sg", body)
     body = (
         '<table class="ml-tab"><tr><th>Card</th><td>Alex Tan</td></tr>'
         f'<tr><th>Change</th><td>Designation: <s>{E(P["desig"])}</s> → {E(P["desig_new"])}</td></tr>'
@@ -345,8 +353,8 @@ def ad_top(active="Cards", role="Super admin", name="Priya Nair", initials="PN",
     )
 
 
-def ad_page(active, inner, role="Super admin"):
-    return f'<div class="ad">{ad_top(active, role)}<div class="ad-main">{inner}</div></div>'
+def ad_page(active, inner, role="Super admin", name="Priya Nair", initials="PN"):
+    return f'<div class="ad">{ad_top(active, role, name, initials)}<div class="ad-main">{inner}</div></div>'
 
 
 CARDS = [
@@ -388,6 +396,7 @@ def ad_mobile_cards():
     return (
         f'<div class="ad amc"><div class="amc-top">{mark(22)}<span>Cards</span><span class="amc-menu">{ic("list", "ic")}</span></div>'
         f'<div class="amc-tools"><span class="ad-input ph">{ic("search", "ic sm")}Search name or email</span>'
+        '<span class="ad-seg"><span class="on">Active</span><span>Deactivated</span></span>'
         f'<span class="ad-btn p full">{ic("plus", "ic sm")}Add card</span></div>{rows}</div>'
     )
 
@@ -431,20 +440,33 @@ def card_form(edit=False):
         f'<div class="ad-field"><label>Mobile</label><div class="ad-mob"><span class="ad-input{" ph" if m_ph else ""}"><span class="pre">+65</span>{mob}</span>'
         f'<span class="ad-sw">{toggle}Show on card</span></div></div>'
         f'<div class="ad-field"><label>Photo</label>{photo}</div>'
+        f"{logo_locked()}"
         f'<div class="ad-field"><label>Biography</label><span class="ad-input area{" ph" if b_ph else ""}">{bio}</span></div>'
         f'<div class="ad-grid2">{field("Languages", langs, g_ph)}{field("LinkedIn", li, i_ph)}</div>'
         "</div>"
     )
 
 
+PV_BAND = f'<div class="pv-band"><span class="pv-logo">{mark(14, "#fff", "#96487F")}Minmed</span></div>'
+
+
+def logo_locked():
+    """The company logo as a card form shows it: locked, set only in Settings."""
+    return (
+        '<div class="ad-field"><label>Company logo</label>'
+        f'<div class="ro-logo">{mark(26)}<span>Same on every card. Only a Super admin can change it, in Settings.</span>'
+        f'{ic("lock", "ic sm")}</div></div>'
+    )
+
+
 def mini_card(desig=None, empty=False):
     if empty:
         return (
-            f'<div class="pv"><div class="pv-band"></div><div class="pv-av">?</div><div class="pv-n ph">Name</div>'
+            f'<div class="pv">{PV_BAND}<div class="pv-av">?</div><div class="pv-n ph">Name</div>'
             '<div class="pv-d ph">Designation</div><div class="pv-btn">Save contact</div></div>'
         )
     return (
-        f'<div class="pv"><div class="pv-band"></div><div class="pv-av">{P["initials"]}</div><div class="pv-n">{E(P["name"])}</div>'
+        f'<div class="pv">{PV_BAND}<div class="pv-av">{P["initials"]}</div><div class="pv-n">{E(P["name"])}</div>'
         f'<div class="pv-d">{E(desig or P["desig"])}</div><div class="pv-c">Minmed</div><div class="pv-btn">Save contact</div></div>'
     )
 
@@ -470,6 +492,7 @@ def ad_edit():
         f'<div class="ad-side"><div class="ad-lbl">Preview</div>{mini_card(P["desig_new"])}'
         f'<div class="ad-hint">{ic("link", "ic sm")}Same link and QR code</div></div></div>'
         '<div class="ad-foot"><span class="ad-btn">Cancel</span><div class="sp"></div><span class="ad-btn p">Save changes</span></div>',
+        role="Admin", name="Siti Rahman", initials="SR",
     )
 
 
@@ -611,7 +634,8 @@ def ad_settings():
         '<span>Notifications</span><span>Google Wallet</span></div>'
         '<div class="ad-sbody">'
         f'<div class="ad-panel pad"><div class="ad-lbl">Card design</div><div class="ad-design"><div>'
-        f'<div class="ad-field"><label>Logo</label><div class="ad-photo">{mark(36)}<span class="ad-btn sm">Replace</span></div></div>'
+        f'<div class="ad-field"><label>Logo</label><div class="ad-photo">{mark(36)}<span class="ad-btn sm">Replace</span></div>'
+        '<small class="fnote">Shown on every card. Only Super admins can change it.</small></div>'
         '<div class="ad-field"><label>Brand colour</label><div class="sw"><i style="background:#96487f"></i><i style="background:#ad5e99"></i>'
         '<i style="background:#192637"></i><i style="background:#efdfeb"></i></div></div></div>'
         f"<div>{mini_card()}</div></div></div>"
@@ -639,24 +663,114 @@ def staff_signin(state="ask"):
     return f'<div class="ad si mob"><div class="si-box">{mark(40)}<div class="si-t">My name card</div>{inner}</div></div>'
 
 
-def my_card():
-    rows = [
-        ("Name", P["name"]), ("Designation", P["desig"]), ("Work email", P["email"]),
-        ("Mobile", P["mobile"] + " · shown on card"), ("Languages", P["langs"]), ("LinkedIn", P["linkedin"]),
-    ]
-    details = "".join(f'<div class="mc-row"><span>{k}</span>{E(v)}</div>' for k, v in rows)
+MC_HELP = "Your name or an alias: letters, numbers and hyphens, 2 to 30 characters. Leave it empty for a link without a name."
+MC_WARN = (
+    "Saving gives you a new link. Your old link, printed QR codes and Apple Wallet passes will show “No card found”. "
+    "Your Google Wallet pass updates itself, and we'll email you the new card."
+)
+MC_NOTE = '<div class="mc-note">Only admins can change these. Reply to your card email to ask for a change.</div>'
+
+
+def link_box(state):
+    """The staff member's link with the one box they can type in: empty, typing, saved or error."""
+    box = {
+        "empty": '<span class="mc-in ph">your-name</span>',
+        "typing": f'<span class="mc-in">{E(P["alias"])}<i></i></span>',
+        "saved": f'<span class="mc-in done">{E(P["alias"])}</span>',
+        "error": '<span class="mc-in bad">Alex Tan!<i></i></span>',
+    }[state]
+    return f'<div class="mc-link"><span>me.minmed.sg/card/</span>{box}<span>/{P["code"]}</span></div>'
+
+
+def link_section(state):
+    if state == "saved":
+        after = (
+            f'<div class="mc-ok">{ic("check", "ic sm")}<span>Your new link is ready. We\'ve emailed you the new card.</span></div>'
+            f'<span class="ad-btn sm">{ic("copy", "ic sm")}Copy link</span>'
+        )
+    elif state == "error":
+        after = (
+            f'<div class="mc-err">{ic("alert", "ic sm")}<span>Use only letters, numbers and hyphens, 2 to 30 characters.</span></div>'
+            '<div class="btn-p off">Save link</div>'
+        )
+    else:
+        after = (
+            f'<div class="mc-help">{MC_HELP}</div>'
+            f'<div class="mc-warn">{ic("alert", "ic sm")}<span>{MC_WARN}</span></div><div class="btn-p">Save link</div>'
+        )
+    return f'<div class="mc-sec"><div class="mc-h">Your link</div>{link_box(state)}{after}</div>'
+
+
+def ro_details(phone=False):
+    """Every card field, read-only, as the staff member sees it."""
+    langs = field("Languages", E(P["langs"]), cls="ro")
+    li = field("LinkedIn", E(P["linkedin"]), cls="ro")
     return (
-        f'<div class="mc"><div class="mc-top">{mark(22, "#fff", "#96487F")}<span>My name card</span>'
+        '<div class="ad-form">'
+        f'<div class="ad-grid2">{field("First name", "Alex", cls="ro")}{field("Last name", "Tan", cls="ro")}</div>'
+        f'{field("Designation", E(P["desig"]), cls="ro")}{field("Work email", E(P["email"]), cls="ro")}'
+        f'{field("Mobile", E(P["mobile"]) + "<span class=suffix>Shown on card</span>", cls="ro")}'
+        f'<div class="ad-field ro"><label>Photo</label><span class="ad-av lg">{P["initials"]}</span></div>'
+        f'<div class="ad-field ro"><label>Biography</label><span class="ad-input area auto">{E(P["bio"])}</span></div>'
+        + (f"{langs}{li}" if phone else f'<div class="ad-grid2">{langs}{li}</div>')
+        + f"{logo_locked()}</div>"
+    )
+
+
+def mc_top():
+    return (
+        f'<div class="mc-top">{mark(22, "#fff", "#96487F")}<span>My name card</span>'
         f'<span class="mc-out">{ic("out", "ic sm")}Sign out</span></div>'
-        '<div class="mc-sec"><div class="mc-h">Your link</div>'
-        f'<div class="mc-link"><span>me.minmed.sg/card/</span><span class="mc-in">{E(P["alias"])}<i></i></span><span>/{P["code"]}</span></div>'
-        '<div class="mc-help">Your name or an alias: letters, numbers and hyphens, 2 to 30 characters. Leave it empty for a link without a name.</div>'
-        f'<div class="mc-warn">{ic("alert", "ic sm")}<span>Saving gives you a new link. Your old link, printed QR codes and Apple Wallet passes will show “No card found”. Your Google Wallet pass updates itself, and we\'ll email you the new card.</span></div>'
-        '<div class="btn-p">Save link</div></div>'
-        f'<div class="mc-sec mc-qrrow"><div class="mc-qr">{qr(11)}</div><div><div class="mc-h">Your QR code</div>'
+    )
+
+
+def mc_qr(title="Your QR code", seed=11):
+    return (
+        f'<div class="mc-sec mc-qrrow"><div class="mc-qr">{qr(seed)}</div><div><div class="mc-h">{title}</div>'
         f'<span class="ad-btn sm">{ic("download", "ic sm")}Download QR code</span></div></div>'
-        f'<div class="mc-sec"><div class="mc-h">Your card details{ic("lock", "ic sm")}</div>{details}'
-        '<div class="mc-note">Only admins can change these. Reply to your card email to ask for a change.</div></div></div>'
+    )
+
+
+def my_card():
+    """My card on a phone, before the staff member has added a name."""
+    return (
+        f'<div class="mc">{mc_top()}{link_section("empty")}{mc_qr()}'
+        f'<div class="mc-sec"><div class="mc-h">Your card details{ic("lock", "ic sm")}</div>{ro_details(phone=True)}{MC_NOTE}</div></div>'
+    )
+
+
+def my_card_step(state):
+    """One step of changing the link on a phone: typing, saved or error."""
+    extra = mc_qr("Your new QR code", 12) if state == "saved" else ""
+    return f'<div class="mc">{mc_top()}{link_section(state)}{extra}</div>'
+
+
+def my_card_desktop():
+    """My card on a computer: the staff member's card details page."""
+    top = (
+        f'<div class="ad-top"><div class="ad-brand">{mark(24)}<span>Minmed</span><small>My name card</small></div>'
+        f'<div class="ad-user"><span class="ad-av">{P["initials"]}</span><span class="ad-un">{E(P["name"])}<small>Staff</small></span>'
+        f'<span class="ad-btn sm">{ic("out", "ic sm")}Sign out</span></div></div>'
+    )
+    link = (
+        f'<div class="ad-panel pad"><div class="ad-lbl">Your link</div>{link_box("saved")}'
+        f'<div class="mc-help">{MC_HELP}</div><div class="mc-warn">{ic("alert", "ic sm")}<span>{MC_WARN}</span></div>'
+        f'<div class="ad-foot"><span class="ad-btn sm">{ic("copy", "ic sm")}Copy link</span><div class="sp"></div>'
+        '<span class="ad-btn p off">Save link</span></div></div>'
+    )
+    qrp = (
+        f'<div class="ad-panel pad row"><div class="ad-qr">{qr(12)}</div><div><div class="ad-lbl">Your QR code</div>'
+        f'<span class="ad-btn sm">{ic("download", "ic sm")}Download QR code</span></div></div>'
+    )
+    det = (
+        f'<div class="ad-panel pad"><div class="ad-lbl withic">Your card details{ic("lock", "ic sm")}</div>{ro_details()}{MC_NOTE}</div>'
+    )
+    return (
+        f'<div class="ad">{top}<div class="ad-main">'
+        f'<div class="ad-h"><span class="ad-av lg">{P["initials"]}</span><div class="ad-title">{E(P["name"])}'
+        f'<small>{E(P["desig"])} · {E(P["email"])}</small></div>{status_pill(True)}</div>'
+        f'<div class="ad-det"><div class="ad-side"><div class="ad-lbl">Your card</div>{mini_card()}</div>'
+        f'<div class="ad-stack">{link}{qrp}{det}</div></div></div></div>'
     )
 
 

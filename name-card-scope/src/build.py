@@ -18,7 +18,7 @@ OUT = SRC.parent / "minmed-name-card-scope.html"
 FIG_ORDER = [
     "overview", "sitemap", "nav", "journey",
     "pg-card", "pg-captcha", "pg-inactive", "pg-notfound", "pg-error", "pg-whatsapp", "pg-desktop",
-    "pg-email", "pg-gpass", "pg-apass", "pg-staffsignin", "pg-mycard", "pg-mycardok",
+    "pg-email", "pg-gpass", "pg-apass", "pg-staffsignin", "pg-mycard", "pg-mycardflow", "pg-mycarddesk",
     "pg-signin", "pg-cards", "pg-add", "pg-import", "pg-details", "pg-edit", "pg-dialogs",
     "pg-activity", "pg-admins", "pg-settings", "pg-adminphone", "pg-notify",
     "bot-flow", "bot-outcome",
@@ -91,7 +91,7 @@ def head():
 <header class="top"><div class="top-inner">
   <div class="brand">{mark(28)}<span>Name Card Scope</span></div>
   <nav class="toc" aria-label="Sections">
-    <a href="#how">How it works</a><a href="#confirmed">Confirmed</a><a href="#features">Features</a><a href="#users">Users</a><a href="#matrix">Permissions</a><a href="#map">Site map</a><a href="#pages">Pages</a><a href="#bots">Bot protection</a><a href="#links">Links &amp; privacy</a><a href="#failures">Failures</a><a href="#feasibility">Feasibility</a><a href="#spec">Spec changes</a><a href="#pending">Pending</a>
+    <a href="#how">How it works</a><a href="#confirmed">Confirmed</a><a href="#features">Features</a><a href="#users">Users</a><a href="#matrix">Permissions</a><a href="#map">Site map</a><a href="#pages">Pages</a><a href="#bots">Bot protection</a><a href="#links">Links &amp; privacy</a><a href="#failures">Failures</a><a href="#feasibility">Feasibility</a><a href="#spec">Spec changes</a><a href="#pending">Open items</a>
   </nav>
 </div></header>
 <main>
@@ -108,7 +108,6 @@ def intro():
   <span>{chip("Confirmed", "dec")} you decided it</span>
   <span>{chip("Proposed", "rec")} my recommendation, waiting for your OK (section 13)</span>
   <span>{chip("Test", "test")} try on a test app before the build</span>
-  <span>{chip("Pending confirmation", "pend")} still to decide (section 13)</span>
 </div>
 """
 
@@ -157,7 +156,7 @@ def s_confirmed():
         row("On a computer, the card also shows a QR code to move it to a phone.", you),
         row("No “Active staff profile ✓ Checked” line and no How to verify panel.", you),
         row("Sharing the link on WhatsApp shows a preview of the card.", "Spec 0.2 §4.4",
-            chip("At risk", "risk") + ' <span class="note">Base44 can\'t make a per-card preview as is. See section 11 and pending item 1.</span>'),
+            chip("At risk", "risk") + ' <span class="note">Base44 can\'t make a per-card preview as is. See section 11 and open item 1.</span>'),
         grp("Wallet"),
         row("Minmed issues a Google Wallet pass. iPhone staff add their QR code to Apple Wallet themselves with iOS 27's Create a Pass. No Apple Developer Program, fee or D-U-N-S number.", you),
         grp("Name or alias in the link"),
@@ -295,7 +294,9 @@ def s_matrix():
         r("See view counts", N, N, Y, Y),
         r("See the activity log", N, N, Y, Y),
         r("Add or remove admins and change roles", N, N, N, Y),
-        r("Change the card design, company details, notifications and Google Wallet settings", N, N, N, Y),
+        r("Change the company logo shown on every card (in Settings)", N, N, N, Y),
+        r("Use a different logo on one card", N, N, N, N),
+        r("Change the brand colours, company details, notifications and Google Wallet settings", N, N, N, Y),
         g("Automatic"),
         auto("Record every admin action and alias change in the activity log"),
         auto("Email manage@minmed.sg when a card is added, edited, given a new alias, deactivated, restored, re-coded or deleted"),
@@ -354,9 +355,10 @@ def s_map():
 <div class="smz z-stf"><div class="smz-h"><b>Staff</b><code>me.minmed.sg/my-card</code><span>Minmed Google sign-in · own card only</span></div>
 <ul class="smt">
   <li>{node("pg-staffsignin", tp(M.staff_signin()), "Sign in", code="/my-card")}</li>
-  <li>{node("pg-mycard", tp(M.my_card()), "My card", "read-only details, alias box, QR code download")}
+  <li>{node("pg-mycard", tp(M.my_card()), "My card", "every field read-only, one box for the link, QR code download")}
     <ul class="smt">
-      <li>{node("pg-mycardok", tp(M.my_card_confirm()), "Change link?", "confirms before saving")}</li>
+      <li>{node("pg-mycardflow", tp(M.my_card_step("typing")), "Changing the link", "type, confirm, done")}</li>
+      <li>{node("pg-mycarddesk", tw(M.my_card_desktop()), "On a computer", "same page, wider")}</li>
     </ul>
   </li>
 </ul></div>"""
@@ -439,7 +441,7 @@ def s_map():
 def s_pages():
     phone_figs = (
         fig("pg-card", M.phone(M.card_body()), "Card page.",
-            f"<code>{E(LINK)}</code> · anyone with the link. Call and WhatsApp only with a published mobile; About only when filled in.",
+            f"<code>{E(M.LINK_ALIAS)}</code>, or <code>{E(LINK)}</code> until a name or alias is added · anyone with the link. Call and WhatsApp only with a published mobile; About only when filled in.",
             alt="Phone showing Alex Tan's card: photo initials, name, designation, Minmed, Save contact button, Email, Call and WhatsApp buttons, work email, mobile, About with biography, languages and LinkedIn, and an About Minmed link.")
         + fig("pg-captcha", M.phone(M.captcha_page()), "CAPTCHA check.",
               "Same address, shown instead of the card when a rule in section 8 is met. Most people pass without clicking; this is what a flagged visitor sees.",
@@ -448,7 +450,7 @@ def s_pages():
               "Same address after deactivation. No details, photo, Save contact or contact buttons.",
               alt="Phone showing: This card is no longer active, and an About Minmed link.")
         + fig("pg-notfound", M.phone(M.notfound_page()), "Card not found.",
-              "Any wrong code, deleted card or mistyped link. The same answer every time, so nobody learns which codes exist.",
+              "Any wrong code, old alias, deleted card or mistyped link. The same answer every time, so nobody learns which codes exist.",
               alt="Phone showing: No card found at this address. Check the link or visit minmed.sg.")
         + fig("pg-error", M.phone(M.error_page()), "Temporary error.",
               "The card can't be checked, for example during an outage or when Base44 credits run out. Never shows old details.",
@@ -456,11 +458,11 @@ def s_pages():
         + fig("pg-whatsapp",
               '<div><span class="variant">Per-card preview · options B, C</span>' + M.wa_chat("card") + "</div>"
               + '<div><span class="variant">Same for every card · option A</span>' + M.wa_chat("generic") + "</div>",
-              "WhatsApp link preview. " + chip("Pending confirmation", "pend"),
-              "Which one depends on the WhatsApp test (pending item 1).",
+              "WhatsApp link preview. " + chip("Test", "test"),
+              "Which one depends on the WhatsApp test (open item 1).",
               alt="Two WhatsApp messages with link previews: one shows Alex Tan's card image and name; the other shows the Minmed logo and Minmed digital name card.")
     )
-    desktop = fig("pg-desktop", shot(M.browser(LINK, M.card_desktop())), "Card page on a computer.",
+    desktop = fig("pg-desktop", shot(M.browser(M.LINK_ALIAS, M.card_desktop())), "Card page on a computer.",
                   "The same card in a narrow column, plus a QR code to move it to a phone.",
                   alt="Browser window showing the card in a centred column and a QR code panel: Scan to save to your phone.", wide=True)
 
@@ -474,15 +476,38 @@ def s_pages():
         + fig("pg-apass", M.apple_pass(), "Apple Wallet pass, made by the staff member.",
               "Made with iOS 27's Create a Pass, so its look may vary. Minmed can't update or remove it, but its QR code always opens the live card.",
               alt="Dark Apple Wallet pass named Minmed name card with the name Alex Tan and a QR code.")
+    )
+
+    def step(n, label, body):
+        return f'<div><div class="stepl"><i>{n}</i>{label}</div>{M.phone(body, url="me.minmed.sg/my-card")}</div>'
+
+    steps = (
+        '<div class="steps4">'
+        + step(1, "Type a name or alias", M.my_card_step("typing"))
+        + step(2, "Confirm the new link", M.my_card_confirm())
+        + step(3, "Done: new link, QR code and email", M.my_card_step("saved"))
+        + step(4, "If the alias breaks the rule", M.my_card_step("error"))
+        + "</div>"
+    )
+    mycard_figs = (
+        '<div class="figs two">'
         + fig("pg-staffsignin", M.phone(M.staff_signin(), url="me.minmed.sg/my-card"), "My card sign-in.",
               "<code>me.minmed.sg/my-card</code>. A Minmed account without an active card sees “There's no name card for this account.”",
               alt="Phone showing My name card, Please sign in with your Minmed registered email address, and a Sign in with Google button.")
         + fig("pg-mycard", M.phone(M.my_card(), url="me.minmed.sg/my-card"), "My card.",
-              "The staff member's own card, read-only, with one box for the name or alias in the link and a QR code download.",
-              alt="Phone showing My name card: the link me.minmed.sg/card/ with a box containing Alex-Tan and the code after it, the alias rules, a warning that saving gives a new link and ends the old one, a Save link button, the QR code with Download QR code, and the card details marked read-only.")
-        + fig("pg-mycardok", M.phone(M.my_card_confirm(), url="me.minmed.sg/my-card"), "Change link?",
-              "Shown before saving. After saving, the new card email goes out and the Google Wallet pass updates.",
-              alt="Dialog: Change your link? Your new link is me.minmed.sg/card/Alex-Tan followed by the code. Your old link and QR code will stop working, including any Apple Wallet pass made from them. Buttons: Cancel and Change link.")
+              "What a staff member sees after signing in. Every field is read-only, including the company logo. The only box they can type in is the name or alias in their link. They can download their QR code.",
+              alt="Phone showing My name card: the link me.minmed.sg/card/ with an empty box and the code after it, the alias rules, a warning that saving gives a new link, a Save link button, the QR code with Download QR code, and every card field read-only, ending with the company logo marked as locked.")
+        + "</div>"
+        + '<div class="figs">'
+        + fig("pg-mycardflow", steps, "How a staff member changes their link.",
+              "1. They type a name or alias in the box. 2. They confirm. 3. The new link works at once and a new card email goes out; the old link shows “No card found”. 4. An alias that breaks the rule can't be saved.",
+              alt="Four phone screens. One: Alex-Tan typed into the box in the link. Two: the Change your link? dialog with Cancel and Change link. Three: the saved link with Alex-Tan, a message that the new link is ready and the new card was emailed, Copy link, and the new QR code with Download. Four: Alex Tan! typed in, a red message to use only letters, numbers and hyphens, 2 to 30 characters, and Save link greyed out.",
+              wide=True)
+        + fig("pg-mycarddesk", shot(M.browser("me.minmed.sg/my-card", M.my_card_desktop())), "My card on a computer.",
+              "The same page, laid out like the admin card details page: the card on the left, then the link box, the QR code and every field read-only.",
+              alt="Browser at me.minmed.sg/my-card for Alex Tan, Staff, with Sign out. Left: the card with the company logo. Right: the link me.minmed.sg/card/ with Alex-Tan in a box and the code, the alias rules and warning, Copy link and a greyed Save link; the QR code with Download QR code; and read-only fields for first and last name, designation, work email, mobile shown on card, photo, biography, languages, LinkedIn and the locked company logo.",
+              wide=True)
+        + "</div>"
     )
 
     signin = (
@@ -497,51 +522,53 @@ def s_pages():
             alt="Two sign-in screens. Left: Name cards admin, Please sign in with your Minmed registered email address, Sign in with Google. Right: You don't have access, Use another account.", wide=True)
         + fig("pg-cards", admin_shot("/admin/cards", M.ad_cards()), "Cards.",
               "<code>/admin/cards</code>. Search by name or email. Deactivated cards are soft-deleted: they leave this list and appear under Deactivated, for Super admins. Views count card page openings in the last 30 days.",
-              alt="Admin Cards page: search box, All/Active/Inactive filter, Import and Add card buttons, and a table of five cards with designation, status, views and last updated.", wide=True)
+              alt="Admin Cards page: search box, Active and Deactivated tabs, Import and Add card buttons, and a table of five active cards with designation, status, views and last updated.", wide=True)
         + fig("pg-add", admin_shot("/admin/cards/new", M.ad_add()), "Add card.",
-              "<code>/admin/cards/new</code>. Work email must end with @minmed.sg. The mobile shows on the card only when switched on.",
-              alt="Add card form with first and last name, designation, work email, mobile with Show on card switch, photo upload, biography, languages, LinkedIn, and an empty preview. Buttons: Cancel, Save, Save and send card email.", wide=True)
+              "<code>/admin/cards/new</code>. Work email must end with @minmed.sg. The mobile shows on the card only when switched on. The company logo is locked: it's the same on every card.",
+              alt="Add card form with first and last name, designation, work email, mobile with Show on card switch, photo upload, the company logo shown as locked, biography, languages, LinkedIn, and an empty preview with the logo. Buttons: Cancel, Save, Save and send card email.", wide=True)
         + fig("pg-import", admin_shot("/admin/cards/import", M.ad_import()), "Import cards.",
               "<code>/admin/cards/import</code>. Rows with problems are skipped until fixed. The card emails can go out in the same step.",
               alt="Import cards page at the Check step: 43 rows, 41 ready, 2 need fixing, with two rows flagged. Send card emails now is ticked; Create 41 cards button.", wide=True)
         + fig("pg-details", admin_shot("/admin/cards/AT29", M.ad_details()), "Card details.",
               "<code>/admin/cards/{id}</code>. Admins can clear an alias. The ⋯ menu (New link code, Delete card) appears only for Super admins. On a deactivated card, Restore replaces Deactivate.",
-              alt="Card details for Alex Tan: Edit, Send card email, Deactivate and an open menu with New link code and Delete card. Panels for live card preview, link with Copy, QR code and card image downloads, Google Wallet pass Active, 48 views, and history.", wide=True)
+              alt="Card details for Alex Tan: Edit, Send card email, Deactivate and an open menu with New link code and Delete card. Panels for the live card with the company logo, the link with the alias Alex-Tan, Copy and Clear alias, QR code and card image downloads, Google Wallet pass Active, 48 views, and history.", wide=True)
         + fig("pg-edit", admin_shot("/admin/cards/AT29/edit", M.ad_edit()), "Edit card.",
-              "<code>/admin/cards/{id}/edit</code>. Saving changes the live card at once, on the same link and QR code, and emails manage@minmed.sg.",
-              alt="Edit card form with the designation changed to Senior Corporate Sales Manager and highlighted, a preview showing the new designation, and the note Same link and QR code.", wide=True)
+              "<code>/admin/cards/{id}/edit</code>, seen by an Admin, who has no Settings tab. Saving changes the live card at once, on the same link and QR code, and emails manage@minmed.sg. The company logo is locked here for everyone.",
+              alt="Edit card form, signed in as Siti Rahman, Admin, with only Cards and Activity log in the menu. The designation is changed to Senior Corporate Sales Manager and highlighted, the company logo is shown as locked, and the preview shows the logo and the new designation, with the note Same link and QR code.", wide=True)
         + fig("pg-dialogs", M.ad_dialogs(), "Confirm dialogs.",
               "Deactivate and Clear alias are for Admins and Super admins. New link code and Delete are for Super admins only.",
               alt="Four dialogs: Deactivate Alex Tan's card, which also soft-deletes it; Clear Alex Tan's alias; Give Alex Tan's card a new link, with Send Alex the new card email ticked; Delete Alex Tan's card permanently.", wide=True)
         + fig("pg-activity", admin_shot("/admin/activity", M.ad_activity()), "Activity log.",
               "<code>/admin/activity</code>. Every admin action and alias change: who, what, which card and when.",
-              alt="Activity log with filters for card, admin and action, and six entries such as Edited, Deactivated, New link code and Imported.", wide=True)
+              alt="Activity log with filters for card, person and action, and seven entries such as Alias changed by Alex Tan (staff), Edited, Deactivated, New link code and Imported.", wide=True)
         + fig("pg-admins", admin_shot("/admin/admins", M.ad_admins()), "Admins (Super admin only).",
               "<code>/admin/admins</code>. Admins are added by company email.",
               alt="Admins page listing four admins with role selectors and Remove links, plus a row to add an admin by email and role.", wide=True)
         + fig("pg-settings", admin_shot("/admin/settings", M.ad_settings()), "Settings (Super admin only).",
-              "<code>/admin/settings</code>. Card design (the company logo on every card), company details, notifications and Google Wallet.",
-              alt="Settings page with sections for card design (logo and brand colours with a card preview), company details, notifications to manage@minmed.sg and Google Wallet status.", wide=True)
+              "<code>/admin/settings</code>. Card design: the company logo on every card, which only Super admins can change. Also company details, notifications and Google Wallet.",
+              alt="Settings page with sections for card design (logo with Replace and the note Shown on every card. Only Super admins can change it., brand colours and a card preview with the logo), company details, notifications to manage@minmed.sg and Google Wallet status.", wide=True)
     )
     last_pair = (
         '<div class="figs two">'
         + fig("pg-adminphone", M.phone(M.ad_mobile_cards(), url="me.minmed.sg/admin/cards"), "Admin console on a phone.",
-              "The same Cards page on a phone: the table becomes a list.",
-              alt="Phone showing the admin Cards list with search, Add card and four cards with their status.")
-        + fig("pg-notify", M.email_admin(), "Admin notification.",
-              "Sent to manage@minmed.sg for every add, edit, alias change, deactivation, restore, new link code and deletion.",
-              alt="Email: Card edited: Alex Tan. Designation changed, by Siti Rahman (Admin), 16 Oct 2026, 10:42 am, with an Open in admin console button.")
+              "The same Cards page on a phone: the table becomes a list, with the same Active and Deactivated tabs.",
+              alt="Phone showing the admin Cards list with search, Active and Deactivated tabs, Add card and four cards with their status.")
+        + fig("pg-notify", f'<div class="mails">{M.email_admin()}{M.email_admin("alias")}</div>', "Admin notification.",
+              "Sent to manage@minmed.sg for every add, edit, alias change, deactivation, restore, new link code and deletion. Two examples: an admin's edit and a staff member's alias change.",
+              alt="Two emails to manage@minmed.sg. Card edited: Alex Tan, designation changed by Siti Rahman (Admin), 16 Oct 2026, 10:42 am. Alias changed: Alex Tan, link changed from the plain link to the one with Alex-Tan, by Alex Tan (staff), 16 Oct 2026, 11:05 am. Each has an Open in admin console button.")
         + "</div>"
     )
     return f"""
 <section id="pages">
 <div class="eyebrow">7</div>
 <h2>Pages</h2>
-<p>High-fidelity mockups of every page and message. You approved the wording on 16/10/2026. New wording for aliases and soft delete is Proposed (pending item 2): {fref("pg-staffsignin")} to {fref("pg-mycardok")}, the card email's My card line, and the alias and deactivation wording in {fref("pg-cards")}, {fref("pg-details")}, {fref("pg-dialogs")} and {fref("pg-activity")}. The “mm” logo stands in for the real one, and the QR codes can't be scanned.</p>
+<p>High-fidelity mockups of every page and message. You approved the wording on 16/10/2026. Wording added since then is Proposed (open item 2). The “mm” logo stands in for the real one, and the QR codes can't be scanned.</p>
 <h3>Public card</h3>
 <div class="figs">{phone_figs}{desktop}</div>
 <h3>Staff</h3>
 <div class="figs">{staff_figs}</div>
+<h3>My card (staff view)</h3>
+{mycard_figs}
 <h3>Admin console</h3>
 <div class="figs">{admin_figs}</div>
 {last_pair}
@@ -662,7 +689,7 @@ def s_failures():
 <tr><td>Wrong, mistyped or deleted link, or one with an old alias</td><td>“No card found” ({fref("pg-notfound")})</td><td>Counts towards rule 1.</td></tr>
 <tr><td>Card deactivated (soft-deleted)</td><td>“This card is no longer active.” ({fref("pg-inactive")})</td><td>The contact file and card image stop at once. The Google Wallet pass shows as expired. The staff member can't sign in to My card.</td></tr>
 <tr><td>A staff member changes their alias after sharing their link</td><td>People with the old link see “No card found”</td><td>Expected. My card warned before saving, and the staff member got a new card email.</td></tr>
-<tr><td>An alias with other characters or the wrong length</td><td>My card explains the rule; nothing is saved</td><td>The link doesn't change.</td></tr>
+<tr><td>An alias with other characters or the wrong length</td><td>My card explains the rule; nothing is saved ({fref("pg-mycardflow")})</td><td>The link doesn't change.</td></tr>
 <tr><td>A Minmed account with no active card signs in to My card</td><td>“There's no name card for this account.” ({fref("pg-staffsignin")})</td><td>No card details are shown.</td></tr>
 <tr><td>Apple Wallet pass of someone who has left</td><td>The pass stays on their phone</td><td>Its QR code opens the “no longer active” page. Minmed can't remove the pass.</td></tr>
 <tr><td>Outage, or Base44 credits run out</td><td>Temporary error ({fref("pg-error")})</td><td>No old or cached details are shown.</td></tr>
@@ -733,7 +760,7 @@ def s_feasibility():
 <tr><td><b>B. Card served by a backend function</b></td><td>Per-card preview on Base44, but links look like <code>me.minmed.sg/functions/card?code=…</code>.</td><td>Untested. Uglier links.</td></tr>
 <tr><td><b>C. Public card pages on a small separate host</b></td><td>Per-card previews, clean links, and full control of noindex, contact files and the visitor's IP address. The admin console stays on Base44.</td><td>An extra service, its cost, and more build work.</td></tr>
 </tbody></table></div>
-<p><b>Plan</b> {chip("Confirmed", "dec")}: test option B on a throwaway app first, which takes a day or two. If it doesn't work cleanly, choose C if per-card previews are a must, otherwise A (pending item 1).</p>
+<p><b>Plan</b> {chip("Confirmed", "dec")}: test option B on a throwaway app first, which takes a day or two. If it doesn't work cleanly, choose C if per-card previews are a must, otherwise A (open item 1).</p>
 
 <h3>Test before the build (throwaway app on a test subdomain)</h3>
 <ol>
@@ -787,11 +814,11 @@ def s_pending():
     return f"""
 <section id="pending">
 <div class="eyebrow">13</div>
-<h2>Pending confirmation</h2>
+<h2>Open items</h2>
 <p>The only open items. Everything else is confirmed.</p>
 <ol class="qs">
-  <li><b>WhatsApp previews: option A, B or C.</b> {chip("Pending confirmation", "pend")}<span class="def">Plan confirmed: test B first. Then C if per-card previews are a must, otherwise A. Affects {fref("pg-whatsapp")}, section 11 and the file addresses in section 6. Needs the test result.</span></li>
-  <li><b>Details added for My card, aliases and soft delete.</b> {chip("Proposed", "rec")}<span class="def">The page address <code>me.minmed.sg/my-card</code>; the wording in {fref("pg-staffsignin")} to {fref("pg-mycardok")}, including “There's no name card for this account.” for a Minmed account without an active card; a line in the card email pointing to My card; a confirm step before a new link is saved; clearing an alias, by the staff member or an admin, brings back the plain link without a name; a Deactivated tab, for Super admins only, listing soft-deleted cards; and the alias and deactivation wording in {fref("pg-cards")}, {fref("pg-details")}, {fref("pg-dialogs")} and {fref("pg-activity")}. Needs your OK.</span></li>
+  <li><b>WhatsApp previews: option A, B or C.</b> {chip("Test", "test")}<span class="def">Plan confirmed: test B first. Then C if per-card previews are a must, otherwise A. Affects {fref("pg-whatsapp")}, section 11 and the file addresses in section 6. Needs the test result.</span></li>
+  <li><b>Details added for My card, aliases, soft delete and the logo.</b> {chip("Proposed", "rec")}<span class="def">The page address <code>me.minmed.sg/my-card</code>. The My card pages and their wording ({fref("pg-staffsignin")} to {fref("pg-mycarddesk")}), including “There's no name card for this account.” for a Minmed account without an active card, the confirm step before a new link is saved, and Copy link. Clearing an alias, by the staff member or an admin, brings back the plain link without a name. The My card line in the card email ({fref("pg-email")}). A Deactivated tab, for Super admins only, listing soft-deleted cards. The locked Company logo field on the card forms and My card, and the note beside the logo in Settings ({fref("pg-add")}, {fref("pg-edit")}, {fref("pg-settings")}). The alias and deactivation wording in {fref("pg-cards")}, {fref("pg-details")}, {fref("pg-dialogs")}, {fref("pg-activity")} and {fref("pg-notify")}. Needs your OK.</span></li>
 </ol>
 </section>
 """
