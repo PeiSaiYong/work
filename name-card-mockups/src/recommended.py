@@ -34,7 +34,7 @@ def r_unavailable():
         f'<p class="pname" style="margin-top:22px">{rec(P["name"])}</p>'
         '<div class="status st-unavail"><span class="ic" aria-hidden="true">⊘</span><span class="t">Card unavailable'
         f'<span class="s">{rec("Checked " + TIME)}</span></span></div>'
-        f'<p class="ptext">{rec(P["name"] + " is no longer with Minmed. Don’t rely on saved copies of this card.")}</p>'
+        f'<p class="ptext">{rec(P["name"] + " is no longer with Minmed.")}</p>'
         f'<span class="howto">How to verify {badge("proposed", mini=True)}</span>'
         '<div class="blank"></div>'
         '<div class="foot-link">About Minmed</div>'
@@ -378,7 +378,7 @@ WORDING = [
     ("Staff · status can't be checked", "Couldn't check your card. Your card hasn't changed. Please try again later. [Try again]"),
     ("Staff · download fails", "Download failed. [Try again]"),
     ("Staff · card deactivated", "Contact HR if this is a mistake. (Below the Card deactivated status.)"),
-    ("Recipient · Card unavailable notice", "{name} is no longer with Minmed. Don't rely on saved copies of this card."),
+    ("Recipient · Card unavailable notice", "{name} is no longer with Minmed."),
     ("Recipient · Temporary verification error", "We couldn't check this card. This doesn't mean the person has left. [Try again]"),
     ("Recipient · CAPTCHA (§8)", "Quick check. Please confirm you're a person to continue."),
     ("Recipient · CAPTCHA failed", "Check failed. [Try again]"),
@@ -439,7 +439,7 @@ def recommended_page():
         "Hide the photo, designation and contact details. They're out of date, and the person has left.",
         "No Save contact. New contact downloads stop after deactivation (§7.4, Proposed).",
         "Show the check time, as with Active, so a screenshot of this page also shows when it was taken.",
-        "One short warning not to rely on saved copies. The About Minmed link still leads to minmed.sg.",
+        "One line: the person is no longer with Minmed. The About Minmed link still leads to minmed.sg.",
     ], card("Recommended Card unavailable page", "Recipient", phone(r_unavailable(), top=addr(), cap=pub_cap()),
             ["Compare with page 3, step 4."]), side=True)
 
