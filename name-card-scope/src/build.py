@@ -103,7 +103,7 @@ def intro():
 <p class="meta">Based on Technical Specification draft 0.2 (15/10/2026) and your decisions on 16/10/2026. Names, numbers, codes and QR codes in the examples are made up. Updated 16/10/2026.</p>
 <div class="legend">
   <span>{chip("Confirmed", "dec")} you decided it</span>
-  <span>{chip("Proposed", "rec")} my recommendation, waiting for your OK</span>
+  <span>{chip("Proposed", "rec")} my recommendation, waiting for your OK (section 14)</span>
   <span>{chip("Test", "test")} try on a test app before the build</span>
   <span>{chip("Pending confirmation", "pend")} still to decide (section 14)</span>
 </div>
@@ -143,7 +143,7 @@ def s_confirmed():
         grp("Product"),
         row("One central place to manage every staff card. Staff can't edit their own card, so there's no approval process.", you),
         row("Cards are public to anyone with the link, but can't be found through Google.", you),
-        row(f"Each link has the person's name and a random code: <code>{E(LINK)}</code>.", you),
+        row(f"Each link is a random code with no name in it, so nobody can work it out from a person's name: <code>{E(LINK)}</code>.", you),
         row("Staff never sign in. They keep their link on their phone, or in Apple Wallet or Google Wallet.", you),
         row("Built on Base44. Phone-first public card. Admins sign in with company Google accounts.", "Spec 0.2 §1.1"),
         grp("The card"),
@@ -176,6 +176,7 @@ def s_confirmed():
 <section id="confirmed">
 <div class="eyebrow">2</div>
 <h2>What's confirmed</h2>
+<p>On 16/10/2026 you approved the proposals in this document. Open items are in section 14.</p>
 <div class="tablewrap"><table>
 <thead><tr><th>Decision</th><th>Source</th></tr></thead>
 <tbody>
@@ -318,7 +319,7 @@ def s_map():
     public = f"""
 <div class="smz"><div class="smz-h"><b>Public</b><code>me.minmed.sg</code><span>No sign-in · hidden from search engines · no menu</span></div>
 <ul class="smt">
-  <li>{node("pg-card", tp(M.card_body()), "Card page", code="/card/{Name}/{code}")}
+  <li>{node("pg-card", tp(M.card_body()), "Card page", code="/card/{code}")}
     <ul class="smt">
       <li>{node("pg-desktop", tw(M.card_desktop()), "On a computer", "adds a QR code")}</li>
       <li>{node("pg-captcha", tp(M.captcha_page()), "CAPTCHA check", "when a rule in section 8 is met")}</li>
@@ -498,7 +499,7 @@ def s_pages():
 <section id="pages">
 <div class="eyebrow">7</div>
 <h2>Pages</h2>
-<p>High-fidelity mockups of every page and message. Wording you confirmed: “This card is no longer active.” and “Please sign in with your Minmed registered email address.” “No card found at this address. Check the link or visit minmed.sg.” comes from spec 0.2. All other wording is Proposed. The “mm” logo stands in for the real one, and the QR codes can't be scanned.</p>
+<p>High-fidelity mockups of every page and message. You approved the wording on 16/10/2026. The “mm” logo stands in for the real one, and the QR codes can't be scanned.</p>
 <h3>Public card</h3>
 <div class="figs">{phone_figs}{desktop}</div>
 <h3>Staff</h3>
@@ -587,13 +588,24 @@ def s_links():
 <div class="eyebrow">9</div>
 <h2>Links and privacy</h2>
 <ul>
-  <li><b>Link format:</b> <code>me.minmed.sg/card/{{FirstLast}}/{{code}}</code>, for example <code>{E(LINK)}</code>. The code is random, at least 10 letters and numbers, made by the server and never reused. The <code>/card/</code> prefix keeps clear of Base44's own addresses.</li>
-  <li><b>The name part is only for people:</b> the server finds the card by its code alone. If someone's name changes, old links and printed QR codes keep working.</li>
+  <li><b>Link format:</b> <code>me.minmed.sg/card/{{code}}</code>, for example <code>{E(LINK)}</code>. No name, initials or counting numbers, so nobody can work out a link from a person's name or from another link. The <code>/card/</code> prefix keeps clear of Base44's own addresses.</li>
+  <li><b>The code</b> {chip("Proposed", "rec")}: 22 random letters and numbers, made by the server with a secure random generator (CSPRNG) and never reused. That's about 131 bits of randomness, above the 128-bit minimum in the standard below. Pending item 3.</li>
+  <li><b>The link stays the same</b> when someone's name or designation changes, so shared links and printed QR codes keep working.</li>
   <li><b>Every public address uses the same random code:</b> the card page, contact file, card image and Google Wallet pass. Never a counting number, so nobody can fetch cards by counting.</li>
   <li><b>Hidden from Google, twice over:</b> no list of cards anywhere (no sitemap entries, no staff directory, the home address redirects to minmed.sg), and every card page, image and contact file tells search engines not to index it. On Base44 that means the page's “Search visibility” switch plus a noindex header on files from backend functions, checked after every publish. Don't block card addresses in robots.txt: Google then can't see the “don't index” instruction and may still list a link someone posted elsewhere.</li>
   <li><b>If a link is misused:</b> a Super admin issues a new code. The old link then shows “No card found”.</li>
   <li><b>Bots:</b> see section 8.</li>
 </ul>
+<h3>Based on industry standards and research</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Industry practice</th><th>Source</th><th>Used in</th></tr></thead>
+<tbody>
+<tr><td>A link that is the only key to a page must be unguessable: a random identifier, never a counting number.</td><td>W3C</td><td>Random code</td></tr>
+<tr><td>Random strings meant to be unguessable need a secure random generator and at least 128 bits of randomness. Each bit doubles the number of possible codes.</td><td>OWASP ASVS 5.0</td><td>22 characters</td></tr>
+<tr><td>A fixed or predictable part, such as a name or initials, adds no strength.</td><td>OWASP</td><td>No name or initials</td></tr>
+<tr><td>Researchers scanned every possible 5- and 6-character short-link code. They found shared OneDrive files and Google Maps directions that revealed people's home addresses.</td><td>Georgiev and Shmatikov, 2016</td><td>Long codes; rule 1 counts wrong addresses</td></tr>
+</tbody></table></div>
+<p class="note">Sources: <a href="https://www.w3.org/TR/capability-urls/">W3C Good Practices for Capability URLs</a> (2014 draft), <a href="https://github.com/OWASP/ASVS/blob/master/5.0/en/0x20-V11-Cryptography.md">OWASP ASVS 5.0 requirement 11.5.1</a>, <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">OWASP session management</a> and <a href="https://arxiv.org/abs/1604.02734">Gone in Six Characters: Short URLs Considered Harmful for Cloud Services</a>.</p>
 </section>
 """
 
@@ -625,7 +637,7 @@ def s_feasibility():
     rows = [
         r("Custom domain me.minmed.sg", works,
           "One DNS record pointing to Base44, on the Starter plan or higher. If minmed.sg's DNS is on Cloudflare, the record must be “DNS only”, so Cloudflare's own protection can't sit in front."),
-        r("Card address with name and code", chip("Test", "test"),
+        r("Card address with random code", chip("Test", "test"),
           f"Base44 keeps addresses at the root for sign-in and system pages, so card links need a prefix: <code>{E(LINK)}</code>. Not documented."),
         r("Hidden from Google", chip("Test", "test"),
           "A per-page “Search visibility” switch (added 28/09/2026) marks pages noindex and removes them from the sitemap. Files served by backend functions can carry their own noindex header. Check what the live site serves after every publish."),
@@ -738,7 +750,7 @@ def s_spec():
         (rm, "Signed links; watermark and reference labels", "§4, §4.1, §4.3, §8, §8.1"),
         (rm, "“Active staff profile ✓ Checked [time]” and the How to verify panel", "§4.1, §5.2"),
         (ch, "CAPTCHA options become four set rules (section 8): more than 3 card opens or contact downloads per IP in 1 minute; a busy-card check; a 30-minute pass that ends after 20 opens in 5 minutes; Turnstile checked on the server. Rules record only for the first 2 weeks", "§4.5, §4.6, §8.1"),
-        (ch, "Public address from <code>me.minmed.sg/first-last</code> to name plus random code", "§1.2, §4.3"),
+        (ch, "Public address from <code>me.minmed.sg/first-last</code> to a random code with no name", "§1.2, §4.3"),
         (ch, "Actors table becomes four users with a full permissions matrix", "§3"),
         (ch, "Field rules: “changes require approval” becomes “maintained by admins”", "§3.1"),
         (ch, "Monthly email reports become view counts in the admin console", "§6"),
@@ -771,6 +783,7 @@ def s_pending():
 <ol class="qs">
   <li><b>WhatsApp previews: option A, B or C.</b> {chip("Pending confirmation", "pend")}<span class="def">Plan confirmed: test B first. Then C if per-card previews are a must, otherwise A. Affects {fref("pg-whatsapp")}, section 11 and the file addresses in section 6. Needs the test result.</span></li>
   <li><b>How long deactivated cards are kept.</b> {chip("Pending confirmation", "pend")}<span class="def">Until then, they're kept and deleted on request. Needs whoever handles data protection (PDPA).</span></li>
+  <li><b>Link code length: 22 random letters and numbers.</b> {chip("Proposed", "rec")}<span class="def">Meets the 128-bit minimum in section 9's standard. Links are tapped or scanned, never typed, so the extra length costs nothing. Shorter codes would fall below the standard. Needs your OK.</span></li>
 </ol>
 </section>
 """
@@ -779,7 +792,7 @@ def s_pending():
 def foot():
     return """
 <div class="footer">
-  <p><b>Sources.</b> Minmed Digital Name Cards Technical Specification draft 0.2 (15/10/2026). Your decisions in this conversation on 16/10/2026. Platform and vendor documentation linked in sections 8, 11 and 12.</p>
+  <p><b>Sources.</b> Minmed Digital Name Cards Technical Specification draft 0.2 (15/10/2026). Your decisions in this conversation on 16/10/2026. Standards, research, platform and vendor documentation linked in sections 8, 9, 11 and 12.</p>
 </div>
 </main>
 <script>

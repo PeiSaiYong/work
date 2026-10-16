@@ -21,7 +21,7 @@ P = {
     "bio": "Helps companies plan health screenings and vaccination programmes for their staff.",
     "langs": "English, Mandarin, Malay",
     "linkedin": "linkedin.com/in/alextan-sample",
-    "path": "/card/AlexTan/AlTa-x7K2p9Qe",
+    "path": "/card/qB8Rh9sTxKuaSF3YkGmD2w",
 }
 LINK = "me.minmed.sg" + P["path"]
 
