@@ -60,9 +60,9 @@ RULES = [
      chip("Confirmed", "dec")),
     ("3", "Busy card", "Opens and downloads of one card, from all IP addresses together",
      "More than 20 in a rolling 10 minutes", "Everyone opening that card gets the CAPTCHA for the next 30 minutes",
-     chip("Proposed", "rec") + "<br><small>Replaces “every 5th visitor”</small>"),
+     chip("Confirmed", "dec") + "<br><small>Replaces “every 5th visitor”</small>"),
     ("4", "Limit after a pass", "Opens and downloads by a browser holding a pass", "More than 20 in 5 minutes",
-     "The pass ends and the CAPTCHA comes back", chip("Proposed", "rec")),
+     "The pass ends and the CAPTCHA comes back", chip("Confirmed", "dec")),
 ]
 
 
@@ -152,7 +152,7 @@ def s_confirmed():
         row("On a computer, the card also shows a QR code to move it to a phone.", you),
         row("No “Active staff profile ✓ Checked” line and no How to verify panel.", you),
         row("Sharing the link on WhatsApp shows a preview of the card.", "Spec 0.2 §4.4",
-            chip("At risk", "risk") + ' <span class="note">Base44 can\'t make a per-card preview as is. See section 11 and pending item 2.</span>'),
+            chip("At risk", "risk") + ' <span class="note">Base44 can\'t make a per-card preview as is. See section 11 and pending item 1.</span>'),
         grp("Wallet"),
         row("Minmed issues a Google Wallet pass. iPhone staff add their QR code to Apple Wallet themselves with iOS 27's Create a Pass. No Apple Developer Program, fee or D-U-N-S number.", you),
         grp("Admins"),
@@ -164,12 +164,13 @@ def s_confirmed():
         grp("Leavers and records"),
         row("HR tells an admin as part of offboarding. The card is deactivated on the person's last day.", you),
         row("Deactivated cards are kept and deleted on request.", you,
-            chip("Pending confirmation", "pend") + ' <span class="note">Retention period, item 3.</span>'),
+            chip("Pending confirmation", "pend") + ' <span class="note">Retention period, pending item 2.</span>'),
         grp("Bot protection"),
         row("One IP address making more than 3 card opens or contact downloads within 1 minute must pass a CAPTCHA.", you),
         row("After passing, that browser isn't asked again for 30 minutes.", you),
-        row("A rule for one card's traffic, instead of “every 5th visitor”.", "You asked for best practice, 16/10",
-            chip("Proposed", "rec") + ' <span class="note">Section 8, pending item 1.</span>'),
+        row("A busy card is checked: more than 20 opens of one card in 10 minutes means everyone opening it gets the CAPTCHA for the next 30 minutes. This replaces “every 5th visitor”.", "You, 16/10; industry standards"),
+        row("A pass ends early after 20 opens in 5 minutes.", "You, 16/10; industry standards"),
+        row("For the first 2 weeks the rules only record. Then they switch on.", "You, 16/10; industry standards"),
     ]
     return f"""
 <section id="confirmed">
@@ -426,7 +427,7 @@ def s_pages():
               '<div><span class="variant">Per-card preview · options B, C</span>' + M.wa_chat("card") + "</div>"
               + '<div><span class="variant">Same for every card · option A</span>' + M.wa_chat("generic") + "</div>",
               "WhatsApp link preview. " + chip("Pending confirmation", "pend"),
-              "Which one depends on the WhatsApp test (pending item 2).",
+              "Which one depends on the WhatsApp test (pending item 1).",
               alt="Two WhatsApp messages with link previews: one shows Alex Tan's card image and name; the other shows the Minmed logo and Minmed digital name card.")
     )
     desktop = fig("pg-desktop", shot(M.browser(LINK, M.card_desktop())), "Card page on a computer.",
@@ -522,7 +523,7 @@ def s_bots():
   <div class="fc-down"><span>No</span></div><div class="fc-gap"></div>
   <div class="dg-n main"><span class="rule-n">Rule 1</span><br>This IP: more than 3 in the last minute?</div><div class="fc-yes"><span>Yes</span></div><div class="dg-n stop"><b>CAPTCHA</b></div>
   <div class="fc-down"><span>No</span></div><div class="fc-gap"></div>
-  <div class="dg-n main cond"><span class="rule-n">Rule 3 · Proposed</span><br>This card: more than 20 in the last 10 minutes?</div><div class="fc-yes"><span>Yes</span></div><div class="dg-n stop"><b>CAPTCHA</b></div>
+  <div class="dg-n main"><span class="rule-n">Rule 3</span><br>This card: more than 20 in the last 10 minutes?</div><div class="fc-yes"><span>Yes</span></div><div class="dg-n stop"><b>CAPTCHA</b></div>
   <div class="fc-down"><span>No</span></div><div class="fc-gap"></div>
   <div class="dg-n ok"><b>Send the page</b><small>the card, or “No card found”</small></div><div></div><div></div>
 </div>"""
@@ -548,23 +549,34 @@ def s_bots():
 </tbody></table></div>
 <div class="figs two">
 {fig("bot-flow", flow, "How each request is checked.",
-     "Counting happens on the server, in rolling windows. Rule 3 is drawn dashed because it's Proposed.",
-     alt="Decision flow. A request first checks for a valid pass (rules 2 and 4): if yes, send the page. If not, rule 1: more than 3 from this IP in the last minute leads to the CAPTCHA. If not, proposed rule 3: more than 20 for this card in the last 10 minutes leads to the CAPTCHA. Otherwise send the page.")}
+     "Counting happens on the server, in rolling windows.",
+     alt="Decision flow. A request first checks for a valid pass (rules 2 and 4): if yes, send the page. If not, rule 1: more than 3 from this IP in the last minute leads to the CAPTCHA. If not, rule 3: more than 20 for this card in the last 10 minutes leads to the CAPTCHA. Otherwise send the page.")}
 {fig("bot-outcome", outcome, "What happens at the CAPTCHA.",
      f"The page is in {fref('pg-captcha')}. A Turnstile token is checked by a backend function; it works once and expires after 5 minutes.",
      alt="CAPTCHA leads to two outcomes: passed, where the card is sent and the browser gets a 30-minute pass; or not passed, where no card details are sent and the visitor can try again.")}
 </div>
-<div class="callout">
-<h3>Why not every 5th visitor</h3>
-<p>Industry guidance (OWASP, Cloudflare, Google) is to challenge unusual behaviour, not a share of visitors. Challenging every 5th visitor would interrupt 1 in 5 real people, while a bot simply retries. None of these sources recommends it. Rule 3 instead checks a card only when its traffic jumps, for example when a list of links is being worked through.</p>
-</div>
+<h3>Based on industry standards and research</h3>
+<p>Each rule follows published guidance from OWASP (a web security nonprofit), Cloudflare and Google.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Industry practice</th><th>Source</th><th>Used in</th></tr></thead>
+<tbody>
+<tr><td>Use a CAPTCHA only as a step-up for suspicious traffic, not as the main defence. None of the sources suggests checking every Nth visitor: that would interrupt 1 in 5 real people, while a bot just tries again.</td><td>OWASP</td><td>Rules 1 and 3, instead of “every 5th visitor”</td></tr>
+<tr><td>Limit by more than the IP address. For example, count all requests to one page, whoever sends them.</td><td>OWASP, Cloudflare</td><td>Rule 3</td></tr>
+<tr><td>Count in rolling windows, not fixed ones, so bursts can't hide at the edges.</td><td>OWASP</td><td>All rules</td></tr>
+<tr><td>A pass lasts 30 minutes by default; 15 to 45 minutes is recommended.</td><td>Cloudflare</td><td>Rule 2</td></tr>
+<tr><td>Keep limits in place after a CAPTCHA is passed.</td><td>OWASP</td><td>Rule 4</td></tr>
+<tr><td>Against scraping, use two limits per IP: 10 requests in 2 minutes, then 20 in 5 minutes.</td><td>Cloudflare</td><td>Rule 4's limit</td></tr>
+<tr><td>Prefer managed checks that only ask a person to click when needed.</td><td>Cloudflare</td><td>Turnstile in Managed mode</td></tr>
+<tr><td>Run the checks without acting first, then set the limits from real traffic.</td><td>Google, Cloudflare</td><td>The first 2 weeks record only</td></tr>
+</tbody></table></div>
+<p class="note">The numbers are starting points. Rule 4's limit matches Cloudflare's example; rule 3's is our estimate for a name card. Both get checked during the record-only weeks.</p>
 <ul>
   <li><b>Managed mode:</b> Turnstile decides whether to show a checkbox. Most people never see it, and there are no picture puzzles.</li>
   <li><b>Shared networks:</b> office Wi-Fi, events and mobile data put many people behind one IP address, so they meet rule 1 sooner. So does one person who opens a card, saves it and reloads twice. In Managed mode, most still pass without clicking.</li>
   <li><b>Server-side:</b> the card page asks a backend function for the card. When a check is needed, no card details are sent until Cloudflare confirms the token.</li>
-  <li><b>Launch</b> {chip("Proposed", "rec")}: run the rules in record-only mode for the first 2 weeks, compare them with real traffic, then switch them on. Cloudflare and Google both advise testing limits before enforcing them.</li>
+  <li><b>Launch</b> {chip("Confirmed", "dec")}: for the first 2 weeks the rules only record. Compare them with real traffic, then switch them on.</li>
 </ul>
-<p class="note">Sources: <a href="https://cheatsheetseries.owasp.org/cheatsheets/Bot_Management_and_Anti-Automation_Cheat_Sheet.html">OWASP bot management</a>, <a href="https://developers.cloudflare.com/waf/rate-limiting-rules/best-practices/">Cloudflare rate limiting best practices</a>, <a href="https://developers.cloudflare.com/cloudflare-challenges/challenge-types/challenge-pages/challenge-passage/">Cloudflare challenge passage</a>, <a href="https://developers.google.com/recaptcha/docs/v3">Google reCAPTCHA v3</a>, <a href="https://developers.cloudflare.com/turnstile/concepts/widget/">Turnstile widget modes</a> and <a href="https://developers.cloudflare.com/turnstile/get-started/server-side-validation/">server-side validation</a>.</p>
+<p class="note">Sources: <a href="https://cheatsheetseries.owasp.org/cheatsheets/Bot_Management_and_Anti-Automation_Cheat_Sheet.html">OWASP bot management</a>, <a href="https://developers.cloudflare.com/waf/rate-limiting-rules/best-practices/">Cloudflare rate limiting best practices</a>, <a href="https://developers.cloudflare.com/cloudflare-challenges/challenge-types/challenge-pages/challenge-passage/">Cloudflare challenge passage</a>, <a href="https://developers.cloudflare.com/cloudflare-challenges/challenge-types/challenge-pages/">Cloudflare challenge types</a>, <a href="https://developers.google.com/recaptcha/docs/v3">Google reCAPTCHA v3</a>, <a href="https://developers.cloudflare.com/turnstile/concepts/widget/">Turnstile widget modes</a> and <a href="https://developers.cloudflare.com/turnstile/get-started/server-side-validation/">server-side validation</a>.</p>
 </section>
 """
 
@@ -661,7 +673,7 @@ def s_feasibility():
 <tr><td><b>B. Card served by a backend function</b></td><td>Per-card preview on Base44, but links look like <code>me.minmed.sg/functions/card?code=…</code>.</td><td>Untested. Uglier links.</td></tr>
 <tr><td><b>C. Public card pages on a small separate host</b></td><td>Per-card previews, clean links, and full control of noindex, contact files and the visitor's IP address. The admin console stays on Base44.</td><td>An extra service, its cost, and more build work.</td></tr>
 </tbody></table></div>
-<p><b>Plan</b> {chip("Confirmed", "dec")}: test option B on a throwaway app first, which takes a day or two. If it doesn't work cleanly, choose C if per-card previews are a must, otherwise A (pending item 2).</p>
+<p><b>Plan</b> {chip("Confirmed", "dec")}: test option B on a throwaway app first, which takes a day or two. If it doesn't work cleanly, choose C if per-card previews are a must, otherwise A (pending item 1).</p>
 
 <h3>Test before the build (throwaway app on a test subdomain)</h3>
 <ol>
@@ -725,7 +737,7 @@ def s_spec():
         (rm, "Staff sign-in and the staff view; staff creating cards (<code>me.minmed.sg/create</code>); the approval process (pending review, reviewers, rejections, exact-version rule, held applications); approval emails to staff", "§1.2, §3, Fig. 2, §5.1, §5.3, §6.1, §7"),
         (rm, "Signed links; watermark and reference labels", "§4, §4.1, §4.3, §8, §8.1"),
         (rm, "“Active staff profile ✓ Checked [time]” and the How to verify panel", "§4.1, §5.2"),
-        (ch, "CAPTCHA options become set rules: more than 3 card opens or contact downloads per IP in 1 minute, a 30-minute pass, Turnstile checked on the server. Rules 3 and 4 are pending item 1", "§4.5, §4.6, §8.1"),
+        (ch, "CAPTCHA options become four set rules (section 8): more than 3 card opens or contact downloads per IP in 1 minute; a busy-card check; a 30-minute pass that ends after 20 opens in 5 minutes; Turnstile checked on the server. Rules record only for the first 2 weeks", "§4.5, §4.6, §8.1"),
         (ch, "Public address from <code>me.minmed.sg/first-last</code> to name plus random code", "§1.2, §4.3"),
         (ch, "Actors table becomes four users with a full permissions matrix", "§3"),
         (ch, "Field rules: “changes require approval” becomes “maintained by admins”", "§3.1"),
@@ -757,7 +769,6 @@ def s_pending():
 <h2>Pending confirmation</h2>
 <p>The only open items. Everything else is confirmed.</p>
 <ol class="qs">
-  <li><b>Bot protection: rules 3 and 4, and a record-only launch.</b> {chip("Proposed", "rec")}<span class="def">Rule 3 (busy card) replaces “every 5th visitor”. Rule 4 ends a pass after 20 opens in 5 minutes. Record-only for the first 2 weeks, then switch on. Affects section 8. Needs your OK.</span></li>
   <li><b>WhatsApp previews: option A, B or C.</b> {chip("Pending confirmation", "pend")}<span class="def">Plan confirmed: test B first. Then C if per-card previews are a must, otherwise A. Affects {fref("pg-whatsapp")}, section 11 and the file addresses in section 6. Needs the test result.</span></li>
   <li><b>How long deactivated cards are kept.</b> {chip("Pending confirmation", "pend")}<span class="def">Until then, they're kept and deleted on request. Needs whoever handles data protection (PDPA).</span></li>
 </ol>
