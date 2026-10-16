@@ -135,7 +135,7 @@ def head():
 <header class="top"><div class="top-inner">
   <div class="brand">{mark(28)}<span>Name Card Scope</span></div>
   <nav class="toc" aria-label="Sections">
-    <a href="#how">How it works</a><a href="#confirmed">Confirmed</a><a href="#features">Features</a><a href="#users">Users</a><a href="#matrix">Permissions</a><a href="#map">Site map</a><a href="#pages">Pages</a><a href="#bots">Bot protection</a><a href="#links">Links &amp; privacy</a><a href="#failures">Failures</a><a href="#feasibility">Feasibility</a><a href="#spec">Spec changes</a><a href="#pending">Open items</a>
+    <a href="#how">How it works</a><a href="#confirmed">Confirmed</a><a href="#features">Features</a><a href="#users">Users</a><a href="#matrix">Permissions</a><a href="#map">Site map</a><a href="#pages">Pages</a><a href="#bots">Bot protection</a><a href="#links">Links &amp; privacy</a><a href="#feasibility">Feasibility</a><a href="#pending">Open items</a>
   </nav>
 </div></header>
 <main>
@@ -150,7 +150,7 @@ def intro():
 <p class="meta">Based on Technical Specification draft 0.2 (15/10/2026) and your decisions on 16/10/2026. Names, numbers, codes and QR codes in the examples are made up. Updated 16/10/2026.</p>
 <div class="legend">
   <span>{chip("Confirmed", "dec")} you decided it</span>
-  <span>{chip("Proposed", "rec")} my recommendation, waiting for your OK (section 13)</span>
+  <span>{chip("Proposed", "rec")} my recommendation, waiting for your OK (section 11)</span>
   <span>{chip("Test", "test")} try on a test app before the build</span>
 </div>
 {preview_button()}
@@ -201,7 +201,7 @@ def s_confirmed():
         row("On a computer, the card also shows a QR code to move it to a phone.", you),
         row("No “Active staff profile ✓ Checked” line and no How to verify panel.", you),
         row("Sharing the link on WhatsApp shows a preview of the card.", "Spec 0.2 §4.4",
-            chip("At risk", "risk") + ' <span class="note">Base44 can\'t make a per-card preview as is. See section 11 and open item 1.</span>'),
+            chip("At risk", "risk") + ' <span class="note">Base44 can\'t make a per-card preview as is. See section 10 and open item 1.</span>'),
         grp("Wallet"),
         row("Minmed issues a Google Wallet pass. iPhone staff add their QR code to Apple Wallet themselves with iOS 27's Create a Pass. No Apple Developer Program, fee or D-U-N-S number.", you),
         grp("Name or alias in the link"),
@@ -233,7 +233,7 @@ def s_confirmed():
 <section id="confirmed">
 <div class="eyebrow">2</div>
 <h2>What's confirmed</h2>
-<p>On 16/10/2026 you approved the proposals in this document. Open items are in section 13.</p>
+<p>On 16/10/2026 you approved the proposals in this document. Open items are in section 11.</p>
 <div class="tablewrap"><table class="decisions">
 <thead><tr><th>Decision</th><th>Source</th></tr></thead>
 <tbody>
@@ -729,10 +729,10 @@ def s_links():
 """
 
 
-def s_failures():
+def s_failures(n):
     return f"""
 <section id="failures">
-<div class="eyebrow">10</div>
+<div class="eyebrow">{n}</div>
 <h2>When things go wrong</h2>
 <div class="tablewrap"><table>
 <thead><tr><th>Situation</th><th>Visitor sees</th><th>Behind it</th></tr></thead>
@@ -794,9 +794,9 @@ def s_feasibility():
     ]
     return f"""
 <section id="feasibility">
-<div class="eyebrow">11</div>
+<div class="eyebrow">10</div>
 <h2>Feasibility on Base44 and Wallet</h2>
-<p>Checked against Base44, Apple, Google and Cloudflare documentation on 16/10/2026. Base44's settings are new and its docs contradict each other in places, so anything marked {chip("Test", "test")} needs trying on a throwaway app before the build starts.</p>
+<p>Checked against Base44, Apple, Google and Cloudflare documentation on 16/10/2026. Base44's settings are new and its docs contradict each other in places, so anything marked {chip("Test", "test")} needs trying on a throwaway app before the build starts. The tests are listed in the build notes, a separate file.</p>
 <div class="tablewrap"><table>
 <thead><tr><th style="width:24%">Capability</th><th style="width:130px">Status</th><th>What it means for the scope</th></tr></thead>
 <tbody>
@@ -812,8 +812,17 @@ def s_feasibility():
 <tr><td><b>C. Public card pages on a small separate host</b></td><td>Per-card previews, clean links, and full control of noindex, contact files and the visitor's IP address. The admin console stays on Base44.</td><td>An extra service, its cost, and more build work.</td></tr>
 </tbody></table></div>
 <p><b>Plan</b> {chip("Confirmed", "dec")}: test option B on a throwaway app first, which takes a day or two. If it doesn't work cleanly, choose C if per-card previews are a must, otherwise A (open item 1).</p>
+<p class="note">Sources: Base44 docs on <a href="https://docs.base44.com/Setting-up-your-app/Connecting-an-external-domain">external domains</a>, <a href="https://docs.base44.com/Performance-and-SEO/checking-your-seo-and-geo">search visibility</a>, <a href="https://docs.base44.com/Performance-and-SEO/SEO-and-search-visibility">SEO and sharing</a>, <a href="https://docs.base44.com/developers/backend/resources/backend-functions/overview">backend functions</a>, <a href="https://docs.base44.com/developers/backend/resources/entities/security">data security</a>, <a href="https://docs.base44.com/documentation/building-your-app/sending-emails">sending emails</a>, <a href="https://docs.base44.com/Setting-up-your-app/security-overview">security</a>, <a href="https://docs.base44.com/Community-and-support/Troubleshooting">troubleshooting</a> and <a href="https://docs.base44.com/Account-and-billing/Credits">credits</a>; Apple's <a href="https://support.apple.com/en-sg/guide/iphone/el8l5r9jnhyv/ios">Create passes in Wallet</a>; Google's <a href="https://developers.google.com/wallet/generic/web">Generic pass</a>, <a href="https://developers.google.com/wallet/generic/test-and-go-live/request-publishing-access">publishing access</a> and <a href="https://developers.google.com/wallet/generic/use-cases/expired-passes">expired passes</a>; Cloudflare's <a href="https://developers.cloudflare.com/turnstile/plans/">Turnstile plans</a> and <a href="https://developers.cloudflare.com/turnstile/">Turnstile overview</a>.</p>
+</section>
+"""
 
-<h3>Test before the build (throwaway app on a test subdomain)</h3>
+
+def s_tests(n):
+    return f"""
+<section id="tests">
+<div class="eyebrow">{n}</div>
+<h2>Test before the build</h2>
+<p>On a throwaway app on a test subdomain, before the build starts.</p>
 <ol>
   <li>Open a card link as WhatsApp and as Google's crawler. Check the preview tags, the noindex instruction and the sitemap, then share the link in a real WhatsApp chat.</li>
   <li>Show Turnstile on the card page, verify its token in a backend function, and log the request headers to find the visitor's IP address. Then try rule 1 and the 30-minute pass from one phone, and from two phones on the same Wi-Fi.</li>
@@ -823,13 +832,11 @@ def s_feasibility():
   <li>Sign in to My card as a staff member on a phone. Check they can change only the alias, that Preview changes nothing until they save, that the old link then shows “No card found”, and that the Google Wallet pass updates and a new card email arrives.</li>
   <li>Check that emails reach staff and manage@minmed.sg.</li>
 </ol>
-
-<p class="note">Sources: Base44 docs on <a href="https://docs.base44.com/Setting-up-your-app/Connecting-an-external-domain">external domains</a>, <a href="https://docs.base44.com/Performance-and-SEO/checking-your-seo-and-geo">search visibility</a>, <a href="https://docs.base44.com/Performance-and-SEO/SEO-and-search-visibility">SEO and sharing</a>, <a href="https://docs.base44.com/developers/backend/resources/backend-functions/overview">backend functions</a>, <a href="https://docs.base44.com/developers/backend/resources/entities/security">data security</a>, <a href="https://docs.base44.com/documentation/building-your-app/sending-emails">sending emails</a>, <a href="https://docs.base44.com/Setting-up-your-app/security-overview">security</a>, <a href="https://docs.base44.com/Community-and-support/Troubleshooting">troubleshooting</a> and <a href="https://docs.base44.com/Account-and-billing/Credits">credits</a>; Apple's <a href="https://support.apple.com/en-sg/guide/iphone/el8l5r9jnhyv/ios">Create passes in Wallet</a>; Google's <a href="https://developers.google.com/wallet/generic/web">Generic pass</a>, <a href="https://developers.google.com/wallet/generic/test-and-go-live/request-publishing-access">publishing access</a> and <a href="https://developers.google.com/wallet/generic/use-cases/expired-passes">expired passes</a>; Cloudflare's <a href="https://developers.cloudflare.com/turnstile/plans/">Turnstile plans</a> and <a href="https://developers.cloudflare.com/turnstile/">Turnstile overview</a>.</p>
 </section>
 """
 
 
-def s_spec():
+def s_spec(n):
     rm, ch, keep, add = chip("Remove", "out"), chip("Change", "rec"), chip("Keep", "in"), chip("Add", "dec")
     rows = [
         (rm, "Staff creating cards (<code>me.minmed.sg/create</code>); the approval process (pending review, reviewers, rejections, exact-version rule, held applications); approval emails to staff", "§1.2, §3, Fig. 2, §5.1, §5.3, §6.1, §7"),
@@ -850,7 +857,7 @@ def s_spec():
     body = "".join(f"<tr><td>{c}</td><td>{w}</td><td>{s}</td></tr>" for c, w, s in rows)
     return f"""
 <section id="spec">
-<div class="eyebrow">12</div>
+<div class="eyebrow">{n}</div>
 <h2>What changes in the spec (draft 0.2 to 0.3)</h2>
 <div class="tablewrap"><table>
 <thead><tr><th style="width:110px">Change</th><th>What</th><th style="width:170px">Spec 0.2 sections</th></tr></thead>
@@ -864,11 +871,11 @@ def s_spec():
 def s_pending():
     return f"""
 <section id="pending">
-<div class="eyebrow">13</div>
+<div class="eyebrow">11</div>
 <h2>Open items</h2>
 <p>The only open items. Everything else is confirmed.</p>
 <ol class="qs">
-  <li><b>WhatsApp previews: option A, B or C.</b> {chip("Test", "test")}<span class="def">Plan confirmed: test B first. Then C if per-card previews are a must, otherwise A. Affects {fref("pg-whatsapp")}, section 11 and the file addresses in section 6. Needs the test result.</span></li>
+  <li><b>WhatsApp previews: option A, B or C.</b> {chip("Test", "test")}<span class="def">Plan confirmed: test B first. Then C if per-card previews are a must, otherwise A. Affects {fref("pg-whatsapp")}, section 10 and the file addresses in section 6. Needs the test result.</span></li>
   <li><b>Wording on the preview screen.</b> {chip("Proposed", "rec")}<span class="def">Step 2 of {fref("pg-mycardflow")}: the title Preview, the note “Not saved yet. This is how your card will look at your new link.”, the new link shown above the card, and Back and Save link buttons. The Preview button sits next to Save link ({fref("pg-mycard")}, {fref("pg-mycarddesk")}). Needs your OK.</span></li>
 </ol>
 </section>
@@ -878,7 +885,7 @@ def s_pending():
 def foot():
     return f"""
 <div class="footer">
-  <p><b>Sources.</b> Minmed Digital Name Cards Technical Specification draft 0.2 (15/10/2026). Your decisions in this conversation on 16/10/2026. Standards, research, platform and vendor documentation linked in sections 8, 9 and 11.</p>
+  <p><b>Sources.</b> Minmed Digital Name Cards Technical Specification draft 0.2 (15/10/2026). Your decisions in this conversation on 16/10/2026. Standards, research, platform and vendor documentation linked in sections 8, 9 and 10.</p>
 </div>
 </main>
 {preview_dialog()}
@@ -970,7 +977,7 @@ def label_cells(doc):
 def build():
     parts = [
         head(), intro(), s_how(), s_confirmed(), s_features(), s_users(), s_matrix(), s_map(), s_pages(),
-        s_bots(), s_links(), s_failures(), s_feasibility(), s_spec(), s_pending(), foot(),
+        s_bots(), s_links(), s_feasibility(), s_pending(), foot(),
     ]
     doc = label_cells("".join(parts))
     assert USED == FIG_ORDER, f"figure order mismatch:\n{USED}\n{FIG_ORDER}"
@@ -978,6 +985,52 @@ def build():
     OUT.write_text(doc)
     print(f"wrote {OUT} ({len(doc):,} bytes, {len(USED)} figures)")
     PV.write()
+    notes()
+
+
+NOTES_OUT = SRC.parent / "minmed-name-card-build-notes.html"
+
+
+def notes():
+    """Build notes moved out of the scope. Figure links become plain text, as the figures are in the scope."""
+    doc = f"""<!doctype html>
+<html lang="en-SG">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Build notes for Minmed Digital Name Cards: what happens when things go wrong, the tests to run before the build, and what changes in the technical specification.">
+<title>Name Card Build Notes</title>
+{PV.FONTS}
+<style>
+{(SRC / "scope.css").read_text()}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-inner">
+  <div class="brand">{mark(28)}<span>Name Card Build Notes</span></div>
+  <nav class="toc" aria-label="Sections">
+    <a href="#failures">When things go wrong</a><a href="#tests">Tests</a><a href="#spec">Spec changes</a>
+  </nav>
+</div></header>
+<main>
+<div class="eyebrow">Build notes · go with the product scope</div>
+<h1>Minmed Digital Name Cards: build notes</h1>
+<p class="lede">Moved out of the product scope on 16/10/2026: what happens when things go wrong, the tests to run before the build, and what changes in the technical specification.</p>
+<p class="meta">Figure, section and rule numbers refer to the product scope. Updated 16/10/2026.</p>
+{s_failures(1)}{s_tests(2)}{s_spec(3)}
+<div class="footer">
+  <p><b>Sources.</b> Minmed Digital Name Cards Technical Specification draft 0.2 (15/10/2026). Your decisions in this conversation on 16/10/2026.</p>
+</div>
+</main>
+</body>
+</html>
+"""
+    doc = label_cells(doc)
+    doc = re.sub(r'<a href="#[\w-]+">(Figure \d+)</a>', r"\1", doc)
+    assert 'href="#pg-' not in doc and "zapkad" not in doc.lower()
+    NOTES_OUT.write_text(doc)
+    print(f"wrote {NOTES_OUT} ({len(doc):,} bytes)")
 
 
 if __name__ == "__main__":
