@@ -674,7 +674,7 @@ MC_NOTE = '<div class="mc-note">Only admins can change these. Reply to your card
 def link_box(state):
     """The staff member's link with the one box they can type in: empty, typing, saved or error."""
     box = {
-        "empty": '<span class="mc-in ph">your-name</span>',
+        "empty": '<span class="mc-in ph">alias</span>',
         "typing": f'<span class="mc-in">{E(P["alias"])}<i></i></span>',
         "saved": f'<span class="mc-in done">{E(P["alias"])}</span>',
         "error": '<span class="mc-in bad">Alex Tan!<i></i></span>',
@@ -691,12 +691,13 @@ def link_section(state):
     elif state == "error":
         after = (
             f'<div class="mc-err">{ic("alert", "ic sm")}<span>Use only letters, numbers and hyphens, 2 to 30 characters.</span></div>'
-            '<div class="btn-p off">Save link</div>'
+            f'<div class="mc-btns"><span class="ad-btn off">{ic("eye", "ic sm")}Preview</span><div class="btn-p off">Save link</div></div>'
         )
     else:
         after = (
             f'<div class="mc-help">{MC_HELP}</div>'
-            f'<div class="mc-warn">{ic("alert", "ic sm")}<span>{MC_WARN}</span></div><div class="btn-p">Save link</div>'
+            f'<div class="mc-warn">{ic("alert", "ic sm")}<span>{MC_WARN}</span></div>'
+            f'<div class="mc-btns"><span class="ad-btn">{ic("eye", "ic sm")}Preview</span><div class="btn-p">Save link</div></div>'
         )
     return f'<div class="mc-sec"><div class="mc-h">Your link</div>{link_box(state)}{after}</div>'
 
@@ -745,6 +746,18 @@ def my_card_step(state):
     return f'<div class="mc">{mc_top()}{link_section(state)}{extra}</div>'
 
 
+def my_card_preview():
+    """Preview on My card: the card at the new link, before anything is saved."""
+    return (
+        f'<div class="mc mcp"><div class="mc-top">{mark(22, "#fff", "#96487F")}<span>Preview</span>'
+        '<span class="mc-out">✕ Close</span></div>'
+        f'<div class="mcp-note">{ic("eye", "ic sm")}<span>Not saved yet. This is how your card will look at your new link.</span></div>'
+        f'<div class="mcp-url">{ic("lock", "lk")}<span>{E(LINK_ALIAS)}</span></div>'
+        f'<div class="mcp-card">{card_body()}</div>'
+        '<div class="mcp-acts"><span class="ad-btn">Back</span><span class="btn-p">Save link</span></div></div>'
+    )
+
+
 def my_card_desktop():
     """My card on a computer: the staff member's card details page."""
     top = (
@@ -756,7 +769,7 @@ def my_card_desktop():
         f'<div class="ad-panel pad"><div class="ad-lbl">Your link</div>{link_box("saved")}'
         f'<div class="mc-help">{MC_HELP}</div><div class="mc-warn">{ic("alert", "ic sm")}<span>{MC_WARN}</span></div>'
         f'<div class="ad-foot"><span class="ad-btn sm">{ic("copy", "ic sm")}Copy link</span><div class="sp"></div>'
-        '<span class="ad-btn p off">Save link</span></div></div>'
+        f'<span class="ad-btn">{ic("eye", "ic sm")}Preview</span><span class="ad-btn p off">Save link</span></div></div>'
     )
     qrp = (
         f'<div class="ad-panel pad row"><div class="ad-qr">{qr(12)}</div><div><div class="ad-lbl">Your QR code</div>'

@@ -428,9 +428,21 @@ a.smn:hover, a.smn:focus-visible { background: var(--surface-2); border-color: v
 .mc .ad-form { gap: 9px; }
 .mc .ad-input { height: 32px; font-size: 12px; }
 /* changing the link, step by step */
-.steps4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 22px 16px; align-items: start; }
-.steps4 > div { display: flex; flex-direction: column; align-items: center; min-width: 0; }
-.steps4 .phone { zoom: 0.84; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px 16px; align-items: start; }
+.steps > div { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+/* My card: Preview and Save side by side, and the preview screen */
+.mc-btns { display: grid; grid-template-columns: 1fr 1.5fr; gap: 8px; }
+.mc-btns .ad-btn { height: 40px; justify-content: center; }
+.mcp { min-height: 0; }
+.mcp-note { display: flex; gap: 8px; align-items: flex-start; margin: 10px 10px 0; padding: 9px 10px; border-radius: 9px; background: #f8f0f6; color: #6e3560; font-size: 11.5px; font-weight: 600; line-height: 1.4; }
+.mcp-note .ic { flex: none; margin-top: 1px; }
+.mcp-url { display: flex; align-items: flex-start; gap: 6px; margin: 8px 10px 0; padding: 7px 10px; border-radius: 9px; background: #eceef1; font: 11px/1.45 ui-monospace, Menlo, Consolas, monospace; color: #2b2f36; overflow-wrap: anywhere; }
+.mcp-url .lk { margin-top: 2px; }
+.mcp-card { flex: 1; min-height: 0; overflow: hidden; margin: 8px 10px 0; border: 1px solid #e6e2e6; border-radius: 14px; background: #fff; display: flex; }
+.mcp-card .pc { zoom: 0.86; }
+.mcp-acts { flex: none; display: grid; grid-template-columns: 1fr 1.5fr; gap: 8px; padding: 10px; margin-top: 10px; background: #fff; border-top: 1px solid #e6e2e6; }
+.mcp-acts .ad-btn { height: 40px; justify-content: center; }
+.mcp-acts .btn-p { height: 40px; font-size: 13px; }
 .stepl { display: flex; align-items: center; gap: 8px; font: 900 0.82rem/1.25 "Lato", sans-serif; color: var(--navy); margin-bottom: 10px; }
 .stepl i { font-style: normal; width: 22px; height: 22px; border-radius: 50%; background: var(--blush); color: var(--plum); display: grid; place-items: center; font-size: 0.75rem; flex: none; }
 .ad-alias { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 12px; color: #5f6673; }

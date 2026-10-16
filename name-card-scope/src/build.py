@@ -150,6 +150,7 @@ def intro():
 <p class="meta">Based on Technical Specification draft 0.2 (15/10/2026) and your decisions on 16/10/2026. Names, numbers, codes and QR codes in the examples are made up. Updated 16/10/2026.</p>
 <div class="legend">
   <span>{chip("Confirmed", "dec")} you decided it</span>
+  <span>{chip("Proposed", "rec")} my recommendation, waiting for your OK (section 13)</span>
   <span>{chip("Test", "test")} try on a test app before the build</span>
 </div>
 {preview_button()}
@@ -209,6 +210,7 @@ def s_confirmed():
         row("Setting or changing the alias gives a new link. The old link, printed QR codes and Apple Wallet passes made from it show “No card found”. The Google Wallet pass updates itself, and a new card email goes out automatically.", you),
         row("Staff can change their alias as often as they like. Each change ends the previous link, and My card asks them to confirm before saving.", you),
         row("Clearing an alias, by the staff member or an admin, brings back the plain link without a name.", you),
+        row("Before saving, staff can preview their card at the new link. Nothing changes until they save: the new link doesn't work yet and the old one keeps working.", you),
         row("Admins can clear an alias that's offensive or copies someone else's name. Every alias change is logged and emailed to manage@minmed.sg.", you),
         grp("Admins"),
         row("Two roles: Super admin and Admin.", you),
@@ -259,7 +261,7 @@ def s_features():
   </ul></div>
   <div><h3>Staff</h3><div class="host">me.minmed.sg/my-card</div><ul>
     <li>Minmed Google sign-in, own card only</li>
-    <li>My card: read-only details, a name or alias for the link, QR code download</li>
+    <li>My card: read-only details, a name or alias for the link, a preview before saving, QR code download</li>
     <li>Card email with link, QR code and Wallet options</li>
     <li>Google Wallet pass that updates itself</li>
     <li>Apple Wallet pass they make themselves</li>
@@ -320,6 +322,7 @@ def s_matrix():
         r("Add the card to Google Wallet or Apple Wallet", N, O, N, N),
         r("Sign in to My card and see their own card details", N, O, N, N),
         r("Set or change the name or alias in their own link", N, O, N, N),
+        r("Preview their card at a new link before saving", N, O, N, N),
         r("Clear their own alias, going back to the plain link", N, O, N, N),
         r("Download their own QR code", N, O, N, N),
         r("Change their own card details", N, N, N, N),
@@ -403,7 +406,7 @@ def s_map():
   <li>{node("pg-staffsignin", tp(M.staff_signin()), "Sign in", code="/my-card")}</li>
   <li>{node("pg-mycard", tp(M.my_card()), "My card", "every field read-only, one box for the link, QR code download")}
     <ul class="smt">
-      <li>{node("pg-mycardflow", tp(M.my_card_step("typing")), "Changing the link", "type, confirm, done")}</li>
+      <li>{node("pg-mycardflow", tp(M.my_card_step("typing")), "Changing the link", "type, preview, confirm, done")}</li>
       <li>{node("pg-mycarddesk", tw(M.my_card_desktop()), "On a computer", "same page, wider")}</li>
     </ul>
   </li>
@@ -524,15 +527,16 @@ def s_pages():
               alt="Dark Apple Wallet pass named Minmed name card with the name Alex Tan and a QR code.")
     )
 
-    def step(n, label, body):
-        return f'<div><div class="stepl"><i>{n}</i>{label}</div>{M.phone(body, url="me.minmed.sg/my-card")}</div>'
+    def step(n, label, body, cls=""):
+        return f'<div><div class="stepl"><i>{n}</i>{label}</div>{M.phone(body, url="me.minmed.sg/my-card", cls=cls)}</div>'
 
     steps = (
-        '<div class="steps4">'
+        '<div class="steps">'
         + step(1, "Type a name or alias", M.my_card_step("typing"))
-        + step(2, "Confirm the new link", M.my_card_confirm())
-        + step(3, "Done: new link, QR code and email", M.my_card_step("saved"))
-        + step(4, "If the alias breaks the rule", M.my_card_step("error"))
+        + step(2, "Preview the card before saving", M.my_card_preview(), cls="cut")
+        + step(3, "Save and confirm the new link", M.my_card_confirm())
+        + step(4, "Done: new link, QR code and email", M.my_card_step("saved"))
+        + step(5, "If the alias breaks the rule", M.my_card_step("error"))
         + "</div>"
     )
     mycard_figs = (
@@ -541,17 +545,17 @@ def s_pages():
               "<code>me.minmed.sg/my-card</code>. A Minmed account without an active card sees “There's no name card for this account.”",
               alt="Phone showing My name card, Please sign in with your Minmed registered email address, and a Sign in with Google button.")
         + fig("pg-mycard", M.phone(M.my_card(), url="me.minmed.sg/my-card", cls="cut"), "My card.",
-              f"Top of the page after signing in. The only box staff can type in is the name or alias in their link, and they can download their QR code. Below that, every field is read-only, including the company logo (whole page in {fref('pg-mycarddesk')}).",
-              alt="Phone showing the top of My name card: the link me.minmed.sg/card/ with an empty box and the code after it, the alias rules, a warning that saving gives a new link, a Save link button, the QR code with Download QR code, and the start of the read-only card details.")
+              f"Top of the page after signing in. The only box staff can type in is the name or alias in their link. Preview shows the card at the new link before saving, and they can download their QR code. Below that, every field is read-only, including the company logo (whole page in {fref('pg-mycarddesk')}).",
+              alt="Phone showing the top of My name card: the link me.minmed.sg/card/ with an empty box marked alias and the code after it, the alias rules, a warning that saving gives a new link, Preview and Save link buttons, the QR code with Download QR code, and the start of the read-only card details.")
         + "</div>"
         + '<div class="figs">'
         + fig("pg-mycardflow", steps, "How a staff member changes their link.",
-              "1. They type a name or alias in the box. 2. They confirm. 3. The new link works at once and a new card email goes out; the old link shows “No card found”. 4. An alias that breaks the rule can't be saved.",
-              alt="Four phone screens. One: Alex-Tan typed into the box in the link. Two: the Change your link? dialog with Cancel and Change link. Three: the saved link with Alex-Tan, a message that the new link is ready and the new card was emailed, Copy link, and the new QR code with Download. Four: Alex Tan! typed in, a red message to use only letters, numbers and hyphens, 2 to 30 characters, and Save link greyed out.",
+              "1. They type a name or alias in the box. 2. Preview shows their card at the new link; nothing is saved yet. 3. They save and confirm. 4. The new link works at once and a new card email goes out; the old link shows “No card found”. 5. An alias that breaks the rule can't be previewed or saved.",
+              alt="Five phone screens. One: Alex-Tan typed into the box in the link, with Preview and Save link buttons. Two: the preview, with the note Not saved yet. This is how your card will look at your new link., the new link me.minmed.sg/card/Alex-Tan/ followed by the code, Alex Tan's card, and Back and Save link buttons. Three: the Change your link? dialog with Cancel and Change link. Four: the saved link with Alex-Tan, a message that the new link is ready and the new card was emailed, Copy link, and the new QR code with Download. Five: Alex Tan! typed in, a red message to use only letters, numbers and hyphens, 2 to 30 characters, and Preview and Save link greyed out.",
               wide=True)
         + fig("pg-mycarddesk", shot(M.browser("me.minmed.sg/my-card", M.my_card_desktop())), "My card on a computer.",
               "The same page, laid out like the admin card details page: the card on the left, then the link box, the QR code and every field read-only.",
-              alt="Browser at me.minmed.sg/my-card for Alex Tan, Staff, with Sign out. Left: the card with the company logo. Right: the link me.minmed.sg/card/ with Alex-Tan in a box and the code, the alias rules and warning, Copy link and a greyed Save link; the QR code with Download QR code; and read-only fields for first and last name, designation, work email, mobile shown on card, photo, biography, languages, LinkedIn and the locked company logo.",
+              alt="Browser at me.minmed.sg/my-card for Alex Tan, Staff, with Sign out. Left: the card with the company logo. Right: the link me.minmed.sg/card/ with Alex-Tan in a box and the code, the alias rules and warning, Copy link, Preview and a greyed Save link; the QR code with Download QR code; and read-only fields for first and last name, designation, work email, mobile shown on card, photo, biography, languages, LinkedIn and the locked company logo.",
               wide=True)
         + "</div>"
     )
@@ -608,7 +612,7 @@ def s_pages():
 <section id="pages">
 <div class="eyebrow">7</div>
 <h2>Pages</h2>
-<p>High-fidelity mockups of every page and message. You approved the wording on 16/10/2026. The “mm” logo stands in for the real one, and the QR codes can't be scanned.</p>
+<p>High-fidelity mockups of every page and message. You approved the wording on 16/10/2026, except the preview screen's (open item 2). The “mm” logo stands in for the real one, and the QR codes can't be scanned.</p>
 <h3>Public card</h3>
 {preview_button()}
 <div class="figs">{phone_figs}{desktop}</div>
@@ -816,7 +820,7 @@ def s_feasibility():
   <li>Download a contact file and open the Google Wallet link from a backend function in iPhone Safari, Android Chrome, WhatsApp and Gmail. Add the pass, edit the card and check the pass updates, then deactivate the card and check the pass shows as expired.</li>
   <li>Add a card's QR code to Apple Wallet with Create a Pass on two iPhones: one with Apple Intelligence and one without.</li>
   <li>Check that a non-minmed Google account is refused, an Admin can't make themselves Super admin, a staff member can't open another card or the admin console, and an anonymous visitor can't list cards.</li>
-  <li>Sign in to My card as a staff member on a phone. Check they can change only the alias, that the old link then shows “No card found”, and that the Google Wallet pass updates and a new card email arrives.</li>
+  <li>Sign in to My card as a staff member on a phone. Check they can change only the alias, that Preview changes nothing until they save, that the old link then shows “No card found”, and that the Google Wallet pass updates and a new card email arrives.</li>
   <li>Check that emails reach staff and manage@minmed.sg.</li>
 </ol>
 
@@ -862,9 +866,10 @@ def s_pending():
 <section id="pending">
 <div class="eyebrow">13</div>
 <h2>Open items</h2>
-<p>The only open item. Everything else is confirmed.</p>
+<p>The only open items. Everything else is confirmed.</p>
 <ol class="qs">
   <li><b>WhatsApp previews: option A, B or C.</b> {chip("Test", "test")}<span class="def">Plan confirmed: test B first. Then C if per-card previews are a must, otherwise A. Affects {fref("pg-whatsapp")}, section 11 and the file addresses in section 6. Needs the test result.</span></li>
+  <li><b>Wording on the preview screen.</b> {chip("Proposed", "rec")}<span class="def">Step 2 of {fref("pg-mycardflow")}: the title Preview, the note “Not saved yet. This is how your card will look at your new link.”, the new link shown above the card, and Back and Save link buttons. The Preview button sits next to Save link ({fref("pg-mycard")}, {fref("pg-mycarddesk")}). Needs your OK.</span></li>
 </ol>
 </section>
 """
