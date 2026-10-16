@@ -88,7 +88,7 @@ def head():
 <header class="top"><div class="top-inner">
   <div class="brand">{mark(28)}<span>Name Card Scope</span></div>
   <nav class="toc" aria-label="Sections">
-    <a href="#how">How it works</a><a href="#confirmed">Confirmed</a><a href="#features">Features</a><a href="#users">Users</a><a href="#matrix">Permissions</a><a href="#map">Site map</a><a href="#pages">Pages</a><a href="#bots">Bot protection</a><a href="#links">Links &amp; privacy</a><a href="#failures">Failures</a><a href="#feasibility">Feasibility</a><a href="#benchmark">Other platforms</a><a href="#spec">Spec changes</a><a href="#pending">Pending</a>
+    <a href="#how">How it works</a><a href="#confirmed">Confirmed</a><a href="#features">Features</a><a href="#users">Users</a><a href="#matrix">Permissions</a><a href="#map">Site map</a><a href="#pages">Pages</a><a href="#bots">Bot protection</a><a href="#links">Links &amp; privacy</a><a href="#failures">Failures</a><a href="#feasibility">Feasibility</a><a href="#spec">Spec changes</a><a href="#pending">Pending</a>
   </nav>
 </div></header>
 <main>
@@ -103,9 +103,8 @@ def intro():
 <p class="meta">Based on Technical Specification draft 0.2 (15/10/2026) and your decisions on 16/10/2026. Names, numbers, codes and QR codes in the examples are made up. Updated 16/10/2026.</p>
 <div class="legend">
   <span>{chip("Confirmed", "dec")} you decided it</span>
-  <span>{chip("Proposed", "rec")} my recommendation, waiting for your OK (section 14)</span>
   <span>{chip("Test", "test")} try on a test app before the build</span>
-  <span>{chip("Pending confirmation", "pend")} still to decide (section 14)</span>
+  <span>{chip("Pending confirmation", "pend")} still to decide (section 13)</span>
 </div>
 """
 
@@ -143,7 +142,7 @@ def s_confirmed():
         grp("Product"),
         row("One central place to manage every staff card. Staff can't edit their own card, so there's no approval process.", you),
         row("Cards are public to anyone with the link, but can't be found through Google.", you),
-        row(f"Each link is a random code with no name in it, so nobody can work it out from a person's name: <code>{E(LINK)}</code>.", you),
+        row(f"Each link is a random code of 22 letters and numbers, with no name in it, so nobody can work it out from a person's name: <code>{E(LINK)}</code>.", "You, 16/10; industry standards"),
         row("Staff never sign in. They keep their link on their phone, or in Apple Wallet or Google Wallet.", you),
         row("Built on Base44. Phone-first public card. Admins sign in with company Google accounts.", "Spec 0.2 §1.1"),
         grp("The card"),
@@ -176,7 +175,7 @@ def s_confirmed():
 <section id="confirmed">
 <div class="eyebrow">2</div>
 <h2>What's confirmed</h2>
-<p>On 16/10/2026 you approved the proposals in this document. Open items are in section 14.</p>
+<p>On 16/10/2026 you approved the proposals in this document. Open items are in section 13.</p>
 <div class="tablewrap"><table>
 <thead><tr><th>Decision</th><th>Source</th></tr></thead>
 <tbody>
@@ -589,7 +588,7 @@ def s_links():
 <h2>Links and privacy</h2>
 <ul>
   <li><b>Link format:</b> <code>me.minmed.sg/card/{{code}}</code>, for example <code>{E(LINK)}</code>. No name, initials or counting numbers, so nobody can work out a link from a person's name or from another link. The <code>/card/</code> prefix keeps clear of Base44's own addresses.</li>
-  <li><b>The code</b> {chip("Proposed", "rec")}: 22 random letters and numbers, made by the server with a secure random generator (CSPRNG) and never reused. That's about 131 bits of randomness, above the 128-bit minimum in the standard below. Pending item 3.</li>
+  <li><b>The code</b> {chip("Confirmed", "dec")}: 22 random letters and numbers, made by the server with a secure random generator (CSPRNG) and never reused. That's about 131 bits of randomness, above the 128-bit minimum in the standard below.</li>
   <li><b>The link stays the same</b> when someone's name or designation changes, so shared links and printed QR codes keep working.</li>
   <li><b>Every public address uses the same random code:</b> the card page, contact file, card image and Google Wallet pass. Never a counting number, so nobody can fetch cards by counting.</li>
   <li><b>Hidden from Google, twice over:</b> no list of cards anywhere (no sitemap entries, no staff directory, the home address redirects to minmed.sg), and every card page, image and contact file tells search engines not to index it. On Base44 that means the page's “Search visibility” switch plus a noindex header on files from backend functions, checked after every publish. Don't block card addresses in robots.txt: Google then can't see the “don't index” instruction and may still list a link someone posted elsewhere.</li>
@@ -697,48 +696,7 @@ def s_feasibility():
   <li>Check that emails reach staff and manage@minmed.sg.</li>
 </ol>
 
-<h3>Accounts and costs to arrange</h3>
-<ul>
-  <li>Base44 Builder plan or higher (own Google sign-in, backend functions, workflows), plus credits.</li>
-  <li>A verified email sending domain, set up by IT.</li>
-  <li>Google Wallet issuer account with a business profile (free, needs Google's approval).</li>
-  <li>Cloudflare account for Turnstile (free plan).</li>
-  <li>Option C only: hosting for the public card pages.</li>
-</ul>
 <p class="note">Sources: Base44 docs on <a href="https://docs.base44.com/Setting-up-your-app/Connecting-an-external-domain">external domains</a>, <a href="https://docs.base44.com/Performance-and-SEO/checking-your-seo-and-geo">search visibility</a>, <a href="https://docs.base44.com/Performance-and-SEO/SEO-and-search-visibility">SEO and sharing</a>, <a href="https://docs.base44.com/developers/backend/resources/backend-functions/overview">backend functions</a>, <a href="https://docs.base44.com/developers/backend/resources/entities/security">data security</a>, <a href="https://docs.base44.com/documentation/building-your-app/sending-emails">sending emails</a>, <a href="https://docs.base44.com/Setting-up-your-app/security-overview">security</a>, <a href="https://docs.base44.com/Community-and-support/Troubleshooting">troubleshooting</a> and <a href="https://docs.base44.com/Account-and-billing/Credits">credits</a>; Apple's <a href="https://support.apple.com/en-sg/guide/iphone/el8l5r9jnhyv/ios">Create passes in Wallet</a>; Google's <a href="https://developers.google.com/wallet/generic/web">Generic pass</a>, <a href="https://developers.google.com/wallet/generic/test-and-go-live/request-publishing-access">publishing access</a> and <a href="https://developers.google.com/wallet/generic/use-cases/expired-passes">expired passes</a>; Cloudflare's <a href="https://developers.cloudflare.com/turnstile/plans/">Turnstile plans</a> and <a href="https://developers.cloudflare.com/turnstile/">Turnstile overview</a>.</p>
-</section>
-"""
-
-
-def s_benchmark():
-    return """
-<section id="benchmark">
-<div class="eyebrow">12</div>
-<h2>Checked against other platforms</h2>
-<p>How five company card platforms handle the admin side, taken from their public help pages. Those pages were read through search results, some are a few years old, and “Unclear” means nothing was documented.</p>
-<div class="tablewrap"><table>
-<thead><tr><th>Capability</th><th>Blinq</th><th>HiHello</th><th>Popl</th><th>Uniqode</th><th>Mobilo</th><th>Minmed plan</th></tr></thead>
-<tbody>
-<tr><td>Roles</td><td>Owner, Admin, Member</td><td>Owner, Admin, Member</td><td>Admin, Subteam admin, Member</td><td>Owner, Admin, Editor, Viewer</td><td>Super admin, Group admin, Member</td><td><b>Super admin, Admin</b></td></tr>
-<tr><td>Admins create staff cards</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td><b>Yes</b></td></tr>
-<tr><td>Staff must log in</td><td>Yes</td><td>Yes</td><td>Yes, except Company Pages</td><td>No</td><td>No</td><td><b>No</b></td></tr>
-<tr><td>Wallet pass</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes, emailed to staff</td><td>Yes, emailed to staff</td><td><b>Google pass emailed; iPhone staff make their own</b></td></tr>
-<tr><td>Import from a spreadsheet</td><td>Yes</td><td>Unclear</td><td>Yes</td><td>Yes</td><td>Yes</td><td><b>Yes</b></td></tr>
-<tr><td>When someone leaves</td><td>Deactivate, keep record, reactivate on rehire</td><td>Pause</td><td>Remove or delete</td><td>Delete</td><td>Release or reassign</td><td><b>Deactivate, keep record, Super admin reactivates</b></td></tr>
-<tr><td>Usage analytics</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td><b>View counts</b></td></tr>
-<tr><td>Admin activity log</td><td>Unclear</td><td>Unclear</td><td>Unclear</td><td>Partly</td><td>Unclear</td><td><b>Yes</b></td></tr>
-<tr><td>Hidden from search engines</td><td>Unclear</td><td>Only cards set to private</td><td>Unclear</td><td>Unclear</td><td>Unclear</td><td><b>Always</b></td></tr>
-</tbody></table></div>
-<h3>Patterns this scope copies</h3>
-<ul>
-  <li><b>No staff logins, Wallet pass by email</b> (Uniqode, Mobilo): the card email with a Google Wallet button.</li>
-  <li><b>Deactivate and keep the record</b> (Blinq): a rehired person gets their old card back.</li>
-  <li><b>Stable link and QR code, live content</b> (Blinq, Uniqode): edits never break shared links or printed QR codes.</li>
-  <li><b>Spreadsheet import</b> (four of five): for loading every staff member at launch.</li>
-  <li><b>Our own page for a departed card:</b> no platform documents what visitors see, so the scope defines it.</li>
-  <li><b>An activity log and “don't index”:</b> platforms barely document them, so the scope makes both explicit requirements.</li>
-</ul>
-<p class="note">Sources: vendor help centres, including <a href="https://support.blinq.me/en/articles/73643-business-admin-onboarding-guide">Blinq admin onboarding</a>, <a href="https://support.hihello.com/hc/en-us/articles/14720204063771-Account-Roles">HiHello roles</a>, <a href="https://support.popl.co/en/articles/9142485-admin-subteam-admin-and-member-roles">Popl roles</a>, <a href="https://docs.uniqode.com/en/articles/7901549-create-apple-wallet-pass-for-your-digital-business-cards">Uniqode Wallet passes</a> and <a href="https://www.mobilocard.com/support-articles/new-admin-features-for-teams">Mobilo admin features</a>.</p>
 </section>
 """
 
@@ -758,12 +716,12 @@ def s_spec():
         (ch, "Launch checks: replace ownership and approval checks with admin-only, random-code, CAPTCHA and “don't index” checks", "§9"),
         (keep, "Base44; public card fields and actions; Save contact; WhatsApp preview; deactivation; public-field filtering on the server; search exclusion; admin notifications and audit", "§1.1, §3.2, §4.2, §4.4, §7.1"),
         (add, "Admin console pages; Super admin and Admin roles; spreadsheet import; card email to staff with Google Wallet and Apple Wallet steps, and replies used for change requests; QR code for computer visitors; new link code; delete and retention rules; offboarding owner and timing; failure handling", "new sections"),
-        (add, "Platform prerequisites: Base44 Builder plan, verified email sending domain, Google Wallet issuer account, Cloudflare Turnstile; the WhatsApp preview approach; the tests to run before the build", "§7.1, new section"),
+        (add, "The WhatsApp preview approach; the tests to run before the build", "§7.1, new section"),
     ]
     body = "".join(f"<tr><td>{c}</td><td>{w}</td><td>{s}</td></tr>" for c, w, s in rows)
     return f"""
 <section id="spec">
-<div class="eyebrow">13</div>
+<div class="eyebrow">12</div>
 <h2>What changes in the spec (draft 0.2 to 0.3)</h2>
 <div class="tablewrap"><table>
 <thead><tr><th style="width:110px">Change</th><th>What</th><th style="width:170px">Spec 0.2 sections</th></tr></thead>
@@ -777,13 +735,12 @@ def s_spec():
 def s_pending():
     return f"""
 <section id="pending">
-<div class="eyebrow">14</div>
+<div class="eyebrow">13</div>
 <h2>Pending confirmation</h2>
 <p>The only open items. Everything else is confirmed.</p>
 <ol class="qs">
   <li><b>WhatsApp previews: option A, B or C.</b> {chip("Pending confirmation", "pend")}<span class="def">Plan confirmed: test B first. Then C if per-card previews are a must, otherwise A. Affects {fref("pg-whatsapp")}, section 11 and the file addresses in section 6. Needs the test result.</span></li>
   <li><b>How long deactivated cards are kept.</b> {chip("Pending confirmation", "pend")}<span class="def">Until then, they're kept and deleted on request. Needs whoever handles data protection (PDPA).</span></li>
-  <li><b>Link code length: 22 random letters and numbers.</b> {chip("Proposed", "rec")}<span class="def">Meets the 128-bit minimum in section 9's standard. Links are tapped or scanned, never typed, so the extra length costs nothing. Shorter codes would fall below the standard. Needs your OK.</span></li>
 </ol>
 </section>
 """
@@ -792,7 +749,7 @@ def s_pending():
 def foot():
     return """
 <div class="footer">
-  <p><b>Sources.</b> Minmed Digital Name Cards Technical Specification draft 0.2 (15/10/2026). Your decisions in this conversation on 16/10/2026. Standards, research, platform and vendor documentation linked in sections 8, 9, 11 and 12.</p>
+  <p><b>Sources.</b> Minmed Digital Name Cards Technical Specification draft 0.2 (15/10/2026). Your decisions in this conversation on 16/10/2026. Standards, research, platform and vendor documentation linked in sections 8, 9 and 11.</p>
 </div>
 </main>
 <script>
@@ -818,7 +775,7 @@ document.addEventListener("click", function (e) {
 def build():
     parts = [
         head(), intro(), s_how(), s_confirmed(), s_features(), s_users(), s_matrix(), s_map(), s_pages(),
-        s_bots(), s_links(), s_failures(), s_feasibility(), s_benchmark(), s_spec(), s_pending(), foot(),
+        s_bots(), s_links(), s_failures(), s_feasibility(), s_spec(), s_pending(), foot(),
     ]
     doc = "".join(parts)
     assert USED == FIG_ORDER, f"figure order mismatch:\n{USED}\n{FIG_ORDER}"
