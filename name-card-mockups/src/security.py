@@ -96,7 +96,7 @@ def captcha_sim():
     return f"""
 <div class="panel" id="captcha-sim">
 <h3>Try it: what a scraper runs into</h3>
-<p class="small" style="margin-top:0">The spec's own example: a CAPTCHA on the <b>fourth different card within 60 seconds</b> {badge("example")}. Real thresholds, time windows and cooldowns are {badge("pending")}, so after the first challenge this demo only shows <i>which</i> outcomes exist, not when they trigger.</p>
+<p class="small" style="margin-top:0">The spec's own example: a CAPTCHA on the <b>fourth different card within 60 seconds</b> {badge("example")}. Real thresholds, time windows and cooldowns are {badge("pending")}, so after the first challenge this demo only shows <i>which</i> outcomes exist, not when they trigger.</p><p class="nojs-note">This demo needs JavaScript, which this viewer has turned off. Open the file in a web browser such as Chrome or Safari to try it.</p>
 <div class="sim">
   <div>{sim_phone}</div>
   <div>
@@ -157,7 +157,7 @@ def token_checker():
     return f"""
 <div class="panel" id="token-check">
 <h3>Try it: how the server treats a CAPTCHA token</h3>
-<p class="small" style="margin-top:0">When someone passes a challenge, their browser gets a token to send with the next request. Using the spec's {badge("candidate")} Cloudflare Turnstile, the server checks that the token is valid, single-use, under five minutes old and issued for the expected hostname and action.</p>
+<p class="small" style="margin-top:0">When someone passes a challenge, their browser gets a token to send with the next request. Using the spec's {badge("candidate")} Cloudflare Turnstile, the server checks that the token is valid, single-use, under five minutes old and issued for the expected hostname and action.</p><p class="nojs-note">This demo needs JavaScript, which this viewer has turned off. Open the file in a web browser such as Chrome or Safari to try it.</p>
 <div class="sim">
   <div>{tok_phone}</div>
   <div>
@@ -483,7 +483,7 @@ def security_page():
 <h1>Security measures, explained</h1>
 <p class="lede">Each scenario from spec §7: what happens, how it's reduced, what can't be prevented, and a picture or a hands-on demo of the measure.</p>
 {legend()}
-<div class="panel" style="margin-top:16px"><h3>On this page</h3>{toc_html}</div>
+<div class="panel needs-js" style="margin-top:16px"><h3>In this tab</h3>{toc_html}</div>
 <section class="section" id="gateway"><div class="eyebrow">Read first</div><h2>Gateway and error messages</h2>{gateway_explainer()}</section>
 <section class="section" id="path"><div class="eyebrow">Overview</div><h2>Where each check happens</h2>{request_path()}</section>
 {"".join(sections)}

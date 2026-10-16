@@ -84,7 +84,7 @@ def index_page():
     ])
 
     hub = "".join(
-        f'<a href="{h}"><h3>{t}</h3><p>{d}</p></a>'
+        f'<a href="{h}"><span class="hub-t">{t}</span><span class="hub-d">{d}</span></a>'
         for h, t, d in [
             ("1-not-verified.html", "1 · Card not verified",
              "Four separate cases: sign-in or directory failure, new card waiting for approval, change not approved, live check failed. Plus how the three recipient results differ."),
@@ -331,7 +331,7 @@ def not_verified_page():
 <h1>When a card is not verified</h1>
 <p class="lede">"Not verified" covers four different situations in the spec. They look different and mean different things, so each has its own flow.</p>
 {legend()}
-<ul class="jump">
+<ul class="jump needs-js">
 <li><a href="#a">A · Sign-in or directory failure</a></li>
 <li><a href="#b">B · New card waiting for approval</a></li>
 <li><a href="#c">C · Change not approved</a></li>
@@ -554,23 +554,47 @@ TABS = [
     ("5-recommended.html", "recommended", "5 · Recommended", recommended_page),
 ]
 
+TAB_IDS = [tab_id for _, tab_id, _, _ in TABS]
+
+# Tabs are radio buttons with labels, so switching tabs needs no JavaScript and
+# never navigates. That matters inside an app's preview frame: there, a "#..."
+# link resolves against the app's own address and replaces the page with a
+# blank one. The script below only adds extras: same-page links, links to a
+# tab by address (#security, #q6) and scrolling to the top on a tab change.
 TAB_JS = """
 (function () {
-  var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
-  var links = document.querySelectorAll(".nav a");
-  function show(hash) {
-    var id = (hash || "").replace(/^#/, "");
-    var el = id ? document.getElementById(id) : null;
-    var tab = el ? (el.classList.contains("tab") ? el : el.closest(".tab")) : null;
-    if (!tab) tab = tabs[0];
-    tabs.forEach(function (t) { t.hidden = t !== tab; });
-    links.forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + tab.id); });
-    if (el && el !== tab) el.scrollIntoView(); else window.scrollTo(0, 0);
+  function tabOf(el) { return el.classList.contains("tab") ? el : el.closest(".tab"); }
+  function setUrl(id) {
+    if (!/^(https?|file|blob):/.test(location.href)) return;
+    try { history.replaceState(null, "", "#" + id); } catch (e) {}
   }
-  window.addEventListener("hashchange", function () { show(location.hash); });
-  show(location.hash);
+  function go(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var tab = tabOf(el);
+    var radio = tab && document.getElementById("tab-" + tab.id);
+    if (radio) radio.checked = true;
+    if (el === tab) window.scrollTo(0, 0); else el.scrollIntoView();
+    setUrl(id);
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a) return;
+    e.preventDefault();
+    go(decodeURIComponent(a.getAttribute("href").slice(1)));
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("input.tab-radio"), function (r) {
+    r.addEventListener("change", function () {
+      if (!r.checked) return;
+      window.scrollTo(0, 0);
+      setUrl(r.id.slice(4));
+    });
+  });
+  if (location.hash.length > 1) go(decodeURIComponent(location.hash.slice(1)));
 })();
 """
+
+TAB_LINK = re.compile(r'<a href="#(' + "|".join(map(re.escape, TAB_IDS)) + r')">(.*?)</a>', re.S)
 
 
 def combine():
@@ -581,15 +605,29 @@ def combine():
         _, body, js = RECORD[fname]
         for other, other_id, _, _ in TABS:
             body = body.replace(f'href="{other}"', f'href="#{other_id}"')
+        body = TAB_LINK.sub(lambda m: f'<label class="tablink" for="tab-{m.group(1)}">{m.group(2)}</label>', body)
         body = re.sub(r"\b([Pp])age(s?) (\d)", lambda m: ("T" if m.group(1) == "P" else "t") + "ab" + m.group(2) + " " + m.group(3), body)
         panels.append(f'<section class="tab" id="{tab_id}">{body}</section>')
         if js:
             scripts.append(js)
-    ids = re.findall(r'\bid="([^"]+)"', "".join(panels))
+    ids = re.findall(r'\bid="([^"]+)"', "".join(panels)) + [f"tab-{t}" for t in TAB_IDS]
     dupes = sorted({i for i in ids if ids.count(i) > 1})
     if dupes:
         raise SystemExit(f"duplicate ids across tabs: {dupes}")
-    nav = "".join(f'<a href="#{tab_id}">{label}</a>' for _, tab_id, label, _ in TABS)
+    leftover = re.findall(r'href="[^"#][^"]*\.html', "".join(panels))
+    if leftover:
+        raise SystemExit(f"links to old page files: {leftover}")
+    radios = "".join(
+        f'<input class="tab-radio" type="radio" name="tab" id="tab-{t}"{" checked" if i == 0 else ""}>'
+        for i, t in enumerate(TAB_IDS)
+    )
+    nav = "".join(f'<label for="tab-{tab_id}">{label}</label>' for _, tab_id, label, _ in TABS)
+    tab_css = "\n".join(
+        f'#tab-{t}:checked ~ main #{t} {{ display: block; }}\n'
+        f'#tab-{t}:checked ~ header .nav label[for="tab-{t}"] {{ background: var(--blush); color: var(--plum); }}\n'
+        f'#tab-{t}:focus-visible ~ header .nav label[for="tab-{t}"] {{ outline: 2px solid var(--brand); outline-offset: 2px; }}'
+        for t in TAB_IDS
+    )
     css = (Path(__file__).resolve().parent / "styles.css").read_text()
     return f"""<!doctype html>
 <html lang="en-SG">
@@ -599,15 +637,18 @@ def combine():
 <meta name="color-scheme" content="light">
 <meta name="description" content="Phone mockups, security explanations and recommended answers for Minmed Digital Name Cards, from spec draft 0.2.">
 <title>Minmed Name Card Mockups</title>
+<script>document.documentElement.classList.add("js");</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 {css}
+{tab_css}
 </style>
 </head>
 <body>
-<header class="top"><div class="top-inner"><a class="brandline" href="#overview">{mark()}<span>Name Cards · mockups</span></a><nav class="nav" aria-label="Tabs">{nav}</nav></div></header>
+{radios}
+<header class="top"><div class="top-inner"><label class="brandline" for="tab-overview">{mark()}<span>Name Cards · mockups</span></label><nav class="nav" aria-label="Tabs">{nav}</nav></div></header>
 <main>
 {"".join(panels)}
 <div class="footer">Mockup based on Minmed Digital Name Cards Technical Specification draft 0.2 (15/10/2026). Not a final design: the spec fixes wording and behaviour, not visuals. Brand colours and fonts come from the minmed repo; the "mm" mark is the stand-in mark used in that repo, not a confirmed official logo. QR codes are illustrative and not scannable. Alex Tan and every other person shown are fictional.</div>
