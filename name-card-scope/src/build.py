@@ -764,7 +764,7 @@ def s_feasibility():
         r("Hidden from Google", chip("Test", "test"),
           "A per-page “Search visibility” switch (added 28/09/2026) marks pages noindex and removes them from the sitemap. Files served by backend functions can carry their own noindex header. Check what the live site serves after every publish."),
         r("Per-card WhatsApp preview", chip("Not supported as is", "risk"),
-          "Base44 sets preview tags per page template, not per card, so every card would share one Minmed preview. Plan below."),
+          "Base44 sets preview tags per page template, not per card, so every card would share one Minmed preview. The options and plan are in the build notes."),
         r("CAPTCHA (Cloudflare Turnstile)", chip("Test", "test"),
           "Free plan: unlimited checks, up to 20 widgets, and no need to route traffic through Cloudflare. The page loads Turnstile (Cloudflare suggests a React component); a backend function verifies each token using a secret key kept in Base44's secrets. Base44's security policy can't be changed per app, so check that Turnstile loads."),
         r("Visitor IP address", chip("Test", "test"),
@@ -796,14 +796,23 @@ def s_feasibility():
 <section id="feasibility">
 <div class="eyebrow">10</div>
 <h2>Feasibility on Base44 and Wallet</h2>
-<p>Checked against Base44, Apple, Google and Cloudflare documentation on 16/10/2026. Base44's settings are new and its docs contradict each other in places, so anything marked {chip("Test", "test")} needs trying on a throwaway app before the build starts. The tests are listed in the build notes, a separate file.</p>
+<p>Checked against Base44, Apple, Google and Cloudflare documentation on 16/10/2026. Base44's settings are new and its docs contradict each other in places, so anything marked {chip("Test", "test")} needs trying on a throwaway app before the build starts. The WhatsApp preview options and the tests are in the build notes, a separate file.</p>
 <div class="tablewrap"><table>
 <thead><tr><th style="width:24%">Capability</th><th style="width:130px">Status</th><th>What it means for the scope</th></tr></thead>
 <tbody>
 {"".join(rows)}
 </tbody></table></div>
+<p class="note">Sources: Base44 docs on <a href="https://docs.base44.com/Setting-up-your-app/Connecting-an-external-domain">external domains</a>, <a href="https://docs.base44.com/Performance-and-SEO/checking-your-seo-and-geo">search visibility</a>, <a href="https://docs.base44.com/Performance-and-SEO/SEO-and-search-visibility">SEO and sharing</a>, <a href="https://docs.base44.com/developers/backend/resources/backend-functions/overview">backend functions</a>, <a href="https://docs.base44.com/developers/backend/resources/entities/security">data security</a>, <a href="https://docs.base44.com/documentation/building-your-app/sending-emails">sending emails</a>, <a href="https://docs.base44.com/Setting-up-your-app/security-overview">security</a>, <a href="https://docs.base44.com/Community-and-support/Troubleshooting">troubleshooting</a> and <a href="https://docs.base44.com/Account-and-billing/Credits">credits</a>; Apple's <a href="https://support.apple.com/en-sg/guide/iphone/el8l5r9jnhyv/ios">Create passes in Wallet</a>; Google's <a href="https://developers.google.com/wallet/generic/web">Generic pass</a>, <a href="https://developers.google.com/wallet/generic/test-and-go-live/request-publishing-access">publishing access</a> and <a href="https://developers.google.com/wallet/generic/use-cases/expired-passes">expired passes</a>; Cloudflare's <a href="https://developers.cloudflare.com/turnstile/plans/">Turnstile plans</a> and <a href="https://developers.cloudflare.com/turnstile/">Turnstile overview</a>.</p>
+</section>
+"""
 
-<h3>WhatsApp previews</h3>
+
+def s_whatsapp(n):
+    return f"""
+<section id="whatsapp">
+<div class="eyebrow">{n}</div>
+<h2>WhatsApp previews</h2>
+<p>Base44 can't make a per-card WhatsApp preview as is (scope section 10). The options:</p>
 <div class="tablewrap"><table>
 <thead><tr><th style="width:24%">Option</th><th>What you get</th><th>Cost</th></tr></thead>
 <tbody>
@@ -812,7 +821,6 @@ def s_feasibility():
 <tr><td><b>C. Public card pages on a small separate host</b></td><td>Per-card previews, clean links, and full control of noindex, contact files and the visitor's IP address. The admin console stays on Base44.</td><td>An extra service, its cost, and more build work.</td></tr>
 </tbody></table></div>
 <p><b>Plan</b> {chip("Confirmed", "dec")}: test option B on a throwaway app first, which takes a day or two. If it doesn't work cleanly, choose C if per-card previews are a must, otherwise A (open item 1).</p>
-<p class="note">Sources: Base44 docs on <a href="https://docs.base44.com/Setting-up-your-app/Connecting-an-external-domain">external domains</a>, <a href="https://docs.base44.com/Performance-and-SEO/checking-your-seo-and-geo">search visibility</a>, <a href="https://docs.base44.com/Performance-and-SEO/SEO-and-search-visibility">SEO and sharing</a>, <a href="https://docs.base44.com/developers/backend/resources/backend-functions/overview">backend functions</a>, <a href="https://docs.base44.com/developers/backend/resources/entities/security">data security</a>, <a href="https://docs.base44.com/documentation/building-your-app/sending-emails">sending emails</a>, <a href="https://docs.base44.com/Setting-up-your-app/security-overview">security</a>, <a href="https://docs.base44.com/Community-and-support/Troubleshooting">troubleshooting</a> and <a href="https://docs.base44.com/Account-and-billing/Credits">credits</a>; Apple's <a href="https://support.apple.com/en-sg/guide/iphone/el8l5r9jnhyv/ios">Create passes in Wallet</a>; Google's <a href="https://developers.google.com/wallet/generic/web">Generic pass</a>, <a href="https://developers.google.com/wallet/generic/test-and-go-live/request-publishing-access">publishing access</a> and <a href="https://developers.google.com/wallet/generic/use-cases/expired-passes">expired passes</a>; Cloudflare's <a href="https://developers.cloudflare.com/turnstile/plans/">Turnstile plans</a> and <a href="https://developers.cloudflare.com/turnstile/">Turnstile overview</a>.</p>
 </section>
 """
 
@@ -875,7 +883,7 @@ def s_pending():
 <h2>Open items</h2>
 <p>The only open items. Everything else is confirmed.</p>
 <ol class="qs">
-  <li><b>WhatsApp previews: option A, B or C.</b> {chip("Test", "test")}<span class="def">Plan confirmed: test B first. Then C if per-card previews are a must, otherwise A. Affects {fref("pg-whatsapp")}, section 10 and the file addresses in section 6. Needs the test result.</span></li>
+  <li><b>WhatsApp previews: option A, B or C.</b> {chip("Test", "test")}<span class="def">Plan confirmed: test B first. Then C if per-card previews are a must, otherwise A. The options are described in the build notes. Affects {fref("pg-whatsapp")}, section 10 and the file addresses in section 6. Needs the test result.</span></li>
   <li><b>Wording on the preview screen.</b> {chip("Proposed", "rec")}<span class="def">Step 2 of {fref("pg-mycardflow")}: the title Preview, the note “Not saved yet. This is how your card will look at your new link.”, the new link shown above the card, and Back and Save link buttons. The Preview button sits next to Save link ({fref("pg-mycard")}, {fref("pg-mycarddesk")}). Needs your OK.</span></li>
 </ol>
 </section>
@@ -999,7 +1007,7 @@ def notes():
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
-<meta name="description" content="Build notes for Minmed Digital Name Cards: what happens when things go wrong, the tests to run before the build, and what changes in the technical specification.">
+<meta name="description" content="Build notes for Minmed Digital Name Cards: what happens when things go wrong, the WhatsApp preview options, the tests to run before the build, and what changes in the technical specification.">
 <title>Name Card Build Notes</title>
 {PV.FONTS}
 <style>
@@ -1010,15 +1018,15 @@ def notes():
 <header class="top"><div class="top-inner">
   <div class="brand">{mark(28)}<span>Name Card Build Notes</span></div>
   <nav class="toc" aria-label="Sections">
-    <a href="#failures">When things go wrong</a><a href="#tests">Tests</a><a href="#spec">Spec changes</a>
+    <a href="#failures">When things go wrong</a><a href="#whatsapp">WhatsApp previews</a><a href="#tests">Tests</a><a href="#spec">Spec changes</a>
   </nav>
 </div></header>
 <main>
 <div class="eyebrow">Build notes · go with the product scope</div>
 <h1>Minmed Digital Name Cards: build notes</h1>
-<p class="lede">Moved out of the product scope on 16/10/2026: what happens when things go wrong, the tests to run before the build, and what changes in the technical specification.</p>
+<p class="lede">Moved out of the product scope on 16/10/2026: what happens when things go wrong, the WhatsApp preview options, the tests to run before the build, and what changes in the technical specification.</p>
 <p class="meta">Figure, section and rule numbers refer to the product scope. Updated 16/10/2026.</p>
-{s_failures(1)}{s_tests(2)}{s_spec(3)}
+{s_failures(1)}{s_whatsapp(2)}{s_tests(3)}{s_spec(4)}
 <div class="footer">
   <p><b>Sources.</b> Minmed Digital Name Cards Technical Specification draft 0.2 (15/10/2026). Your decisions in this conversation on 16/10/2026.</p>
 </div>

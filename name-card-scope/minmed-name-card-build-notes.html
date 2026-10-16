@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
-<meta name="description" content="Build notes for Minmed Digital Name Cards: what happens when things go wrong, the tests to run before the build, and what changes in the technical specification.">
+<meta name="description" content="Build notes for Minmed Digital Name Cards: what happens when things go wrong, the WhatsApp preview options, the tests to run before the build, and what changes in the technical specification.">
 <title>Name Card Build Notes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -597,13 +597,13 @@ a.smn:hover, a.smn:focus-visible { background: var(--surface-2); border-color: v
 <header class="top"><div class="top-inner">
   <div class="brand"><svg class="mk" width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" fill="#96487F"/><text x="16" y="21" text-anchor="middle" font-family="Lato, Arial, sans-serif" font-size="14" font-weight="900" fill="#fff">mm</text></svg><span>Name Card Build Notes</span></div>
   <nav class="toc" aria-label="Sections">
-    <a href="#failures">When things go wrong</a><a href="#tests">Tests</a><a href="#spec">Spec changes</a>
+    <a href="#failures">When things go wrong</a><a href="#whatsapp">WhatsApp previews</a><a href="#tests">Tests</a><a href="#spec">Spec changes</a>
   </nav>
 </div></header>
 <main>
 <div class="eyebrow">Build notes · go with the product scope</div>
 <h1>Minmed Digital Name Cards: build notes</h1>
-<p class="lede">Moved out of the product scope on 16/10/2026: what happens when things go wrong, the tests to run before the build, and what changes in the technical specification.</p>
+<p class="lede">Moved out of the product scope on 16/10/2026: what happens when things go wrong, the WhatsApp preview options, the tests to run before the build, and what changes in the technical specification.</p>
 <p class="meta">Figure, section and rule numbers refer to the product scope. Updated 16/10/2026.</p>
 
 <section id="failures">
@@ -624,8 +624,22 @@ a.smn:hover, a.smn:focus-visible { background: var(--surface-2); border-color: v
 </tbody></table></div>
 </section>
 
-<section id="tests">
+<section id="whatsapp">
 <div class="eyebrow">2</div>
+<h2>WhatsApp previews</h2>
+<p>Base44 can't make a per-card WhatsApp preview as is (scope section 10). The options:</p>
+<div class="tablewrap"><table>
+<thead><tr><th style="width:24%">Option</th><th>What you get</th><th>Cost</th></tr></thead>
+<tbody>
+<tr><td data-label="Option"><b>A. One Minmed preview</b></td><td data-label="What you get">Every shared link shows the same preview: Minmed logo and “Minmed digital name card”. Everything stays on Base44.</td><td data-label="Cost">Simplest. Drops the spec's per-card preview.</td></tr>
+<tr><td data-label="Option"><b>B. Card served by a backend function</b></td><td data-label="What you get">Per-card preview on Base44, but links look like <code>me.minmed.sg/functions/card?code=…</code>.</td><td data-label="Cost">Untested. Uglier links.</td></tr>
+<tr><td data-label="Option"><b>C. Public card pages on a small separate host</b></td><td data-label="What you get">Per-card previews, clean links, and full control of noindex, contact files and the visitor's IP address. The admin console stays on Base44.</td><td data-label="Cost">An extra service, its cost, and more build work.</td></tr>
+</tbody></table></div>
+<p><b>Plan</b> <span class="chip c-dec">Confirmed</span>: test option B on a throwaway app first, which takes a day or two. If it doesn't work cleanly, choose C if per-card previews are a must, otherwise A (open item 1).</p>
+</section>
+
+<section id="tests">
+<div class="eyebrow">3</div>
 <h2>Test before the build</h2>
 <p>On a throwaway app on a test subdomain, before the build starts.</p>
 <ol>
@@ -640,7 +654,7 @@ a.smn:hover, a.smn:focus-visible { background: var(--surface-2); border-color: v
 </section>
 
 <section id="spec">
-<div class="eyebrow">3</div>
+<div class="eyebrow">4</div>
 <h2>What changes in the spec (draft 0.2 to 0.3)</h2>
 <div class="tablewrap"><table>
 <thead><tr><th style="width:110px">Change</th><th>What</th><th style="width:170px">Spec 0.2 sections</th></tr></thead>
