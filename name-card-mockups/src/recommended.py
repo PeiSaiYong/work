@@ -45,7 +45,7 @@ def r_temp_error():
     return (
         '<div style="height:18px"></div>'
         '<div class="status st-error"><span class="ic" aria-hidden="true">!</span><span class="t">Temporary verification error</span></div>'
-        f'<p class="ptext">{rec("We couldn’t check this card. This doesn’t mean the person has left.")}</p>'
+        f'<p class="ptext">{rec("We couldn’t check this card.")}</p>'
         f'<div class="btn primary">{rec("Try again")}</div>'
         f'<span class="howto">How to verify {badge("proposed", mini=True)}</span>'
         '<div class="blank"></div><div class="foot-link">About Minmed</div>'
@@ -131,7 +131,6 @@ def s_held():
     return (
         '<div style="height:10px"></div>'
         f'<p class="ptitle">{rec("Your application is on hold")}</p>'
-        f'<p class="ptext">{rec("An administrator will check it.")}</p>'
         '<div class="blank"></div>'
     )
 
@@ -186,7 +185,7 @@ def s_deactivated():
 def s_temp_error():
     return (
         f'<div class="status st-error"><span class="ic" aria-hidden="true">!</span><span class="t">{rec("Couldn’t check your card")}</span></div>'
-        f'<p class="ptext">{rec("Your card hasn’t changed. Please try again later.")}</p>'
+        f'<p class="ptext">{rec("Please try again later.")}</p>'
         f'<div class="btn primary">{rec("Try again")}</div><div class="blank"></div>'
     )
 
@@ -218,7 +217,7 @@ def email(to, subject, body, cap):
 def e_approved():
     body = (
         f'<p class="ptext">{rec("Hi Alex,")}</p>'
-        f'<p class="ptext">{rec("Your change is now live. Your link and QR code are unchanged.")}</p>'
+        f'<p class="ptext">{rec("Your change is now live.")}</p>'
         f'<dl class="kv"><div><dt>Designation</dt><dd style="margin:0">{E(P["desig_new"])}</dd></div></dl>'
     )
     return email(P["email"], "Name card change approved", body, "Change approved")
@@ -230,7 +229,7 @@ def e_rejected():
         f'<p class="ptext">{rec("Your change wasn’t approved.")}</p>'
         f'<div class="panel" style="padding:8px 10px;font-size:12px"><b>{rec("Reason from reviewer")}</b>'
         '<div>"Please use your designation as it appears in HR records."</div></div>'
-        f'<p class="ptext">{rec("Your current card stays live. To edit, open")} <span class="linktext">me.minmed.sg/staff</span></p>'
+        f'<p class="ptext">{rec("To edit, open")} <span class="linktext">me.minmed.sg/staff</span></p>'
     )
     return email(P["email"], "Name card change not approved", body, "Change not approved")
 
@@ -289,7 +288,7 @@ def rv_changed():
     return (
         f'<p class="ptitle">{E(P["name"])}</p>'
         f'<div class="status st-error"><span class="ic" aria-hidden="true">!</span><span class="t">{rec("This change was updated")}</span></div>'
-        f'<p class="ptext">{rec("Nothing was published. Please review the latest version.")}</p>'
+        f'<p class="ptext">{rec("Please review the latest version.")}</p>'
         f'<div class="btn primary">{rec("Load latest version")}</div><div class="blank"></div>'
     )
 
@@ -350,7 +349,7 @@ def card(title, who, visual, notes):
 
 QUESTIONS = [
     ("q1", "Card unavailable page", "Show the name, the status and the check time. Hide the photo, designation, contacts and Save contact."),
-    ("q2", "Temporary verification error page", "Show no card details at all. Explain that it doesn't mean the person has left, and offer Try again."),
+    ("q2", "Temporary verification error page", "Show no card details at all. One line and a Try again button."),
     ("q3", "New card before first approval", "Show the submitted card in the staff view, labelled \"Preview · not public yet\"."),
     ("q4", "Signing in after deactivation", "Allow it, but show only the status and who to contact. No card, no buttons."),
     ("q5", "Reviewer and administrator screens", "Yes. Six screens below: review queue, review, reason, changed version, held application, deactivate."),
@@ -371,23 +370,23 @@ def summary():
 WORDING = [
     ("Staff · sign-in screen", "Please sign in with your Minmed registered email address. [Sign in with Google]"),
     ("Staff · sign-in or access fails, e.g. non-Minmed account or failed identity check (§8)", "Please sign in with your Minmed registered email address. [Try again]"),
-    ("Staff · application held (§8)", "Your application is on hold. An administrator will check it."),
+    ("Staff · application held (§8)", "Your application is on hold."),
     ("Staff · new card waiting for approval", "You can share your card once it's approved. Card label: Preview · not public yet."),
     ("Staff · change form button", "[Submit for review]"),
     ("Staff · editing during review", "Replace your pending change? Review will start again. [Replace and submit] [Cancel]"),
-    ("Staff · status can't be checked", "Couldn't check your card. Your card hasn't changed. Please try again later. [Try again]"),
+    ("Staff · status can't be checked", "Couldn't check your card. Please try again later. [Try again]"),
     ("Staff · download fails", "Download failed. [Try again]"),
     ("Staff · card deactivated", "Contact HR if this is a mistake. (Below the Card deactivated status.)"),
     ("Recipient · Card unavailable notice", "{name} is no longer with Minmed."),
-    ("Recipient · Temporary verification error", "We couldn't check this card. This doesn't mean the person has left. [Try again]"),
+    ("Recipient · Temporary verification error", "We couldn't check this card. [Try again]"),
     ("Recipient · CAPTCHA (§8)", "Quick check. Please confirm you're a person to continue."),
     ("Recipient · CAPTCHA failed", "Check failed. [Try again]"),
     ("Recipient · slowed down or blocked (§8)", "Too many cards opened. Please try again after {time}."),
     ("Recipient · How to verify panel title", "How to check this card"),
-    ("Reviewer · change edited during review", "This change was updated. Nothing was published. Please review the latest version. [Load latest version]"),
+    ("Reviewer · change edited during review", "This change was updated. Please review the latest version. [Load latest version]"),
     ("Administrator · confirm deactivation", "Deactivate {name}'s card? This takes effect immediately and is recorded. [Deactivate] [Cancel]"),
-    ("Email · change approved", "Subject: Name card change approved. Hi {first name}, your change is now live. Your link and QR code are unchanged. {changed fields}"),
-    ("Email · change not approved", "Subject: Name card change not approved. Hi {first name}, your change wasn't approved. Reason from reviewer: {reason}. Your current card stays live. To edit, open me.minmed.sg/staff."),
+    ("Email · change approved", "Subject: Name card change approved. Hi {first name}, your change is now live. {changed fields}"),
+    ("Email · change not approved", "Subject: Name card change not approved. Hi {first name}, your change wasn't approved. Reason from reviewer: {reason}. To edit, open me.minmed.sg/staff."),
     ("Email · deactivation to manage@minmed.sg", "Subject: Name card deactivated: {name}. Card, Action, By, Time."),
     ("All emails · sender", "Minmed Name Cards <no-reply@minmed.sg> (sample address)"),
 ]
@@ -445,7 +444,7 @@ def recommended_page():
 
     q2 = qa("q2", 2, "What does the Temporary verification error page show?", QUESTIONS[1][2], [
         "Nothing was confirmed, so nothing is shown: no name, no photo and no check time (§7.12: no protected response is released).",
-        "Say plainly that it doesn't mean the person has left (§5.2).",
+        "The heading already says the error is temporary. The How to verify panel explains that it doesn't mean the person has left (§5.2).",
         "Offer Try again, since most outages are short.",
         "Use this same screen when the card lookup fails. Only a failed CAPTCHA gets its own short message (see question 7). That's one fewer screen meaning the same thing.",
     ], card("Recommended verification error page", "Recipient", phone(r_temp_error(), top=addr(), cap=pub_cap()),
@@ -511,7 +510,7 @@ def recommended_page():
         card("Editing during review", "Staff", phone(s_edit_again(), top=apphead(), cap=staff_cap()),
              ["Asked as a question so they can back out."]),
         card("Status can't be checked", "Staff", phone(s_temp_error(), top=apphead(), cap=staff_cap()),
-             ["Says the card hasn't changed, as §5.1 requires."]),
+             ["Short. Nothing about the card changes when this happens (§5.1), so the screen doesn't need to say so."]),
         card("Download fails", "Staff", phone(s_download_failed(), top=apphead(), cap=staff_cap()),
              ["Short. The spec already rules out giving them an empty or partial file."]),
     ])
@@ -526,12 +525,13 @@ def recommended_page():
              ["Title says \"check\", not \"verify\", in line with the rule that the page never says \"Verified\"."]),
     ])
     w_email = "".join([
-        card("Change approved", "Officer's inbox", e_approved(), ["Says the link and QR haven't changed, so there's nothing to reshare."]),
-        card("Change not approved", "Officer's inbox", e_rejected(), ["Says the current card is still live."]),
+        card("Change approved", "Officer's inbox", e_approved(), ["Says the change is live and lists what changed."]),
+        card("Change not approved", "Officer's inbox", e_rejected(), ["Gives the reason and where to edit."]),
         card("Deactivation notice", "manage@minmed.sg", e_deactivated(), ["The fields §7.14 asks for: account, card and time."]),
     ])
     q7 = qa("q7", 7, "What should the undefined messages and buttons say?", QUESTIONS[6][2], [
         "One short line per screen saying what to do next. Staff already know the rules, so screens don't explain them.",
+        "The only exception is the two confirmation boxes. Each keeps one line saying what will happen, so it's more than \"Are you sure?\"",
         "No error codes, and nothing that tells a scraper which rule it tripped.",
         "Emails come from one fixed address on minmed.sg, set up with SPF, DKIM and DMARC so staff can trust them. Emails link to me.minmed.sg/staff and never ask for a password.",
     ], "").replace("</section>",
