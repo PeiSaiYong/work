@@ -9,6 +9,7 @@ import html
 import re
 
 import mocks as M
+import preview as PV
 from mocks import E, LINK, chip, mark, thumb
 
 SRC = Path(__file__).resolve().parent
@@ -69,6 +70,46 @@ RULES = [
 ]
 
 
+# ------------------------------------------------------------------ card preview (dialog)
+
+PREVIEW_CSS = """
+.pv-cta { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; margin: 14px 0 0; }
+.pv-open { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 0; border-radius: 10px; background: var(--plum); color: #fff; font: 700 0.9rem/1.2 "Open Sans", sans-serif; cursor: pointer; }
+.pv-open:hover { background: #84396e; }
+.pv-open:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+.pv-open .ic { width: 16px; height: 16px; }
+.pv-cta span { color: var(--muted); font-size: 0.86rem; }
+.pvd { padding: 0; border: 0; background: transparent; overflow: visible; max-width: none; max-height: none; }
+.pvd::backdrop { background: rgba(25, 38, 55, 0.62); }
+.pvd form { position: absolute; top: 0; right: -56px; margin: 0; z-index: 2; }
+.pvd-x { width: 40px; height: 40px; border-radius: 50%; border: 0; background: #fff; color: var(--navy); font: 400 26px/1 "Open Sans", sans-serif; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
+.pvd-x:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+@media (max-width: 520px) {
+  .pvd { width: 100vw; height: 100vh; height: 100dvh; margin: 0; }
+  .pvd .pvw { height: 100%; }
+  .pvd .pvw .pv-dev { width: 100%; height: 100%; border: 0; border-radius: 0; box-shadow: none; }
+  .pvd .pvw .pv-sb, .pvd .pvw .pv-bar { display: none; }
+  .pvd form { top: 10px; right: 10px; }
+}
+"""
+
+
+def preview_button():
+    return (
+        '<div class="pv-cta"><button type="button" class="pv-open" data-preview="card-preview">'
+        f'{M.ic("phone")}Preview the card at full size</button>'
+        "<span>What a visitor sees after scanning a QR code, with made-up details.</span></div>"
+    )
+
+
+def preview_dialog():
+    return (
+        '<dialog id="card-preview" class="pvd" aria-label="Card preview at full size">'
+        '<form method="dialog"><button class="pvd-x" aria-label="Close preview">×</button></form>'
+        f"{PV.device()}</dialog>"
+    )
+
+
 # ------------------------------------------------------------------ sections
 
 def head():
@@ -85,6 +126,9 @@ def head():
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 {(SRC / "scope.css").read_text()}
+{PV.card_css()}
+{PV.FRAME_CSS}
+{PREVIEW_CSS}
 </style>
 </head>
 <body>
@@ -108,6 +152,7 @@ def intro():
   <span>{chip("Confirmed", "dec")} you decided it</span>
   <span>{chip("Test", "test")} try on a test app before the build</span>
 </div>
+{preview_button()}
 """
 
 
@@ -565,6 +610,7 @@ def s_pages():
 <h2>Pages</h2>
 <p>High-fidelity mockups of every page and message. You approved the wording on 16/10/2026. The “mm” logo stands in for the real one, and the QR codes can't be scanned.</p>
 <h3>Public card</h3>
+{preview_button()}
 <div class="figs">{phone_figs}{desktop}</div>
 <h3>Staff</h3>
 <div class="figs">{staff_figs}</div>
@@ -825,45 +871,56 @@ def s_pending():
 
 
 def foot():
-    return """
+    return f"""
 <div class="footer">
   <p><b>Sources.</b> Minmed Digital Name Cards Technical Specification draft 0.2 (15/10/2026). Your decisions in this conversation on 16/10/2026. Standards, research, platform and vendor documentation linked in sections 8, 9 and 11.</p>
 </div>
 </main>
+{preview_dialog()}
 <script>
 document.documentElement.classList.add("js");
-function fitShots() {
-  document.querySelectorAll(".shot").forEach(function (s) {
+function fitShots() {{
+  document.querySelectorAll(".shot").forEach(function (s) {{
     var c = s.firstElementChild;
     if (!c) return;
     c.style.zoom = "";
-    if (s.classList.contains("zoomed")) { s.classList.remove("fit"); return; }
+    if (s.classList.contains("zoomed")) {{ s.classList.remove("fit"); return; }}
     var need = c.scrollWidth, have = s.clientWidth - 4;
-    if (need > have + 1) { c.style.zoom = (have / need).toFixed(4); s.classList.add("fit"); }
-    else { s.classList.remove("fit"); }
-  });
-}
-document.addEventListener("click", function (e) {
+    if (need > have + 1) {{ c.style.zoom = (have / need).toFixed(4); s.classList.add("fit"); }}
+    else {{ s.classList.remove("fit"); }}
+  }});
+}}
+document.addEventListener("click", function (e) {{
   var s = e.target.closest && e.target.closest(".shot");
   if (!s || !(s.classList.contains("fit") || s.classList.contains("zoomed"))) return;
   s.classList.toggle("zoomed");
   fitShots();
-});
+}});
 window.addEventListener("resize", fitShots);
 window.addEventListener("load", fitShots);
 fitShots();
-document.addEventListener("click", function (e) {
+document.addEventListener("click", function (e) {{
+  var b = e.target.closest && e.target.closest("[data-preview]");
+  if (b) {{
+    var d = document.getElementById(b.getAttribute("data-preview"));
+    if (d && d.showModal) d.showModal();
+    else if (d) d.setAttribute("open", "");
+    return;
+  }}
+  if (e.target.classList && e.target.classList.contains("pvd")) e.target.close();
+}});
+document.addEventListener("click", function (e) {{
   var a = e.target.closest && e.target.closest('a[href^="#"]');
   if (!a) return;
   var id = decodeURIComponent(a.getAttribute("href").slice(1));
   var el = id && document.getElementById(id);
   if (!el) return;
   e.preventDefault();
-  el.scrollIntoView({ behavior: "smooth", block: "start" });
-  if (/^(https?|file|blob):$/.test(location.protocol)) {
-    try { history.replaceState(null, "", "#" + id); } catch (err) {}
-  }
-});
+  el.scrollIntoView({{ behavior: "smooth", block: "start" }});
+  if (/^(https?|file|blob):$/.test(location.protocol)) {{
+    try {{ history.replaceState(null, "", "#" + id); }} catch (err) {{}}
+  }}
+}});
 </script>
 </body>
 </html>
@@ -915,6 +972,7 @@ def build():
     assert "zapkad" not in doc.lower(), "Zapkad must not appear in the scope"
     OUT.write_text(doc)
     print(f"wrote {OUT} ({len(doc):,} bytes, {len(USED)} figures)")
+    PV.write()
 
 
 if __name__ == "__main__":

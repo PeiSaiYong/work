@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en-SG">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="robots" content="noindex">
+<meta name="description" content="Preview of a Minmed digital name card as a visitor sees it after scanning the QR code. Made-up details.">
+<title>Card Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+.pvw .ic { width: 22.5px; height: 22.5px; flex: none; }
+.pvw .mk { flex: none; display: block; }
+.pvw .pc { position: relative; flex: 1; display: flex; flex-direction: column; font-family: "Open Sans", sans-serif; color: #2b2f36; background: #fff; text-align: left; }
+.pvw .band { height: 120px; background: linear-gradient(135deg, #8b3f75 0%, #ad5e99 62%, #c487b5 100%); position: relative; flex: none; }
+.pvw .band.sm { height: 77.5px; }
+.pvw .blogo { position: absolute; left: 20px; top: 17.5px; display: flex; align-items: center; gap: 8.8px; color: #fff; font: 900 18.8px/1 "Lato", sans-serif; }
+.pvw .pc-av { width: 105px; height: 105px; border-radius: 50%; border: 5px solid #fff; background: #efdfeb; color: #96487f; display: grid; place-items: center; font: 900 33.8px/1 "Lato", sans-serif; margin: -55px auto 0; position: relative; box-shadow: 0 5px 17.5px rgba(25, 38, 55, 0.14); flex: none; }
+.pvw .pc-name { text-align: center; font: 900 26.2px/1.2 "Lato", sans-serif; color: #192637; margin: 10px 17.5px 0; }
+.pvw .pc-desig { text-align: center; font-size: 16.2px; line-height: 1.35; color: #5f6673; margin: 3.8px 17.5px 0; }
+.pvw .pc-co { text-align: center; font: 900 14.4px/1 "Lato", sans-serif; color: #96487f; margin-top: 8.8px; letter-spacing: 0.1em; text-transform: uppercase; }
+.pvw .pc-act { padding: 17.5px 20px 0; }
+.pvw .btn-p { display: flex; align-items: center; justify-content: center; gap: 10px; background: #96487f; color: #fff; font: 700 17.5px/1 "Open Sans", sans-serif; border-radius: 15px; height: 55px; box-shadow: 0 2.5px 7.5px rgba(150, 72, 127, 0.3); }
+.pvw .btn-p.sm { display: inline-flex; height: 47.5px; padding: 0 25px; font-size: 16.2px; }
+.pvw .pc-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+.pvw .pc-row.one { grid-template-columns: 1fr; }
+.pvw .btn-s { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6.2px; height: 70px; border: 1px solid #e6e2e6; border-radius: 15px; font: 600 14.4px/1 "Open Sans", sans-serif; color: #192637; background: #fff; }
+.pvw .btn-s .ic { color: #96487f; }
+.pvw .pc-list { margin: 17.5px 20px 0; }
+.pvw .pc-item { display: flex; gap: 12.5px; padding: 11.2px 0; border-top: 1px solid #efecef; font-size: 15.6px; line-height: 1.35; overflow-wrap: anywhere; }
+.pvw .pc-item .ic { width: 20px; height: 20px; color: #96487f; margin-top: 2.5px; }
+.pvw .pc-item .k { display: block; color: #5f6673; font-size: 13.1px; }
+.pvw .pc-item .lnk { color: #96487f; }
+.pvw .pc-sec { font: 900 13.1px/1 "Lato", sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: #5f6673; margin: 7.5px 0 7.5px; padding-top: 15px; border-top: 1px solid #efecef; }
+.pvw .pc-bio { font-size: 15.6px; line-height: 1.45; margin: 0 0 7.5px; }
+.pvw .pc-foot { margin-top: auto; padding: 22.5px 20px 20px; text-align: center; }
+.pvw .pc-foot span { display: inline-flex; align-items: center; gap: 7.5px; font: 600 15.6px/1 "Open Sans", sans-serif; color: #96487f; }
+.pvw .pc-foot .ic { width: 18.8px; height: 18.8px; }
+
+.pvw .blogo .mk { width: 28px; height: 28px; }
+.pvw .lk { width: 12px; height: 12px; flex: none; opacity: 0.55; }
+.pvw .pv-dev { width: 412px; height: var(--dev-h, min(844px, calc(100vh - 48px))); margin: 0 auto; border: 11px solid #101216; border-radius: 54px; background: #fff; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(25, 38, 55, 0.28); text-align: left; }
+.pvw .pv-sb { height: 46px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 6px 30px 0 36px; font: 700 15px/1 "Open Sans", sans-serif; color: #111; background: #fff; }
+.pvw .pv-scr { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; background: #fff; }
+.pvw .pv-bar { flex: none; padding: 9px 16px 18px; background: #f5f5f7; border-top: 1px solid #e4e4e8; display: flex; justify-content: center; }
+.pvw .pv-bar span { display: inline-flex; align-items: center; gap: 6px; background: #e6e6ea; border-radius: 13px; padding: 8px 18px; font: 600 14px/1 "Open Sans", sans-serif; color: #2b2f36; }
+.pvw .pv-note { flex: none; text-align: center; font: 600 12px/1.4 "Open Sans", sans-serif; color: #8f95a0; padding: 0 16px 18px; }
+
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: linear-gradient(#f8f0f6, #f2eef2) fixed; color: #2b2f36; font: 15px/1.5 "Open Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+.pv-stage { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px 16px; --dev-h: min(844px, calc(100vh - 150px)); }
+.pv-intro { text-align: center; max-width: 440px; }
+.pv-intro b { display: block; font: 900 20px/1.25 "Lato", sans-serif; color: #192637; }
+.pv-intro span { display: block; margin-top: 4px; font-size: 14px; color: #5f6673; }
+@media (max-width: 520px) {
+  body { background: #fff; }
+  .pv-stage { display: block; padding: 0; }
+  .pv-intro, .pvw .pv-sb, .pvw .pv-bar { display: none; }
+  .pvw .pv-dev { width: auto; height: auto; min-height: 100vh; min-height: 100dvh; border: 0; border-radius: 0; box-shadow: none; }
+  .pvw .pv-scr { overflow: visible; }
+}
+
+</style>
+</head>
+<body>
+<main class="pv-stage">
+<div class="pv-intro"><b>Minmed digital name card</b><span>What a visitor sees after scanning a staff member's QR code. Made-up details; the buttons don't work.</span></div>
+<div class="pvw"><div class="pv-dev"><div class="pv-sb"><span>9:41</span><svg width="44" height="11" viewBox="0 0 44 11" aria-hidden="true"><rect x="0" y="7" width="3" height="4" rx=".8" fill="currentColor"/><rect x="4.5" y="5" width="3" height="6" rx=".8" fill="currentColor"/><rect x="9" y="3" width="3" height="8" rx=".8" fill="currentColor"/><rect x="13.5" y="1" width="3" height="10" rx=".8" fill="currentColor"/><rect x="21.5" y=".5" width="19" height="10" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="23" y="2" width="14" height="7" rx="1.8" fill="currentColor"/><rect x="41.5" y="3.5" width="1.6" height="4" rx=".8" fill="currentColor" opacity=".45"/></svg></div><div class="pv-scr"><div class="pc"><div class="band"><div class="blogo"><svg class="mk" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="16" fill="#fff"/><text x="16" y="21" text-anchor="middle" font-family="Lato, Arial, sans-serif" font-size="14" font-weight="900" fill="#96487F">mm</text></svg><span>Minmed</span></div></div><div class="pc-av">AT</div><div class="pc-name">Alex Tan</div><div class="pc-desig">Corporate Sales Manager</div><div class="pc-co">Minmed</div><div class="pc-act"><div class="btn-p"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3.1-7 7-7s7 3 7 7"/><path d="M19 5v6M16 8h6"/></svg>Save contact</div><div class="pc-row"><div class="btn-s"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email</div><div class="btn-s"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M11 18h2"/></svg>Call</div><div class="btn-s"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H10l-5 4v-4H4z"/></svg>WhatsApp</div></div></div><div class="pc-list"><div class="pc-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span><span class="k">Work email</span>alex.tan@minmed.sg</span></div><div class="pc-item"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M11 18h2"/></svg><span><span class="k">Mobile</span>+65 8000 1234</span></div><div class="pc-sec">About</div><p class="pc-bio">Helps companies plan health screenings and vaccination programmes for their staff.</p><div class="pc-item"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><text x="12" y="17" text-anchor="middle" font-family="Lato, Arial, sans-serif" font-size="13" font-weight="900" fill="currentColor">Aa</text></svg><span><span class="k">Languages</span>English, Mandarin, Malay</span></div><div class="pc-item"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3.5" fill="currentColor"/><text x="12" y="16.6" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" font-weight="700" fill="#fff">in</text></svg><span><span class="k">LinkedIn</span><span class="lnk">linkedin.com/in/alextan-sample</span></span></div></div><div class="pc-foot"><span><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg>About Minmed</span></div></div><div class="pv-note">Preview with made-up details</div></div><div class="pv-bar"><span><svg class="lk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></svg>me.minmed.sg</span></div></div></div>
+</main>
+</body>
+</html>
