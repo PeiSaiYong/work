@@ -34,10 +34,9 @@ def r_unavailable():
         f'<p class="pname" style="margin-top:22px">{rec(P["name"])}</p>'
         '<div class="status st-unavail"><span class="ic" aria-hidden="true">⊘</span><span class="t">Card unavailable'
         f'<span class="s">{rec("Checked " + TIME)}</span></span></div>'
-        f'<p class="ptext">{rec(P["name"] + " is no longer with Minmed. Don’t rely on saved contacts, screenshots or old messages with this card.")}</p>'
+        f'<p class="ptext">{rec(P["name"] + " is no longer with Minmed. Don’t rely on saved copies of this card.")}</p>'
         f'<span class="howto">How to verify {badge("proposed", mini=True)}</span>'
         '<div class="blank"></div>'
-        f'<p class="ptext" style="text-align:center">{rec("For help, visit minmed.sg.")}</p>'
         '<div class="foot-link">About Minmed</div>'
     )
 
@@ -46,7 +45,7 @@ def r_temp_error():
     return (
         '<div style="height:18px"></div>'
         '<div class="status st-error"><span class="ic" aria-hidden="true">!</span><span class="t">Temporary verification error</span></div>'
-        f'<p class="ptext">{rec("We couldn’t check this card just now. This doesn’t mean the person has left Minmed. Please try again in a few minutes.")}</p>'
+        f'<p class="ptext">{rec("We couldn’t check this card. This doesn’t mean the person has left.")}</p>'
         f'<div class="btn primary">{rec("Try again")}</div>'
         f'<span class="howto">How to verify {badge("proposed", mini=True)}</span>'
         '<div class="blank"></div><div class="foot-link">About Minmed</div>'
@@ -57,7 +56,7 @@ def r_captcha():
     return (
         '<div style="height:18px"></div>'
         f'<p class="ptitle">{rec("Quick check")}</p>'
-        f'<p class="ptext">{rec("Please confirm you’re a person to keep viewing staff cards. This helps protect Minmed staff details from automated copying.")}</p>'
+        f'<p class="ptext">{rec("Please confirm you’re a person to continue.")}</p>'
         '<div class="captcha"><span class="box" aria-hidden="true"></span><span class="small">'
         + phi("challenge widget")
         + f'<br>{badge("candidate", "Candidate: Cloudflare Turnstile", mini=True)}</span></div>'
@@ -68,8 +67,7 @@ def r_captcha():
 def r_captcha_failed():
     return (
         '<div style="height:18px"></div>'
-        f'<p class="ptitle">{rec("That check didn’t work")}</p>'
-        f'<p class="ptext">{rec("Please try again.")}</p>'
+        f'<p class="ptitle">{rec("Check failed")}</p>'
         f'<div class="btn primary">{rec("Try again")}</div>'
         '<div class="blank"></div><div class="foot-link">About Minmed</div>'
     )
@@ -79,7 +77,7 @@ def r_blocked():
     return (
         '<div style="height:18px"></div>'
         f'<p class="ptitle">{rec("Too many cards opened")}</p>'
-        f'<p class="ptext">{rec("To protect staff details, viewing cards is paused for a while. Please try again after 10:57 am.")}</p>'
+        f'<p class="ptext">{rec("Please try again after 10:57 am.")}</p>'
         f'<p class="psmall">{badge("sample", "Sample time", mini=True)} Real cooldown {badge("pending", mini=True)}</p>'
         '<div class="blank"></div><div class="foot-link">About Minmed</div>'
     )
@@ -114,20 +112,17 @@ def s_signin():
     big = mark("mark").replace('class="mark"', 'class="mark" style="width:52px;height:52px"')
     return (
         f'<div style="text-align:center;margin-top:34px">{big}</div>'
-        f'<p class="ptitle" style="text-align:center">{rec("Minmed Name Cards")}</p>'
-        f'<p class="ptext" style="text-align:center">{rec("For Minmed staff. Sign in with your Minmed Google account to get your name card.")}</p>'
+        f'<p class="ptext" style="text-align:center">{rec("Please sign in with your Minmed registered email address.")}</p>'
         f'<div class="btn primary">{rec("Sign in with Google")}</div>'
         '<div class="blank"></div>'
-        f'<p class="psmall" style="text-align:center">{rec("Got a card link from someone? Just open it. You don’t need to sign in.")}</p>'
     )
 
 
 def s_wrong_account():
     return (
         '<div style="height:10px"></div>'
-        f'<p class="ptitle">{rec("Use your Minmed Google account")}</p>'
-        f'<p class="ptext">{rec("You’re signed in as alex.personal@example.com, which isn’t a Minmed account. Name cards are only for Minmed staff.")}</p>'
-        f'<div class="btn primary">{rec("Use a different account")}</div>'
+        f'<p class="ptext">{rec("Please sign in with your Minmed registered email address.")}</p>'
+        f'<div class="btn primary">{rec("Try again")}</div>'
         '<div class="blank"></div>'
     )
 
@@ -136,8 +131,7 @@ def s_held():
     return (
         '<div style="height:10px"></div>'
         f'<p class="ptitle">{rec("Your application is on hold")}</p>'
-        f'<p class="ptext">{rec("We couldn’t match your account to the staff directory, so an administrator will check it. Nothing is published until they do. You don’t need to do anything.")}</p>'
-        f'<dl class="kv"><div><dt>{rec("Signed in as")}</dt><dd style="margin:0">alex.t@minmed.sg</dd></div></dl>'
+        f'<p class="ptext">{rec("An administrator will check it.")}</p>'
         '<div class="blank"></div>'
     )
 
@@ -145,7 +139,7 @@ def s_held():
 def s_new_pending():
     return (
         staff_status("pending")
-        + f'<p class="ptext">{rec("Your card is waiting for review. You can share it once it’s approved.")}</p>'
+        + f'<p class="ptext">{rec("You can share your card once it’s approved.")}</p>'
         + f'<p class="prevlabel">{rec("Preview · not public yet")}</p>'
         + ncard()
         + staff_buttons(share_on=False, note=False)
@@ -170,7 +164,7 @@ def s_edit_again():
     dialog = (
         '<div class="dialog">'
         f'<p class="ptitle">{rec("Replace your pending change?")}</p>'
-        f'<p class="ptext">{rec("You already have a change waiting for review. If you submit this one, it replaces that change and review starts again.")}</p>'
+        f'<p class="ptext">{rec("Review will start again.")}</p>'
         f'<div class="btn primary">{rec("Replace and submit")}</div>'
         f'<div class="btn ghost">{rec("Cancel")}</div></div>'
     )
@@ -184,16 +178,15 @@ def s_submit():
 def s_deactivated():
     return (
         staff_status("deactivated")
-        + f'<p class="ptext">{rec("Your card has been deactivated. Your link now shows Card unavailable, and your card can’t be shared or downloaded.")}</p>'
-        + f'<p class="ptext">{rec("If you think this is a mistake, contact HR.")}</p>'
+        + f'<p class="ptext">{rec("Contact HR if this is a mistake.")}</p>'
         + '<div class="blank"></div>'
     )
 
 
 def s_temp_error():
     return (
-        f'<div class="status st-error"><span class="ic" aria-hidden="true">!</span><span class="t">{rec("We couldn’t check your card right now")}</span></div>'
-        f'<p class="ptext">{rec("Nothing about your card has changed. Please try again in a few minutes.")}</p>'
+        f'<div class="status st-error"><span class="ic" aria-hidden="true">!</span><span class="t">{rec("Couldn’t check your card")}</span></div>'
+        f'<p class="ptext">{rec("Your card hasn’t changed. Please try again later.")}</p>'
         f'<div class="btn primary">{rec("Try again")}</div><div class="blank"></div>'
     )
 
@@ -201,7 +194,7 @@ def s_temp_error():
 def s_download_failed():
     return (
         staff_status("approved") + ncard()
-        + f'<div class="toast"><span style="flex:1">{rec("Download didn’t work. Nothing was saved.")}</span>'
+        + f'<div class="toast"><span style="flex:1">{rec("Download failed.")}</span>'
         f'<span class="btn sm">{rec("Try again")}</span></div>'
         + staff_buttons()
     )
@@ -225,22 +218,21 @@ def email(to, subject, body, cap):
 def e_approved():
     body = (
         f'<p class="ptext">{rec("Hi Alex,")}</p>'
-        f'<p class="ptext">{rec("Your name card change is approved and live now.")}</p>'
+        f'<p class="ptext">{rec("Your change is now live. Your link and QR code are unchanged.")}</p>'
         f'<dl class="kv"><div><dt>Designation</dt><dd style="margin:0">{E(P["desig_new"])}</dd></div></dl>'
-        f'<p class="ptext">{rec("Your link and QR code stay the same, so there’s nothing to share again:")} <span class="linktext">me.minmed.sg/{P["slug"]}</span></p>'
     )
-    return email(P["email"], "Your name card change is approved", body, "Change approved")
+    return email(P["email"], "Name card change approved", body, "Change approved")
 
 
 def e_rejected():
     body = (
         f'<p class="ptext">{rec("Hi Alex,")}</p>'
-        f'<p class="ptext">{rec("Your name card change wasn’t approved.")}</p>'
+        f'<p class="ptext">{rec("Your change wasn’t approved.")}</p>'
         f'<div class="panel" style="padding:8px 10px;font-size:12px"><b>{rec("Reason from reviewer")}</b>'
         '<div>"Please use your designation as it appears in HR records."</div></div>'
-        f'<p class="ptext">{rec("Your current card is still live and unchanged. To edit and resubmit, open")} <span class="linktext">me.minmed.sg/staff</span></p>'
+        f'<p class="ptext">{rec("Your current card stays live. To edit, open")} <span class="linktext">me.minmed.sg/staff</span></p>'
     )
-    return email(P["email"], "Your name card change wasn’t approved", body, "Change not approved")
+    return email(P["email"], "Name card change not approved", body, "Change not approved")
 
 
 def e_deactivated():
@@ -249,7 +241,6 @@ def e_deactivated():
         f'<div><dt>{rec("Action")}</dt><dd style="margin:0">{rec("Deactivated")}</dd></div>'
         f'<div><dt>{rec("By")}</dt><dd style="margin:0">hr.admin@minmed.sg</dd></div>'
         f'<div><dt>{rec("Time")}</dt><dd style="margin:0">{E(TIME)}</dd></div></dl>'
-        f'<p class="ptext">{rec("The public page now shows Card unavailable.")}</p>'
     )
     return email("manage@minmed.sg", "Name card deactivated: Alex Tan", body, "To manage@minmed.sg")
 
@@ -298,7 +289,7 @@ def rv_changed():
     return (
         f'<p class="ptitle">{E(P["name"])}</p>'
         f'<div class="status st-error"><span class="ic" aria-hidden="true">!</span><span class="t">{rec("This change was updated")}</span></div>'
-        f'<p class="ptext">{rec("Alex edited this change while you were reviewing it. Nothing was published. Review the latest version instead.")}</p>'
+        f'<p class="ptext">{rec("Nothing was published. Please review the latest version.")}</p>'
         f'<div class="btn primary">{rec("Load latest version")}</div><div class="blank"></div>'
     )
 
@@ -326,7 +317,7 @@ def ad_deactivate():
     dialog = (
         '<div class="dialog">'
         f'<p class="ptitle">{rec("Deactivate Alex Tan’s card?")}</p>'
-        f'<p class="ptext">{rec("Their link will show Card unavailable straight away, and sharing and downloads stop. This is recorded and emailed to manage@minmed.sg.")}</p>'
+        f'<p class="ptext">{rec("This takes effect immediately and is recorded.")}</p>'
         f'<div class="btn danger primary">{rec("Deactivate")}</div>'
         f'<div class="btn ghost">{rec("Cancel")}</div></div>'
     )
@@ -361,10 +352,10 @@ QUESTIONS = [
     ("q1", "Card unavailable page", "Show the name, the status and the check time. Hide the photo, designation, contacts and Save contact."),
     ("q2", "Temporary verification error page", "Show no card details at all. Explain that it doesn't mean the person has left, and offer Try again."),
     ("q3", "New card before first approval", "Show the submitted card in the staff view, labelled \"Preview · not public yet\"."),
-    ("q4", "Signing in after deactivation", "Allow it, but show only the status and what it means. No card, no buttons."),
+    ("q4", "Signing in after deactivation", "Allow it, but show only the status and who to contact. No card, no buttons."),
     ("q5", "Reviewer and administrator screens", "Yes. Six screens below: review queue, review, reason, changed version, held application, deactivate."),
     ("q6", "Where the staff view lives", "me.minmed.sg/staff, with \"staff\" reserved so no card can use that address."),
-    ("q7", "Undefined wording and button labels", "Draft wording for every placeholder, collected in one table at the end of this section."),
+    ("q7", "Undefined wording and button labels", "One short line per screen, collected in one table at the end of this section."),
     ("q8", "Format of the check time", "An exact date and time, such as \"Checked 10:42 am, 15 Oct 2026\". Never \"just now\"."),
 ]
 
@@ -378,24 +369,26 @@ def summary():
 
 
 WORDING = [
-    ("Staff · sign-in screen", "Minmed Name Cards. For Minmed staff. Sign in with your Minmed Google account to get your name card. [Sign in with Google] Got a card link from someone? Just open it. You don't need to sign in."),
-    ("Staff · non-Minmed account or identity check fails (§8)", "Use your Minmed Google account. You're signed in as {email}, which isn't a Minmed account. Name cards are only for Minmed staff. [Use a different account]. Leave out the sentence with {email} when the account isn't known."),
-    ("Staff · application held (§8)", "Your application is on hold. We couldn't match your account to the staff directory, so an administrator will check it. Nothing is published until they do. You don't need to do anything."),
-    ("Staff · new card waiting for approval", "Your card is waiting for review. You can share it once it's approved. Card label: Preview · not public yet."),
+    ("Staff · sign-in screen", "Please sign in with your Minmed registered email address. [Sign in with Google]"),
+    ("Staff · sign-in or access fails, e.g. non-Minmed account or failed identity check (§8)", "Please sign in with your Minmed registered email address. [Try again]"),
+    ("Staff · application held (§8)", "Your application is on hold. An administrator will check it."),
+    ("Staff · new card waiting for approval", "You can share your card once it's approved. Card label: Preview · not public yet."),
     ("Staff · change form button", "[Submit for review]"),
-    ("Staff · editing during review", "Replace your pending change? You already have a change waiting for review. If you submit this one, it replaces that change and review starts again. [Replace and submit] [Cancel]"),
-    ("Staff · status can't be checked", "We couldn't check your card right now. Nothing about your card has changed. Please try again in a few minutes. [Try again]"),
-    ("Staff · download fails", "Download didn't work. Nothing was saved. [Try again]"),
-    ("Staff · card deactivated", "Your card has been deactivated. Your link now shows Card unavailable, and your card can't be shared or downloaded. If you think this is a mistake, contact HR."),
-    ("Recipient · Card unavailable notice", "{name} is no longer with Minmed. Don't rely on saved contacts, screenshots or old messages with this card. For help, visit minmed.sg."),
-    ("Recipient · Temporary verification error", "We couldn't check this card just now. This doesn't mean the person has left Minmed. Please try again in a few minutes. [Try again]"),
-    ("Recipient · CAPTCHA (§8)", "Quick check. Please confirm you're a person to keep viewing staff cards. This helps protect Minmed staff details from automated copying."),
-    ("Recipient · CAPTCHA failed", "That check didn't work. Please try again. [Try again]"),
-    ("Recipient · slowed down or blocked (§8)", "Too many cards opened. To protect staff details, viewing cards is paused for a while. Please try again after {time}."),
+    ("Staff · editing during review", "Replace your pending change? Review will start again. [Replace and submit] [Cancel]"),
+    ("Staff · status can't be checked", "Couldn't check your card. Your card hasn't changed. Please try again later. [Try again]"),
+    ("Staff · download fails", "Download failed. [Try again]"),
+    ("Staff · card deactivated", "Contact HR if this is a mistake. (Below the Card deactivated status.)"),
+    ("Recipient · Card unavailable notice", "{name} is no longer with Minmed. Don't rely on saved copies of this card."),
+    ("Recipient · Temporary verification error", "We couldn't check this card. This doesn't mean the person has left. [Try again]"),
+    ("Recipient · CAPTCHA (§8)", "Quick check. Please confirm you're a person to continue."),
+    ("Recipient · CAPTCHA failed", "Check failed. [Try again]"),
+    ("Recipient · slowed down or blocked (§8)", "Too many cards opened. Please try again after {time}."),
     ("Recipient · How to verify panel title", "How to check this card"),
-    ("Email · change approved", "Subject: Your name card change is approved. Hi {first name}, your name card change is approved and live now. {changed fields}. Your link and QR code stay the same, so there's nothing to share again: {link}"),
-    ("Email · change not approved", "Subject: Your name card change wasn't approved. Hi {first name}, your name card change wasn't approved. Reason from reviewer: {reason}. Your current card is still live and unchanged. To edit and resubmit, open me.minmed.sg/staff."),
-    ("Email · deactivation to manage@minmed.sg", "Subject: Name card deactivated: {name}. Card, Action, By, Time. The public page now shows Card unavailable."),
+    ("Reviewer · change edited during review", "This change was updated. Nothing was published. Please review the latest version. [Load latest version]"),
+    ("Administrator · confirm deactivation", "Deactivate {name}'s card? This takes effect immediately and is recorded. [Deactivate] [Cancel]"),
+    ("Email · change approved", "Subject: Name card change approved. Hi {first name}, your change is now live. Your link and QR code are unchanged. {changed fields}"),
+    ("Email · change not approved", "Subject: Name card change not approved. Hi {first name}, your change wasn't approved. Reason from reviewer: {reason}. Your current card stays live. To edit, open me.minmed.sg/staff."),
+    ("Email · deactivation to manage@minmed.sg", "Subject: Name card deactivated: {name}. Card, Action, By, Time."),
     ("All emails · sender", "Minmed Name Cards <no-reply@minmed.sg> (sample address)"),
 ]
 
@@ -444,7 +437,7 @@ def recommended_page():
         "Hide the photo, designation and contact details. They're out of date, and the person has left.",
         "No Save contact. New contact downloads stop after deactivation (§7.4, Proposed).",
         "Show the check time, as with Active, so a screenshot of this page also shows when it was taken.",
-        "Point to minmed.sg so the recipient has somewhere to go.",
+        "One short warning not to rely on saved copies. The About Minmed link still leads to minmed.sg.",
     ], card("Recommended Card unavailable page", "Recipient", phone(r_unavailable(), top=addr(), cap=pub_cap()),
             ["Compare with page 3, step 4."]), side=True)
 
@@ -503,13 +496,14 @@ def recommended_page():
 
     w_staff = "".join([
         card("Sign-in screen", "Staff", phone(s_signin(), top=apphead(), cap="Sign-in"),
-             ["\"Sign in with Google\" is the label Google's own sign-in button uses.",
-              "The last line stops recipients thinking they need an account."]),
-        card("Non-Minmed account", "Staff", phone(s_wrong_account(), top=apphead(), cap=staff_cap()),
-             ["Showing the account they used makes the mistake obvious.",
-              "If the identity check fails and the account isn't known, leave out the sentence naming the account."]),
+             ["One line. Staff already know who the app is for.",
+              "\"Sign in with Google\" is the label Google's own sign-in button uses."]),
+        card("Sign-in or access fails", "Staff", phone(s_wrong_account(), top=apphead(), cap=staff_cap()),
+             ["The same line covers every sign-in or access failure, such as a non-Minmed account or a failed identity check.",
+              "It doesn't say which check failed, so it gives nothing away.",
+              "Try again lets them sign in with a different account."]),
         card("Application on hold", "Staff", phone(s_held(), top=apphead(), cap=staff_cap()),
-             ["Reassures them that nothing is wrong and nothing is published."]),
+             ["Kept separate from the line above, because an administrator still has to act (§5.1)."]),
         card("Change form button", "Staff", phone(s_submit(), top=apphead(), cap=staff_cap()),
              ["\"Submit for review\" matches the status they'll see next: Pending review."]),
         card("Editing during review", "Staff", phone(s_edit_again(), top=apphead(), cap=staff_cap()),
@@ -517,11 +511,11 @@ def recommended_page():
         card("Status can't be checked", "Staff", phone(s_temp_error(), top=apphead(), cap=staff_cap()),
              ["Says the card hasn't changed, as §5.1 requires."]),
         card("Download fails", "Staff", phone(s_download_failed(), top=apphead(), cap=staff_cap()),
-             ["Says nothing was saved, so they don't go looking for a broken file."]),
+             ["Short. The spec already rules out giving them an empty or partial file."]),
     ])
     w_recipient = "".join([
         card("CAPTCHA check", "Recipient", phone(r_captcha(), top=addr(), cap=pub_cap()),
-             ["Explains why, so genuine visitors don't feel accused."]),
+             ["One line. Visitors don't need the reasons."]),
         card("CAPTCHA failed", "Recipient", phone(r_captcha_failed(), top=addr(), cap=pub_cap()),
              ["Short, with nothing that helps a bot tune its attempts."]),
         card("Slowed down or blocked", "Recipient", phone(r_blocked(), top=addr(), cap=pub_cap()),
@@ -530,12 +524,12 @@ def recommended_page():
              ["Title says \"check\", not \"verify\", in line with the rule that the page never says \"Verified\"."]),
     ])
     w_email = "".join([
-        card("Change approved", "Officer's inbox", e_approved(), ["Tells them there's nothing to reshare."]),
+        card("Change approved", "Officer's inbox", e_approved(), ["Says the link and QR haven't changed, so there's nothing to reshare."]),
         card("Change not approved", "Officer's inbox", e_rejected(), ["Says the current card is still live."]),
         card("Deactivation notice", "manage@minmed.sg", e_deactivated(), ["The fields §7.14 asks for: account, card and time."]),
     ])
     q7 = qa("q7", 7, "What should the undefined messages and buttons say?", QUESTIONS[6][2], [
-        "Short sentences that say what happened and what to do next.",
+        "One short line per screen saying what to do next. Staff already know the rules, so screens don't explain them.",
         "No error codes, and nothing that tells a scraper which rule it tripped.",
         "Emails come from one fixed address on minmed.sg, set up with SPF, DKIM and DMARC so staff can trust them. Emails link to me.minmed.sg/staff and never ask for a password.",
     ], "").replace("</section>",
