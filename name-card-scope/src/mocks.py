@@ -21,9 +21,12 @@ P = {
     "bio": "Helps companies plan health screenings and vaccination programmes for their staff.",
     "langs": "English, Mandarin, Malay",
     "linkedin": "linkedin.com/in/alextan-sample",
+    "code": "qB8Rh9sTxKuaSF3YkGmD2w",
     "path": "/card/qB8Rh9sTxKuaSF3YkGmD2w",
+    "alias": "Alex-Tan",
 }
 LINK = "me.minmed.sg" + P["path"]
+LINK_ALIAS = f"me.minmed.sg/card/{P['alias']}/{P['code']}"
 
 
 # ---------------------------------------------------------------- small parts
@@ -304,7 +307,8 @@ def email_card():
         '<div class="ml-steps"><b>iPhone (iOS 27)</b><ol><li>Take a screenshot of the QR code.</li>'
         '<li>In Wallet, tap + then Create a Pass.</li><li>Choose the screenshot.</li></ol>'
         '<p>No Apple Intelligence? Choose Create Pass Manually and scan the QR code from a computer screen.</p></div>'
-        '<p class="ml-foot">Need a change? Reply to this email.</p>'
+        '<p class="ml-foot">Want your name in your link? Sign in at me.minmed.sg/my-card.</p>'
+        '<p class="ml-foot">Need another change? Reply to this email.</p>'
     )
     return mail(
         "Your Minmed digital name card",
@@ -348,7 +352,7 @@ def ad_page(active, inner, role="Super admin"):
 CARDS = [
     ("AT", "Alex Tan", "alex.tan@minmed.sg", "Corporate Sales Manager", True, 48, "15 Oct 2026"),
     ("PN", "Priya Nair", "priya.nair@minmed.sg", "HR Manager", True, 12, "14 Oct 2026"),
-    ("DL", "Daniel Lim", "daniel.lim@minmed.sg", "Business Development Executive", False, 0, "16 Oct 2026"),
+    ("NA", "Nur Aisyah", "nur.aisyah@minmed.sg", "Clinic Operations Executive", True, 19, "16 Oct 2026"),
     ("SR", "Siti Rahman", "siti.rahman@minmed.sg", "HR Executive", True, 7, "12 Oct 2026"),
     ("MG", "Marcus Goh", "marcus.goh@minmed.sg", "Corporate Health Consultant", True, 31, "15 Oct 2026"),
 ]
@@ -369,7 +373,7 @@ def ad_cards():
         '<div class="ad-h"><div class="ad-title">Cards<small>128 cards</small></div><div class="sp"></div>'
         f'<span class="ad-btn">{ic("upload", "ic sm")}Import</span><span class="ad-btn p">{ic("plus", "ic sm")}Add card</span></div>'
         f'<div class="ad-tools"><span class="ad-input ph grow">{ic("search", "ic sm")}Search name or email</span>'
-        '<span class="ad-seg"><span class="on">All</span><span>Active</span><span>Inactive</span></span></div>'
+        '<span class="ad-seg"><span class="on">Active</span><span>Deactivated</span></span></div>'
         '<div class="ad-panel"><table class="ad-table"><thead><tr><th>Name</th><th>Designation</th><th>Status</th>'
         f'<th class="num">Views, 30 days</th><th>Last updated</th></tr></thead><tbody>{rows}</tbody></table>'
         '<div class="ad-pg"><span>1–5 of 128</span><span class="ad-btn sm">Next</span></div></div>',
@@ -502,6 +506,7 @@ def ad_import():
 
 def ad_details():
     hist = [
+        ("16 Oct 2026, 11:05", f"Alias set to {P['alias']} by Alex Tan"),
         ("15 Oct 2026, 16:05", "Photo added by Siti Rahman"),
         ("12 Oct 2026, 09:16", "Card email sent by Priya Nair"),
         ("12 Oct 2026, 09:15", "Card created by Priya Nair (import)"),
@@ -518,7 +523,8 @@ def ad_details():
         '<div class="ad-det">'
         f'<div class="ad-side"><div class="ad-lbl">Live card</div>{mini_card()}</div>'
         '<div class="ad-cards">'
-        f'<div class="ad-panel pad"><div class="ad-lbl">Link</div><div class="ad-link"><code>{E(LINK)}</code><span class="ad-btn sm">{ic("copy", "ic sm")}Copy</span></div></div>'
+        f'<div class="ad-panel pad"><div class="ad-lbl">Link</div><div class="ad-link"><code>{E(LINK_ALIAS)}</code><span class="ad-btn sm">{ic("copy", "ic sm")}Copy</span></div>'
+        f'<div class="ad-alias"><span>Alias <b>{E(P["alias"])}</b>, set by Alex Tan</span><span class="ad-btn sm">Clear alias</span></div></div>'
         f'<div class="ad-panel pad row"><div class="ad-qr">{qr(11)}</div><div><div class="ad-lbl">QR code and card image</div>'
         f'<span class="ad-btn sm">{ic("download", "ic sm")}QR code</span> <span class="ad-btn sm">{ic("download", "ic sm")}Card image</span></div></div>'
         f'<div class="ad-panel pad"><div class="ad-lbl">Google Wallet pass</div><div class="ad-gw"><span class="pill on">Active</span>Updates when the card changes</div></div>'
@@ -539,7 +545,8 @@ def dialog(title, text, confirm, danger=True, extra=""):
 def ad_dialogs():
     return (
         '<div class="dialogs">'
-        + dialog("Deactivate Alex Tan's card?", "The link will show “This card is no longer active.” Save contact stops working.", "Deactivate")
+        + dialog("Deactivate Alex Tan's card?", "The link will show “This card is no longer active.” Save contact stops working and Alex can't sign in. The card is soft-deleted: it leaves the Cards list, and a Super admin can restore it.", "Deactivate")
+        + dialog("Clear Alex Tan's alias?", f"The link goes back to {E(LINK)}. The link with the alias stops working, and Alex gets a new card email.", "Clear alias")
         + dialog(
             "Give Alex Tan's card a new link?",
             "The old link and QR code will stop working.",
@@ -553,6 +560,7 @@ def ad_dialogs():
 
 def ad_activity():
     rows = [
+        ("16 Oct 2026, 11:05", "Alex Tan (staff)", "Alias changed", "Alex Tan", f"{P['alias']} · new card email sent"),
         ("16 Oct 2026, 10:42", "Siti Rahman", "Edited", "Alex Tan", "Designation"),
         ("16 Oct 2026, 09:05", "Siti Rahman", "Deactivated", "Daniel Lim", "Last day 15 Oct"),
         ("15 Oct 2026, 17:20", "Priya Nair", "New link code", "Marcus Goh", "Old link stopped"),
@@ -567,8 +575,8 @@ def ad_activity():
         "Activity log",
         '<div class="ad-h"><div class="ad-title">Activity log</div></div>'
         '<div class="ad-tools"><span class="ad-input">Card: All' + ic("chev", "ic sm") + '</span>'
-        '<span class="ad-input">Admin: All' + ic("chev", "ic sm") + '</span><span class="ad-input">Action: All' + ic("chev", "ic sm") + "</span></div>"
-        '<div class="ad-panel"><table class="ad-table"><thead><tr><th>When</th><th>Admin</th><th>Action</th><th>Card</th><th>Details</th></tr></thead>'
+        '<span class="ad-input">By: All' + ic("chev", "ic sm") + '</span><span class="ad-input">Action: All' + ic("chev", "ic sm") + "</span></div>"
+        '<div class="ad-panel"><table class="ad-table"><thead><tr><th>When</th><th>By</th><th>Action</th><th>Card</th><th>Details</th></tr></thead>'
         f"<tbody>{body}</tbody></table></div>",
     )
 
@@ -614,6 +622,51 @@ def ad_settings():
         '<div class="ad-panel pad"><div class="ad-lbl">Google Wallet</div><div class="ad-gw"><span class="pill on">Publishing approved</span>'
         "Pass design follows the card design</div></div>"
         "</div></div>",
+    )
+
+
+def staff_signin(state="ask"):
+    if state == "ask":
+        inner = (
+            '<div class="si-msg">Please sign in with your Minmed registered email address.</div>'
+            '<span class="g-btn"><span class="g-ic">G</span>Sign in with Google</span>'
+        )
+    else:
+        inner = (
+            f'<div class="si-err">{ic("lock", "ic sm")}There\'s no name card for this account.</div>'
+            '<span class="g-btn"><span class="g-ic">G</span>Use another account</span>'
+        )
+    return f'<div class="ad si mob"><div class="si-box">{mark(40)}<div class="si-t">My name card</div>{inner}</div></div>'
+
+
+def my_card():
+    rows = [
+        ("Name", P["name"]), ("Designation", P["desig"]), ("Work email", P["email"]),
+        ("Mobile", P["mobile"] + " · shown on card"), ("Languages", P["langs"]), ("LinkedIn", P["linkedin"]),
+    ]
+    details = "".join(f'<div class="mc-row"><span>{k}</span>{E(v)}</div>' for k, v in rows)
+    return (
+        f'<div class="mc"><div class="mc-top">{mark(22, "#fff", "#96487F")}<span>My name card</span>'
+        f'<span class="mc-out">{ic("out", "ic sm")}Sign out</span></div>'
+        '<div class="mc-sec"><div class="mc-h">Your link</div>'
+        f'<div class="mc-link"><span>me.minmed.sg/card/</span><span class="mc-in">{E(P["alias"])}<i></i></span><span>/{P["code"]}</span></div>'
+        '<div class="mc-help">Your name or an alias: letters, numbers and hyphens, 2 to 30 characters. Leave it empty for a link without a name.</div>'
+        f'<div class="mc-warn">{ic("alert", "ic sm")}<span>Saving gives you a new link. Your old link, printed QR codes and Apple Wallet passes will show “No card found”. Your Google Wallet pass updates itself, and we\'ll email you the new card.</span></div>'
+        '<div class="btn-p">Save link</div></div>'
+        f'<div class="mc-sec mc-qrrow"><div class="mc-qr">{qr(11)}</div><div><div class="mc-h">Your QR code</div>'
+        f'<span class="ad-btn sm">{ic("download", "ic sm")}Download QR code</span></div></div>'
+        f'<div class="mc-sec"><div class="mc-h">Your card details{ic("lock", "ic sm")}</div>{details}'
+        '<div class="mc-note">Only admins can change these. Reply to your card email to ask for a change.</div></div></div>'
+    )
+
+
+def my_card_confirm():
+    return (
+        '<div class="mc dim"><div class="modal"><div class="md-t">Change your link?</div>'
+        f'<p>Your new link: <b class="mc-new">{E(LINK_ALIAS)}</b></p>'
+        '<p>Your old link and QR code will stop working, including any Apple Wallet pass made from them. '
+        'Your Google Wallet pass updates itself, and we\'ll email you the new card.</p>'
+        '<div class="md-a"><span class="ad-btn">Cancel</span><span class="ad-btn p">Change link</span></div></div></div>'
     )
 
 

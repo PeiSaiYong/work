@@ -18,7 +18,7 @@ OUT = SRC.parent / "minmed-name-card-scope.html"
 FIG_ORDER = [
     "overview", "sitemap", "nav", "journey",
     "pg-card", "pg-captcha", "pg-inactive", "pg-notfound", "pg-error", "pg-whatsapp", "pg-desktop",
-    "pg-email", "pg-gpass", "pg-apass",
+    "pg-email", "pg-gpass", "pg-apass", "pg-staffsignin", "pg-mycard", "pg-mycardok",
     "pg-signin", "pg-cards", "pg-add", "pg-import", "pg-details", "pg-edit", "pg-dialogs",
     "pg-activity", "pg-admins", "pg-settings", "pg-adminphone", "pg-notify",
     "bot-flow", "bot-outcome",
@@ -102,10 +102,11 @@ def intro():
     return f"""
 <div class="eyebrow">Product scope · input to spec 0.3</div>
 <h1>Minmed Digital Name Cards</h1>
-<p class="lede">A digital name card for every Minmed staff member, managed centrally. Admins create and change every card. Staff never sign in. Anyone with a card's link can open it, but nobody can find it on Google.</p>
+<p class="lede">A digital name card for every Minmed staff member, managed centrally. Admins create and change every card. Staff sign in only to see their card, add a name or alias to their link and download their QR code. Anyone with a card's link can open it, but nobody can find it on Google.</p>
 <p class="meta">Based on Technical Specification draft 0.2 (15/10/2026) and your decisions on 16/10/2026. Names, numbers, codes and QR codes in the examples are made up. Updated 16/10/2026.</p>
 <div class="legend">
   <span>{chip("Confirmed", "dec")} you decided it</span>
+  <span>{chip("Proposed", "rec")} my recommendation, waiting for your OK (section 13)</span>
   <span>{chip("Test", "test")} try on a test app before the build</span>
   <span>{chip("Pending confirmation", "pend")} still to decide (section 13)</span>
 </div>
@@ -116,10 +117,11 @@ def s_how():
     steps = [
         ("Admin adds the card", "In the admin console, one at a time or from a spreadsheet."),
         ("Staff member gets an email", "Their link and QR code, an Add to Google Wallet button, and steps for Apple Wallet."),
+        ("Staff member can add a name to the link", "Optional. They sign in with their Minmed Google account and type a name or alias. They get a new link and a new card email; the old link stops working."),
         ("Staff member shares it", "Sends the link on WhatsApp or email, or shows the QR code from Wallet."),
         ("Visitor opens the link", "Sees the card, then saves the contact, emails, calls or WhatsApps. Unusual traffic gets a CAPTCHA."),
         ("Details change", "The staff member replies to the card email. An admin edits the card, and the same link shows the new details."),
-        ("Staff member leaves", "HR tells an admin. On the last day the card is deactivated and the link shows “This card is no longer active.”"),
+        ("Staff member leaves", "HR tells an admin. On the last day the card is deactivated and soft-deleted, and the staff member can't sign in. The link shows “This card is no longer active.”"),
     ]
     boxes = "".join(f"<div><b>{t}</b>{d}</div>" for t, d in steps)
     return f"""
@@ -127,7 +129,7 @@ def s_how():
 <div class="eyebrow">1</div>
 <h2>How it works</h2>
 {fig("overview", f'<div class="flow">{boxes}</div>', "The life of a card, from creation to deactivation.",
-     alt="Six numbered steps: admin adds the card; staff member gets an email; staff member shares it; visitor opens the link; details change; staff member leaves.", wide=True)}
+     alt="Seven numbered steps: admin adds the card; staff member gets an email; staff member can add a name to the link; staff member shares it; visitor opens the link; details change; staff member leaves.", wide=True)}
 </section>
 """
 
@@ -143,11 +145,11 @@ def s_confirmed():
     you = "You, 16/10"
     rows = [
         grp("Product"),
-        row("One central place to manage every staff card. Staff can't edit their own card, so there's no approval process.", you),
+        row("One central place to manage every staff card. Staff can't change their card details, so there's no approval process. The only thing they can change is the name or alias in their link.", you),
         row("Cards are public to anyone with the link, but can't be found through Google.", you),
-        row(f"Each link is a random code of 22 letters and numbers, with no name in it, so nobody can work it out from a person's name: <code>{E(LINK)}</code>.", "You, 16/10; industry standards"),
-        row("Staff never sign in. They keep their link on their phone, or in Apple Wallet or Google Wallet.", you),
-        row("Built on Base44. Phone-first public card. Admins sign in with company Google accounts.", "Spec 0.2 §1.1"),
+        row(f"Each link ends in a random code of 22 letters and numbers, so nobody can guess it: <code>{E(LINK)}</code>. Staff can put a name or alias in front of the code: <code>{E(M.LINK_ALIAS)}</code>.", "You, 16/10; industry standards"),
+        row("Staff sign in with their Minmed Google account to a My card page. There they can only read their card details, set or change the name or alias in their link, and download their QR code. They keep their link on their phone, or in Apple Wallet or Google Wallet.", you),
+        row("Built on Base44. Phone-first public card. Admins and staff sign in with company Google accounts.", "Spec 0.2 §1.1; you, 16/10"),
         grp("The card"),
         row("Fields: name, designation, Minmed, work email, optional mobile and photo, optional biography, languages and LinkedIn. Company information is a link to minmed.sg; no social links.", "Spec 0.2 §3.1; you, 16/10"),
         row("Actions: Save contact and Email, plus Call and WhatsApp when a mobile is published. No visitor app.", "Spec 0.2 §1.1; you, 16/10"),
@@ -158,16 +160,21 @@ def s_confirmed():
             chip("At risk", "risk") + ' <span class="note">Base44 can\'t make a per-card preview as is. See section 11 and pending item 1.</span>'),
         grp("Wallet"),
         row("Minmed issues a Google Wallet pass. iPhone staff add their QR code to Apple Wallet themselves with iOS 27's Create a Pass. No Apple Developer Program, fee or D-U-N-S number.", you),
+        grp("Name or alias in the link"),
+        row("Optional. Letters, numbers and hyphens, 2 to 30 characters.", you),
+        row("Until an alias is set, the plain link without a name works.", you),
+        row("Setting or changing the alias gives a new link. The old link, printed QR codes and Apple Wallet passes made from it show “No card found”. The Google Wallet pass updates itself, and a new card email goes out automatically.", you),
+        row("Staff can change their alias as often as they like. Each change ends the previous link.", you),
+        row("Admins can clear an alias that's offensive or copies someone else's name. Every alias change is logged and emailed to manage@minmed.sg.", you),
         grp("Admins"),
         row("Two roles: Super admin and Admin.", you),
-        row("Only a Super admin can reactivate a card, give it a new link code or delete it.", you),
+        row("Only a Super admin can reactivate (restore) a card, give it a new link code or delete it.", you),
         row("Cards can be imported from a spreadsheet at launch.", you),
         row("Admins see view counts. No monthly report emails.", you),
         row("Every admin change is logged and emailed to manage@minmed.sg.", "Spec 0.2 §1.1"),
         grp("Leavers and records"),
-        row("HR tells an admin as part of offboarding. The card is deactivated on the person's last day.", you),
-        row("Deactivated cards are kept and deleted on request.", you,
-            chip("Pending confirmation", "pend") + ' <span class="note">Retention period, pending item 2.</span>'),
+        row("HR tells an admin as part of offboarding. On the person's last day their card is deactivated and soft-deleted, and they can no longer sign in.", you),
+        row("Soft-deleted cards are kept but hidden. A Super admin can restore one or delete it permanently.", "You, 16/10 (PDPA)"),
         grp("Bot protection"),
         row("One IP address making more than 3 card opens or contact downloads within 1 minute must pass a CAPTCHA.", you),
         row("After passing, that browser isn't asked again for 30 minutes.", you),
@@ -205,7 +212,9 @@ def s_features():
     <li>CAPTCHA check against bots</li>
     <li>Hidden from search engines</li>
   </ul></div>
-  <div><h3>Staff</h3><div class="host">no sign-in</div><ul>
+  <div><h3>Staff</h3><div class="host">me.minmed.sg/my-card</div><ul>
+    <li>Minmed Google sign-in, own card only</li>
+    <li>My card: read-only details, a name or alias for the link, QR code download</li>
     <li>Card email with link, QR code and Wallet options</li>
     <li>Google Wallet pass that updates itself</li>
     <li>Apple Wallet pass they make themselves</li>
@@ -214,11 +223,11 @@ def s_features():
   <div><h3>Admin console</h3><div class="host">me.minmed.sg/admin</div><ul>
     <li>Google sign-in, admin list only</li>
     <li>Cards: list, search, add, import, edit</li>
-    <li>Card details: link, QR code, card image, views, history</li>
-    <li>Deactivate; Super admin also reactivates, re-codes and deletes</li>
+    <li>Card details: link, alias (clear it if needed), QR code, card image, views, history</li>
+    <li>Deactivate (soft delete); Super admin also restores, re-codes and deletes permanently</li>
     <li>Activity log</li>
     <li>Admins and Settings, including the company logo (Super admin)</li>
-    <li>Email to manage@minmed.sg on every change</li>
+    <li>Email to manage@minmed.sg on every change, alias changes included</li>
   </ul></div>
 </div>
 </section>
@@ -234,7 +243,7 @@ def s_users():
 <thead><tr><th>User</th><th>Signs in?</th><th>Who they are</th><th>What they do</th></tr></thead>
 <tbody>
 <tr><td><b>Visitor</b></td><td>No</td><td>Anyone who has a card's link or scans its QR code.</td><td>Views the card, saves the contact, gets in touch. May be asked to pass a CAPTCHA.</td></tr>
-<tr><td><b>Staff member</b> (card holder)</td><td>No</td><td>Minmed staff with a card.</td><td>Gets their card by email, keeps it in Wallet or on their phone, shares it. Asks an admin for changes.</td></tr>
+<tr><td><b>Staff member</b> (card holder)</td><td>Yes, company Google account, to their own My card page only</td><td>Minmed staff with a card.</td><td>Gets their card by email, keeps it in Wallet or on their phone, shares it. Can add a name or alias to their link and download their QR code. Asks an admin for other changes.</td></tr>
 <tr><td><b>Admin</b></td><td>Yes, company Google account</td><td>For example HR, added by a Super admin.</td><td>Adds, edits, sends and deactivates cards.</td></tr>
 <tr><td><b>Super admin</b></td><td>Yes, company Google account</td><td>One or two owners, for example manage@minmed.sg's owner and IT.</td><td>Everything an Admin does, plus admins, settings, and reactivating, re-coding or deleting cards.</td></tr>
 </tbody></table></div>
@@ -264,7 +273,11 @@ def s_matrix():
         g("Getting and keeping a card"),
         r("Receive the card email (link, QR code, Wallet options)", N, O, N, N),
         r("Add the card to Google Wallet or Apple Wallet", N, O, N, N),
-        r("Change their own details", N, N, N, N),
+        r("Sign in to My card and see their own card details", N, O, N, N),
+        r("Set or change the name or alias in their own link", N, O, N, N),
+        r(f"Clear their own alias, going back to the plain link {chip('Proposed', 'rec')}", N, O, N, N),
+        r("Download their own QR code", N, O, N, N),
+        r("Change their own card details", N, N, N, N),
         r("Ask for a change by replying to the card email", N, O, N, N),
         g("Admin console"),
         r("Sign in to the admin console", N, N, Y, Y),
@@ -272,10 +285,11 @@ def s_matrix():
         r("Add a card", N, N, Y, Y),
         r("Import cards from a spreadsheet", N, N, Y, Y),
         r("Edit a card's details and photo, and choose whether the mobile is shown", N, N, Y, Y),
+        r("Clear a staff member's alias", N, N, Y, Y),
         r("Send or re-send the card email", N, N, Y, Y),
         r("Download a card's QR code and card image", N, N, Y, Y),
-        r("Deactivate a card", N, N, Y, Y),
-        r("Reactivate a card", N, N, N, Y),
+        r("Deactivate a card (soft delete)", N, N, Y, Y),
+        r("Restore a deactivated card", N, N, N, Y),
         r("Issue a new link code (the old link stops working)", N, N, N, Y),
         r("Delete a card permanently", N, N, N, Y),
         r("See view counts", N, N, Y, Y),
@@ -283,8 +297,9 @@ def s_matrix():
         r("Add or remove admins and change roles", N, N, N, Y),
         r("Change the card design, company details, notifications and Google Wallet settings", N, N, N, Y),
         g("Automatic"),
-        auto("Record every admin action in the activity log"),
-        auto("Email manage@minmed.sg when a card is added, edited, deactivated, reactivated, re-coded or deleted"),
+        auto("Record every admin action and alias change in the activity log"),
+        auto("Email manage@minmed.sg when a card is added, edited, given a new alias, deactivated, restored, re-coded or deleted"),
+        auto("Send a new card email and update the Google Wallet pass when an alias changes"),
         auto("Update the Google Wallet pass when its card changes, and expire it when the card is deactivated"),
         auto("Ask for a CAPTCHA when a bot-protection rule is met (section 8)"),
     ]
@@ -303,7 +318,7 @@ def s_matrix():
 
 
 def node(key, thumb_html, title, sub="", code=""):
-    c = f"<code>{E(code)}</code>" if code else ""
+    c = f"<code>{E(code).replace('/', '/<wbr>')}</code>" if code else ""
     s = f"<small>{sub}</small>" if sub else ""
     href = f' href="#{key}"' if key else ""
     tag = "a" if key else "div"
@@ -320,9 +335,9 @@ def s_map():
     tp = lambda h: thumb(h, "phone")  # noqa: E731
     tw = lambda h: thumb(h, "wide")  # noqa: E731
     public = f"""
-<div class="smz"><div class="smz-h"><b>Public</b><code>me.minmed.sg</code><span>No sign-in · hidden from search engines · no menu</span></div>
+<div class="smz z-pub"><div class="smz-h"><b>Public</b><code>me.minmed.sg</code><span>No sign-in · hidden from search engines · no menu</span></div>
 <ul class="smt">
-  <li>{node("pg-card", tp(M.card_body()), "Card page", code="/card/{code}")}
+  <li>{node("pg-card", tp(M.card_body()), "Card page", "or /card/{alias}/{code}", code="/card/{code}")}
     <ul class="smt">
       <li>{node("pg-desktop", tw(M.card_desktop()), "On a computer", "adds a QR code")}</li>
       <li>{node("pg-captcha", tp(M.captcha_page()), "CAPTCHA check", "when a rule in section 8 is met")}</li>
@@ -335,8 +350,19 @@ def s_map():
   <li>{dot_node("Home", "redirects to minmed.sg; no staff list", "/")}</li>
 </ul></div>"""
 
+    staff = f"""
+<div class="smz z-stf"><div class="smz-h"><b>Staff</b><code>me.minmed.sg/my-card</code><span>Minmed Google sign-in · own card only</span></div>
+<ul class="smt">
+  <li>{node("pg-staffsignin", tp(M.staff_signin()), "Sign in", code="/my-card")}</li>
+  <li>{node("pg-mycard", tp(M.my_card()), "My card", "read-only details, alias box, QR code download")}
+    <ul class="smt">
+      <li>{node("pg-mycardok", tp(M.my_card_confirm()), "Change link?", "confirms before saving")}</li>
+    </ul>
+  </li>
+</ul></div>"""
+
     admin = f"""
-<div class="smz"><div class="smz-h"><b>Admin console</b><code>me.minmed.sg/admin</code><span>Company Google sign-in · admin list only</span></div>
+<div class="smz z-adm"><div class="smz-h"><b>Admin console</b><code>me.minmed.sg/admin</code><span>Company Google sign-in · admin list only</span></div>
 <ul class="smt">
   <li>{node("pg-signin", tw(M.ad_signin()), "Sign in", code="/admin")}</li>
   <li>{node("pg-cards", tw(M.ad_cards()), "Cards", code="/admin/cards")}
@@ -346,7 +372,7 @@ def s_map():
       <li>{node("pg-details", tw(M.ad_details()), "Card details", code="/admin/cards/{id}")}
         <ul class="smt">
           <li>{node("pg-edit", tw(M.ad_edit()), "Edit card", code="/admin/cards/{id}/edit")}</li>
-          <li>{node("pg-dialogs", "", "Confirm dialogs", "deactivate, new link code, delete")}</li>
+          <li>{node("pg-dialogs", "", "Confirm dialogs", "deactivate, clear alias, new link code, delete")}</li>
         </ul>
       </li>
     </ul>
@@ -359,7 +385,7 @@ def s_map():
     tm = lambda h: thumb(h, "mail")  # noqa: E731
     tpass = lambda h: thumb(h, "pass")  # noqa: E731
     msgs = f"""
-<div class="smz"><div class="smz-h"><b>Emails, Wallet and sharing</b><code>outside the website</code><span>How cards reach staff, admins and visitors</span></div>
+<div class="smz z-msg"><div class="smz-h"><b>Emails, Wallet and sharing</b><code>outside the website</code><span>How cards reach staff, admins and visitors</span></div>
 <ul class="smt">
   <li>{node("pg-email", tm(M.email_card()), "Card email", "to the staff member")}</li>
   <li>{node("pg-gpass", tpass(M.gwallet_pass()), "Google Wallet pass", "issued by Minmed")}</li>
@@ -396,8 +422,8 @@ def s_map():
 <section id="map">
 <div class="eyebrow">6</div>
 <h2>Site map and navigation</h2>
-<p>Three parts: the public card, the admin console, and the emails and passes that connect them. Select a page to see its mockup in section 7.</p>
-{fig("sitemap", f'<div class="smap">{public}{admin}{msgs}</div>', "Site map. Each entry is a page or message, with its address.", wide=True, img=False)}
+<p>Four parts: the public card, the staff's My card page, the admin console, and the emails and passes that connect them. Select a page to see its mockup in section 7.</p>
+{fig("sitemap", f'<div class="smap">{public}{staff}{admin}{msgs}</div>', "Site map. Each entry is a page or message, with its address.", wide=True, img=False)}
 <div class="figs">
 {fig("nav", nav_inner, "Admin console navigation.",
      "Admins see Cards and Activity log; Super admins also see Admins and Settings. The account menu holds Sign out. Inside a card, the breadcrumb leads back to Cards.",
@@ -440,14 +466,23 @@ def s_pages():
 
     staff_figs = (
         fig("pg-email", M.email_card(), "Card email to the staff member.",
-            "Sent when an admin chooses Save and send card email, or Send card email. Replies go to manage@minmed.sg.",
-            alt="Email: Your Minmed digital name card. Open my card button, link, QR code, Add to Google Wallet button, three iPhone steps for Create a Pass, and Need a change? Reply to this email.")
+            "Sent when an admin chooses Save and send card email or Send card email, and again after every alias change. Replies go to manage@minmed.sg.",
+            alt="Email: Your Minmed digital name card. Open my card button, link, QR code, Add to Google Wallet button, three iPhone steps for Create a Pass, a pointer to me.minmed.sg/my-card for adding a name to the link, and Need another change? Reply to this email.")
         + fig("pg-gpass", M.gwallet_pass(), "Google Wallet pass.",
               "Issued by Minmed. Updates when the card changes and shows as expired when it's deactivated.",
               alt="Plum Google Wallet pass with the Minmed logo, designation, name, work email and a QR code.")
         + fig("pg-apass", M.apple_pass(), "Apple Wallet pass, made by the staff member.",
               "Made with iOS 27's Create a Pass, so its look may vary. Minmed can't update or remove it, but its QR code always opens the live card.",
               alt="Dark Apple Wallet pass named Minmed name card with the name Alex Tan and a QR code.")
+        + fig("pg-staffsignin", M.phone(M.staff_signin(), url="me.minmed.sg/my-card"), "My card sign-in.",
+              "<code>me.minmed.sg/my-card</code>. A Minmed account without an active card sees “There's no name card for this account.”",
+              alt="Phone showing My name card, Please sign in with your Minmed registered email address, and a Sign in with Google button.")
+        + fig("pg-mycard", M.phone(M.my_card(), url="me.minmed.sg/my-card"), "My card.",
+              "The staff member's own card, read-only, with one box for the name or alias in the link and a QR code download.",
+              alt="Phone showing My name card: the link me.minmed.sg/card/ with a box containing Alex-Tan and the code after it, the alias rules, a warning that saving gives a new link and ends the old one, a Save link button, the QR code with Download QR code, and the card details marked read-only.")
+        + fig("pg-mycardok", M.phone(M.my_card_confirm(), url="me.minmed.sg/my-card"), "Change link?",
+              "Shown before saving. After saving, the new card email goes out and the Google Wallet pass updates.",
+              alt="Dialog: Change your link? Your new link is me.minmed.sg/card/Alex-Tan followed by the code. Your old link and QR code will stop working, including any Apple Wallet pass made from them. Buttons: Cancel and Change link.")
     )
 
     signin = (
@@ -461,7 +496,7 @@ def s_pages():
             "Left: <code>me.minmed.sg/admin</code>. Right: a company account that isn't on the admin list.",
             alt="Two sign-in screens. Left: Name cards admin, Please sign in with your Minmed registered email address, Sign in with Google. Right: You don't have access, Use another account.", wide=True)
         + fig("pg-cards", admin_shot("/admin/cards", M.ad_cards()), "Cards.",
-              "<code>/admin/cards</code>. Search by name or email, filter by status. Views count card page openings in the last 30 days.",
+              "<code>/admin/cards</code>. Search by name or email. Deactivated cards are soft-deleted: they leave this list and appear under Deactivated, for Super admins. Views count card page openings in the last 30 days.",
               alt="Admin Cards page: search box, All/Active/Inactive filter, Import and Add card buttons, and a table of five cards with designation, status, views and last updated.", wide=True)
         + fig("pg-add", admin_shot("/admin/cards/new", M.ad_add()), "Add card.",
               "<code>/admin/cards/new</code>. Work email must end with @minmed.sg. The mobile shows on the card only when switched on.",
@@ -470,16 +505,16 @@ def s_pages():
               "<code>/admin/cards/import</code>. Rows with problems are skipped until fixed. The card emails can go out in the same step.",
               alt="Import cards page at the Check step: 43 rows, 41 ready, 2 need fixing, with two rows flagged. Send card emails now is ticked; Create 41 cards button.", wide=True)
         + fig("pg-details", admin_shot("/admin/cards/AT29", M.ad_details()), "Card details.",
-              "<code>/admin/cards/{id}</code>. The ⋯ menu (New link code, Delete card) appears only for Super admins. On an inactive card, Reactivate replaces Deactivate.",
+              "<code>/admin/cards/{id}</code>. Admins can clear an alias. The ⋯ menu (New link code, Delete card) appears only for Super admins. On a deactivated card, Restore replaces Deactivate.",
               alt="Card details for Alex Tan: Edit, Send card email, Deactivate and an open menu with New link code and Delete card. Panels for live card preview, link with Copy, QR code and card image downloads, Google Wallet pass Active, 48 views, and history.", wide=True)
         + fig("pg-edit", admin_shot("/admin/cards/AT29/edit", M.ad_edit()), "Edit card.",
               "<code>/admin/cards/{id}/edit</code>. Saving changes the live card at once, on the same link and QR code, and emails manage@minmed.sg.",
               alt="Edit card form with the designation changed to Senior Corporate Sales Manager and highlighted, a preview showing the new designation, and the note Same link and QR code.", wide=True)
         + fig("pg-dialogs", M.ad_dialogs(), "Confirm dialogs.",
-              "Deactivate is for Admins and Super admins. New link code and Delete are for Super admins only.",
-              alt="Three dialogs: Deactivate Alex Tan's card; Give Alex Tan's card a new link, with Send Alex the new card email ticked; Delete Alex Tan's card permanently.", wide=True)
+              "Deactivate and Clear alias are for Admins and Super admins. New link code and Delete are for Super admins only.",
+              alt="Four dialogs: Deactivate Alex Tan's card, which also soft-deletes it; Clear Alex Tan's alias; Give Alex Tan's card a new link, with Send Alex the new card email ticked; Delete Alex Tan's card permanently.", wide=True)
         + fig("pg-activity", admin_shot("/admin/activity", M.ad_activity()), "Activity log.",
-              "<code>/admin/activity</code>. Every admin action: who, what, which card and when.",
+              "<code>/admin/activity</code>. Every admin action and alias change: who, what, which card and when.",
               alt="Activity log with filters for card, admin and action, and six entries such as Edited, Deactivated, New link code and Imported.", wide=True)
         + fig("pg-admins", admin_shot("/admin/admins", M.ad_admins()), "Admins (Super admin only).",
               "<code>/admin/admins</code>. Admins are added by company email.",
@@ -494,7 +529,7 @@ def s_pages():
               "The same Cards page on a phone: the table becomes a list.",
               alt="Phone showing the admin Cards list with search, Add card and four cards with their status.")
         + fig("pg-notify", M.email_admin(), "Admin notification.",
-              "Sent to manage@minmed.sg for every add, edit, deactivation, reactivation, new link code and deletion.",
+              "Sent to manage@minmed.sg for every add, edit, alias change, deactivation, restore, new link code and deletion.",
               alt="Email: Card edited: Alex Tan. Designation changed, by Siti Rahman (Admin), 16 Oct 2026, 10:42 am, with an Open in admin console button.")
         + "</div>"
     )
@@ -502,7 +537,7 @@ def s_pages():
 <section id="pages">
 <div class="eyebrow">7</div>
 <h2>Pages</h2>
-<p>High-fidelity mockups of every page and message. You approved the wording on 16/10/2026. The “mm” logo stands in for the real one, and the QR codes can't be scanned.</p>
+<p>High-fidelity mockups of every page and message. You approved the wording on 16/10/2026. New wording for aliases and soft delete is Proposed (pending item 2): {fref("pg-staffsignin")} to {fref("pg-mycardok")}, the card email's My card line, and the alias and deactivation wording in {fref("pg-cards")}, {fref("pg-details")}, {fref("pg-dialogs")} and {fref("pg-activity")}. The “mm” logo stands in for the real one, and the QR codes can't be scanned.</p>
 <h3>Public card</h3>
 <div class="figs">{phone_figs}{desktop}</div>
 <h3>Staff</h3>
@@ -549,7 +584,7 @@ def s_bots():
 <thead><tr><th>Rule</th><th>What's counted</th><th>Limit</th><th>Then</th><th>Status</th></tr></thead>
 <tbody>
 {rule_rows}
-<tr><td><b>Never checked</b></td><td colspan="4">WhatsApp and other link-preview fetches (they only see the preview), the admin console (Google sign-in), and images, styles and scripts.</td></tr>
+<tr><td><b>Never checked</b></td><td colspan="4">WhatsApp and other link-preview fetches (they only see the preview), the admin console and My card (Google sign-in), and images, styles and scripts.</td></tr>
 </tbody></table></div>
 <div class="figs two">
 {fig("bot-flow", flow, "How each request is checked.",
@@ -591,12 +626,15 @@ def s_links():
 <div class="eyebrow">9</div>
 <h2>Links and privacy</h2>
 <ul>
-  <li><b>Link format:</b> <code>me.minmed.sg/card/{{code}}</code>, for example <code>{E(LINK)}</code>. No name, initials or counting numbers, so nobody can work out a link from a person's name or from another link. The <code>/card/</code> prefix keeps clear of Base44's own addresses.</li>
+  <li><b>Link format:</b> <code>me.minmed.sg/card/{{code}}</code>, or <code>me.minmed.sg/card/{{alias}}/{{code}}</code> once the staff member adds a name or alias. For example <code>{E(LINK)}</code> and <code>{E(M.LINK_ALIAS)}</code>. The code has no name, initials or counting numbers. The <code>/card/</code> prefix keeps clear of Base44's own addresses.</li>
   <li><b>The code</b> {chip("Confirmed", "dec")}: 22 random letters and numbers, made by the server with a secure random generator (CSPRNG) and never reused. That's about 131 bits of randomness, above the 128-bit minimum in the standard below.</li>
-  <li><b>The link stays the same</b> when someone's name or designation changes, so shared links and printed QR codes keep working.</li>
+  <li><b>The alias:</b> optional and chosen by the staff member: letters, numbers and hyphens, 2 to 30 characters. It adds no security; the code alone keeps the link unguessable. A link with an alias can be found by searching for that alias.</li>
+  <li><b>Both parts are checked:</b> the code must belong to a card, and the alias must be the card's current one, or absent when none is set. Anything else shows “No card found” and counts towards rule 1.</li>
+  <li><b>The link changes only</b> when the alias is set, changed or cleared, or a Super admin issues a new code. Name and designation edits keep the same link.</li>
+  <li><b>An alias change ends the old link:</b> links already sent, printed QR codes and Apple Wallet passes made from it show “No card found”. The Google Wallet pass updates itself and a new card email goes out.</li>
   <li><b>Every public address uses the same random code:</b> the card page, contact file, card image and Google Wallet pass. Never a counting number, so nobody can fetch cards by counting.</li>
   <li><b>Hidden from Google, twice over:</b> no list of cards anywhere (no sitemap entries, no staff directory, the home address redirects to minmed.sg), and every card page, image and contact file tells search engines not to index it. On Base44 that means the page's “Search visibility” switch plus a noindex header on files from backend functions, checked after every publish. Don't block card addresses in robots.txt: Google then can't see the “don't index” instruction and may still list a link someone posted elsewhere.</li>
-  <li><b>If a link is misused:</b> a Super admin issues a new code. The old link then shows “No card found”.</li>
+  <li><b>If a link is misused:</b> a Super admin issues a new code. The old link then shows “No card found”. An admin can also clear an offensive alias.</li>
   <li><b>Bots:</b> see section 8.</li>
 </ul>
 <h3>Based on industry standards and research</h3>
@@ -605,7 +643,7 @@ def s_links():
 <tbody>
 <tr><td>A link that is the only key to a page must be unguessable: a random identifier, never a counting number.</td><td>W3C</td><td>Random code</td></tr>
 <tr><td>Random strings meant to be unguessable need a secure random generator and at least 128 bits of randomness. Each bit doubles the number of possible codes.</td><td>OWASP ASVS 5.0</td><td>22 characters</td></tr>
-<tr><td>A fixed or predictable part, such as a name or initials, adds no strength.</td><td>OWASP</td><td>No name or initials</td></tr>
+<tr><td>A fixed or predictable part, such as a name or initials, adds no strength.</td><td>OWASP</td><td>The alias adds none; the code alone keeps links unguessable</td></tr>
 <tr><td>Researchers scanned every possible 5- and 6-character short-link code. They found shared OneDrive files and Google Maps directions that revealed people's home addresses.</td><td>Georgiev and Shmatikov, 2016</td><td>Long codes; rule 1 counts wrong addresses</td></tr>
 </tbody></table></div>
 <p class="note">Sources: <a href="https://www.w3.org/TR/capability-urls/">W3C Good Practices for Capability URLs</a> (2014 draft), <a href="https://github.com/OWASP/ASVS/blob/master/5.0/en/0x20-V11-Cryptography.md">OWASP ASVS 5.0 requirement 11.5.1</a>, <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">OWASP session management</a> and <a href="https://arxiv.org/abs/1604.02734">Gone in Six Characters: Short URLs Considered Harmful for Cloud Services</a>.</p>
@@ -621,8 +659,11 @@ def s_failures():
 <div class="tablewrap"><table>
 <thead><tr><th>Situation</th><th>Visitor sees</th><th>Behind it</th></tr></thead>
 <tbody>
-<tr><td>Wrong, mistyped or deleted link</td><td>“No card found” ({fref("pg-notfound")})</td><td>Counts towards rule 1.</td></tr>
-<tr><td>Card deactivated</td><td>“This card is no longer active.” ({fref("pg-inactive")})</td><td>The contact file and card image stop at once. The Google Wallet pass shows as expired.</td></tr>
+<tr><td>Wrong, mistyped or deleted link, or one with an old alias</td><td>“No card found” ({fref("pg-notfound")})</td><td>Counts towards rule 1.</td></tr>
+<tr><td>Card deactivated (soft-deleted)</td><td>“This card is no longer active.” ({fref("pg-inactive")})</td><td>The contact file and card image stop at once. The Google Wallet pass shows as expired. The staff member can't sign in to My card.</td></tr>
+<tr><td>A staff member changes their alias after sharing their link</td><td>People with the old link see “No card found”</td><td>Expected. My card warned before saving, and the staff member got a new card email.</td></tr>
+<tr><td>An alias with other characters or the wrong length</td><td>My card explains the rule; nothing is saved</td><td>The link doesn't change.</td></tr>
+<tr><td>A Minmed account with no active card signs in to My card</td><td>“There's no name card for this account.” ({fref("pg-staffsignin")})</td><td>No card details are shown.</td></tr>
 <tr><td>Apple Wallet pass of someone who has left</td><td>The pass stays on their phone</td><td>Its QR code opens the “no longer active” page. Minmed can't remove the pass.</td></tr>
 <tr><td>Outage, or Base44 credits run out</td><td>Temporary error ({fref("pg-error")})</td><td>No old or cached details are shown.</td></tr>
 <tr><td>The CAPTCHA can't load or isn't passed</td><td>The check again, with a way to retry</td><td>No card details are sent until a check passes.</td></tr>
@@ -640,8 +681,8 @@ def s_feasibility():
     rows = [
         r("Custom domain me.minmed.sg", works,
           "One DNS record pointing to Base44, on the Starter plan or higher. If minmed.sg's DNS is on Cloudflare, the record must be “DNS only”, so Cloudflare's own protection can't sit in front."),
-        r("Card address with random code", chip("Test", "test"),
-          f"Base44 keeps addresses at the root for sign-in and system pages, so card links need a prefix: <code>{E(LINK)}</code>. Not documented."),
+        r("Card address with optional alias", chip("Test", "test"),
+          "Base44 keeps addresses at the root for sign-in and system pages, so card links need a prefix: <code>/card/{code}</code> and <code>/card/{alias}/{code}</code>. Two-part addresses aren't documented."),
         r("Hidden from Google", chip("Test", "test"),
           "A per-page “Search visibility” switch (added 28/09/2026) marks pages noindex and removes them from the sitemap. Files served by backend functions can carry their own noindex header. Check what the live site serves after every publish."),
         r("Per-card WhatsApp preview", chip("Not supported as is", "risk"),
@@ -654,8 +695,12 @@ def s_feasibility():
           "Cloudflare can't sit in front of a Base44 domain, so the rules are counted in backend functions with a database table, in rolling windows."),
         r("Contact file and Google Wallet link", chip("Test", "test"),
           "Backend functions can return files of the right type and use code libraries. Their addresses look like <code>me.minmed.sg/functions/contact?code=…</code>, still behind the random code."),
-        r("Admin sign-in limited to minmed.sg", chip("Works, with setup", "dec"),
-          "Needs Minmed's own Google sign-in set to “Internal” (Builder plan or higher). Base44 only has “admin” and “user” roles, so Super admin and Admin are our own list, editable only by Super admins."),
+        r("Sign-in limited to minmed.sg (admins and staff)", chip("Works, with setup", "dec"),
+          "Needs Minmed's own Google sign-in set to “Internal” (Builder plan or higher). Base44 only has “admin” and “user” roles, so Super admin and Admin are our own list, editable only by Super admins. Staff sign in as ordinary users. Base44's plans don't charge per user."),
+        r("Staff limited to their own card and alias", chip("Test", "test"),
+          "Base44's row-level rules can limit a signed-in user to the card with their email, and field-level rules can limit which fields they write. Saving goes through a backend function that checks the alias, then updates the link, the Google Wallet pass, the activity log and the emails. Check that the field rule can be tied to the person's own card."),
+        r("Soft delete for leavers", works,
+          "Base44 records carry a soft-delete flag and date, so a deactivated card can be hidden but kept, and restored by a Super admin."),
         r("Visitors can't list cards", chip("Ours to build", "rec"),
           "A public Base44 app lets anyone register. Visitors must only get one card's public fields, by its code, through a backend function. One wrong rule could expose every card."),
         r("Emails to staff and manage@minmed.sg", chip("Works, with setup", "dec"),
@@ -696,7 +741,8 @@ def s_feasibility():
   <li>Show Turnstile on the card page, verify its token in a backend function, and log the request headers to find the visitor's IP address. Then try rule 1 and the 30-minute pass from one phone, and from two phones on the same Wi-Fi.</li>
   <li>Download a contact file and open the Google Wallet link from a backend function in iPhone Safari, Android Chrome, WhatsApp and Gmail.</li>
   <li>Add a card's QR code to Apple Wallet with Create a Pass on two iPhones: one with Apple Intelligence and one without.</li>
-  <li>Check that a non-minmed Google account is refused, an Admin can't make themselves Super admin, and an anonymous visitor can't list cards.</li>
+  <li>Check that a non-minmed Google account is refused, an Admin can't make themselves Super admin, a staff member can't open another card or the admin console, and an anonymous visitor can't list cards.</li>
+  <li>Sign in to My card as a staff member on a phone. Check they can change only the alias, that the old link then shows “No card found”, and that the Google Wallet pass updates and a new card email arrives.</li>
   <li>Check that emails reach staff and manage@minmed.sg.</li>
 </ol>
 
@@ -708,18 +754,19 @@ def s_feasibility():
 def s_spec():
     rm, ch, keep, add = chip("Remove", "out"), chip("Change", "rec"), chip("Keep", "in"), chip("Add", "dec")
     rows = [
-        (rm, "Staff sign-in and the staff view; staff creating cards (<code>me.minmed.sg/create</code>); the approval process (pending review, reviewers, rejections, exact-version rule, held applications); approval emails to staff", "§1.2, §3, Fig. 2, §5.1, §5.3, §6.1, §7"),
+        (rm, "Staff creating cards (<code>me.minmed.sg/create</code>); the approval process (pending review, reviewers, rejections, exact-version rule, held applications); approval emails to staff", "§1.2, §3, Fig. 2, §5.1, §5.3, §6.1, §7"),
+        (ch, "The staff view becomes a read-only My card page, with one box for a name or alias in the link and a QR code download", "§5, §5.1"),
         (rm, "Signed links; watermark and reference labels", "§4, §4.1, §4.3, §8, §8.1"),
         (rm, "“Active staff profile ✓ Checked [time]” and the How to verify panel", "§4.1, §5.2"),
         (ch, "CAPTCHA options become four set rules (section 8): more than 3 card opens or contact downloads per IP in 1 minute; a busy-card check; a 30-minute pass that ends after 20 opens in 5 minutes; Turnstile checked on the server. Rules record only for the first 2 weeks", "§4.5, §4.6, §8.1"),
-        (ch, "Public address from <code>me.minmed.sg/first-last</code> to a random code with no name", "§1.2, §4.3"),
+        (ch, "Public address from <code>me.minmed.sg/first-last</code> to a random code, with an optional name or alias chosen by the staff member", "§1.2, §4.3"),
         (ch, "Actors table becomes four users with a full permissions matrix", "§3"),
-        (ch, "Field rules: “changes require approval” becomes “maintained by admins”", "§3.1"),
+        (ch, "Field rules: “changes require approval” becomes “maintained by admins”; staff change only their alias", "§3.1"),
         (ch, "Monthly email reports become view counts in the admin console", "§6"),
         (ch, "UI: the staff and recipient views become the public card and admin console in section 7", "§5"),
         (ch, "Launch checks: replace ownership and approval checks with admin-only, random-code, CAPTCHA and “don't index” checks", "§9"),
         (keep, "Base44; public card fields and actions; Save contact; WhatsApp preview; deactivation; public-field filtering on the server; search exclusion; admin notifications and audit", "§1.1, §3.2, §4.2, §4.4, §7.1"),
-        (add, "Admin console pages; Super admin and Admin roles; spreadsheet import; card email to staff with Google Wallet and Apple Wallet steps, and replies used for change requests; QR code for computer visitors; new link code; delete and retention rules; offboarding owner and timing; failure handling", "new sections"),
+        (add, "Admin console pages; Super admin and Admin roles; spreadsheet import; card email to staff with Google Wallet and Apple Wallet steps, and replies used for change requests; QR code for computer visitors; new link code; soft delete for leavers; offboarding owner and timing; failure handling", "new sections"),
         (add, "The WhatsApp preview approach; the tests to run before the build", "§7.1, new section"),
     ]
     body = "".join(f"<tr><td>{c}</td><td>{w}</td><td>{s}</td></tr>" for c, w, s in rows)
@@ -744,7 +791,7 @@ def s_pending():
 <p>The only open items. Everything else is confirmed.</p>
 <ol class="qs">
   <li><b>WhatsApp previews: option A, B or C.</b> {chip("Pending confirmation", "pend")}<span class="def">Plan confirmed: test B first. Then C if per-card previews are a must, otherwise A. Affects {fref("pg-whatsapp")}, section 11 and the file addresses in section 6. Needs the test result.</span></li>
-  <li><b>How long deactivated cards are kept.</b> {chip("Pending confirmation", "pend")}<span class="def">Until then, they're kept and deleted on request. Needs whoever handles data protection (PDPA).</span></li>
+  <li><b>Details added for My card, aliases and soft delete.</b> {chip("Proposed", "rec")}<span class="def">The page address <code>me.minmed.sg/my-card</code>; the wording in {fref("pg-staffsignin")} to {fref("pg-mycardok")}, including “There's no name card for this account.” for a Minmed account without an active card; a line in the card email pointing to My card; a confirm step before a new link is saved; clearing an alias, by the staff member or an admin, brings back the plain link without a name; a Deactivated tab, for Super admins only, listing soft-deleted cards; and the alias and deactivation wording in {fref("pg-cards")}, {fref("pg-details")}, {fref("pg-dialogs")} and {fref("pg-activity")}. Needs your OK.</span></li>
 </ol>
 </section>
 """
