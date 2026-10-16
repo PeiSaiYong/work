@@ -6,6 +6,7 @@ const path = require('path');
 const { chromium } = require('playwright');
 
 const DIR = path.resolve(__dirname, '..');
+const VERSION = 'v3';   // shown in the file name and footer, so copies in Drive can be told apart
 const DOCS = [
   ['minmed-name-card-scope', 'Minmed Digital Name Cards · Product scope'],
   ['minmed-name-card-build-notes', 'Minmed Digital Name Cards · Build notes'],
@@ -24,7 +25,7 @@ const SIZES = [
       await page.goto('file://' + path.join(DIR, name + '.html'), { waitUntil: 'networkidle' });
       await page.evaluate(() => document.fonts.ready);
       await page.evaluate(() => { if (typeof fitShots === 'function') fitShots(); });
-      const out = `${name}-${z.tag}.pdf`;
+      const out = `${name}-${z.tag}-${VERSION}.pdf`;
       await page.pdf({
         path: path.join(DIR, out),
         ...z.page,
@@ -36,7 +37,7 @@ const SIZES = [
         footerTemplate:
           `<div style="width:100%;padding:0 ${z.side};display:flex;justify-content:space-between;` +
           `font:${z.foot}px Arial,Helvetica,sans-serif;color:#8a8f99">` +
-          `<span>${title}</span><span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>`,
+          `<span>${title} · PDF ${VERSION}</span><span><span class="pageNumber"></span> / <span class="totalPages"></span></span></div>`,
       });
       await page.close();
       console.log('wrote', out);

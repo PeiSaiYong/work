@@ -594,6 +594,17 @@ a.smn:hover, a.smn:focus-visible { background: var(--surface-2); border-color: v
   html { scroll-behavior: auto; }
   /* Chrome saves blurred shadows as masked images; some PDF viewers (iPhone, Drive) draw them as grey boxes */
   *, *::before, *::after { box-shadow: none !important; text-shadow: none !important; }
+  /* no see-through layers either: solid colours stand in for faded icons and buttons */
+  *, *::before, *::after { opacity: 1 !important; }
+  .lk { color: #9aa0a8; }
+  .ad-btn.off { color: #b8bcc4; border-color: #ece8ec; }
+  .ad-btn.p.off, .btn-p.off { background: #d6b3cc; border-color: #d6b3cc; color: #fff; }
+  .c-dec { border-color: color-mix(in srgb, var(--green) 35%, #fff); }
+  .c-rec { border-color: color-mix(in srgb, var(--amber) 35%, #fff); }
+  .c-test { border-color: color-mix(in srgb, var(--blue) 35%, #fff); }
+  .c-risk { border-color: color-mix(in srgb, var(--red) 35%, #fff); }
+  .sw i { border-color: #ececec; }
+  .mc.dim, .modal-wrap { background: #80878f; }
   body { background: #fff; }
   .top, .pv-cta, .pvd { display: none !important; }
   main { padding-top: 0; padding-bottom: 0; }
