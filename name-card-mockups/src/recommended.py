@@ -355,7 +355,7 @@ QUESTIONS = [
     ("q4", "Signing in after deactivation", "Allow it, but show only the status and who to contact. No card, no buttons."),
     ("q5", "Reviewer and administrator screens", "Yes. Six screens below: review queue, review, reason, changed version, held application, deactivate."),
     ("q6", "Where the staff view lives", "me.minmed.sg/staff, with \"staff\" reserved so no card can use that address."),
-    ("q7", "Undefined wording and button labels", "One short line per screen, collected in one table at the end of this section."),
+    ("q7", "Undefined wording and button labels", "One short line per screen, collected in one table at the end of this tab."),
     ("q8", "Format of the check time", "An exact date and time, such as \"Checked 10:42 am, 15 Oct 2026\". Never \"just now\"."),
 ]
 
@@ -396,9 +396,11 @@ WORDING = [
 def wording_table():
     rows = "".join(f"<tr><td><b>{E(w)}</b></td><td>{E(t)}</td></tr>" for w, t in WORDING)
     return (
-        '<h3 style="margin-top:28px">All recommended wording in one place</h3>'
+        '<section class="section sec" id="wording"><div class="eyebrow">Summary</div>'
+        '<h2>All recommended wording in one place</h2>'
         '<p class="small muted" style="margin-top:0">Square brackets are buttons. Curly brackets are filled in by the system.</p>'
         f'<div class="tablewrap"><table class="t"><tr><th style="width:30%">Where</th><th>Recommended wording</th></tr>{rows}</table></div>'
+        '</section>'
     )
 
 
@@ -536,7 +538,7 @@ def recommended_page():
         '<h3 style="margin-top:22px">Staff screens</h3>' + f'<div class="steps">{w_staff}</div>'
         + '<h3 style="margin-top:34px">Recipient screens</h3>' + f'<div class="steps">{w_recipient}</div>'
         + '<h3 style="margin-top:34px">Emails</h3>' + f'<div class="steps">{w_email}</div>'
-        + wording_table() + "</section>")
+        + "</section>")
 
     a, b = time_visual()
     q8 = qa("q8", 8, "How should the check time be written?", QUESTIONS[7][2], [
@@ -562,7 +564,7 @@ def recommended_page():
 {legend}
 <h2 style="margin-top:28px">At a glance</h2>
 {summary()}
-{q1}{q2}{q3}{q4}{q5}{q6}{q7}{q8}
+{q1}{q2}{q3}{q4}{q5}{q6}{q7}{q8}{wording_table()}
 """
     return page("5-recommended.html", "Recommended Answers",
                 "Mockups showing a recommended answer to each open question for Minmed Digital Name Cards.", body)
