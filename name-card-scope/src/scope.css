@@ -577,4 +577,20 @@ a.smn:hover, a.smn:focus-visible { background: var(--surface-2); border-color: v
   .shot.zoomed { cursor: zoom-out; }
   .shot.zoomed::after { content: "Scroll sideways, or tap to fit the screen"; position: sticky; left: 0; }
 }
-@media print { .top { position: static; } .fig, .smz, .dg, .fc { break-inside: avoid; } }
+/* ---------- print and PDF ---------- */
+@media print {
+  html { scroll-behavior: auto; }
+  body { background: #fff; }
+  .top, .pv-cta, .pvd { display: none !important; }
+  main { padding-top: 0; padding-bottom: 0; }
+  .fig, .smz, .dg, .fc, .qs li, .feat > div, .steps > div, .legend, tr { break-inside: avoid; }
+  h2, h3, .eyebrow { break-after: avoid; }
+  #sitemap { break-inside: auto; }
+  .phone { zoom: 0.85; }
+  li { break-inside: avoid; }
+  section { break-before: page; }
+  section:first-of-type { break-before: auto; }
+  .footer { break-before: avoid; margin-top: 24px; }
+  .shot.fit::after, .shot.zoomed::after { content: none !important; display: none !important; }
+  a { text-decoration: none; }
+}
