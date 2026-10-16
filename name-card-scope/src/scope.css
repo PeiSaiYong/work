@@ -580,6 +580,8 @@ a.smn:hover, a.smn:focus-visible { background: var(--surface-2); border-color: v
 /* ---------- print and PDF ---------- */
 @media print {
   html { scroll-behavior: auto; }
+  /* Chrome saves blurred shadows as masked images; some PDF viewers (iPhone, Drive) draw them as grey boxes */
+  *, *::before, *::after { box-shadow: none !important; text-shadow: none !important; }
   body { background: #fff; }
   .top, .pv-cta, .pvd { display: none !important; }
   main { padding-top: 0; padding-bottom: 0; }
